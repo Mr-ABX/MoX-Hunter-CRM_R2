@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MoX Hunter | AI Acquisition Engine</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  </head>
+  <body class="bg-zinc-950 text-zinc-50 font-sans antialiased">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+    <script>
+      // 1. Monkeypatch console.error to swallow ResizeObserver noise
+      const originalConsoleError = console.error;
+      console.error = (...args) => {
+        const msg = args[0] && typeof args[0] === 'string' ? args[0] : '';
+        if (msg.includes('ResizeObserver') || msg.includes('loop limit exceeded') || msg.includes('undelivered notifications')) {
+          return;
+        }
+        originalConsoleError.apply(console, args);
+      };
+
+      window.addEventListener('error', (e) => {
+        const msg = e.message || '';
+        if (msg.includes('ResizeObserver') || msg.includes('loop limit exceeded') || msg.includes('undelivered notifications')) {
+          e.stopImmediatePropagation();
+          e.preventDefault();
+        }
+      }, true);
+    </script>
+  </body>
+</html>
+
