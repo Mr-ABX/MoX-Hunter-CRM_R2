@@ -7,22 +7,11 @@ export function useAuth() {
   const [authLoading, setAuthLoading] = useState(true);
 
   useEffect(() => {
-    // TESTING OVERRIDE: automatically log in as a test user
-    setUser({
-      uid: "test-user-123",
-      displayName: "Test Developer",
-      email: "test@moxhunter.com",
-      photoURL: "https://www.gravatar.com/avatar/2c7d99fe281ecd3bcd65ab915bac6dd5?s=250",
-    } as User);
-    setAuthLoading(false);
-
-    /* Original real auth listener:
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
       setAuthLoading(false);
     });
     return () => unsubscribe();
-    */
   }, []);
 
   const handleSignIn = async () => {

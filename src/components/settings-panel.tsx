@@ -5,12 +5,16 @@ import { WolfLogo } from './logo';
 
 export function SettingsPanel() {
   const [mode, setMode] = useState<'solo' | 'agency'>('solo');
-  const [hunterMode, setHunterMode] = useState(false);
+  const [hunterMode, setHunterMode] = useState(() => localStorage.getItem('hunterMode') === 'true');
+  const [senderName, setSenderName] = useState(() => localStorage.getItem('brevoSenderName') || 'MoX Hunter Agent');
+  const [senderEmail, setSenderEmail] = useState(() => localStorage.getItem('brevoSenderEmail') || 'agent@moxhunter.com');
   const [saved, setSaved] = useState(false);
 
   const handleSave = () => {
     localStorage.setItem('agentMode', mode);
     localStorage.setItem('hunterMode', hunterMode.toString());
+    localStorage.setItem('brevoSenderName', senderName);
+    localStorage.setItem('brevoSenderEmail', senderEmail);
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   };
@@ -93,6 +97,36 @@ export function SettingsPanel() {
                 <div className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-transform ${hunterMode ? 'translate-x-6' : 'translate-x-0'}`} />
               </div>
             </button>
+          </div>
+
+          <div className="bg-zinc-900/50 border border-zinc-800/50 rounded-2xl p-6 mb-8">
+            <h2 className="text-xl font-semibold text-zinc-100 mb-4">Brevo Email Settings</h2>
+            <p className="text-zinc-400 text-sm mb-6">
+              Configure the sender details for your automated outreach campaigns via Brevo API. Ensure the email address is an authorized sender in your Brevo dashboard.
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-zinc-400 mb-2">Sender Name</label>
+                <input
+                  type="text"
+                  value={senderName}
+                  onChange={(e) => setSenderName(e.target.value)}
+                  className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-4 py-3 text-zinc-100 focus:outline-none focus:border-indigo-500"
+                  placeholder="e.g. John Doe"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-zinc-400 mb-2">Sender Email</label>
+                <input
+                  type="email"
+                  value={senderEmail}
+                  onChange={(e) => setSenderEmail(e.target.value)}
+                  className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-4 py-3 text-zinc-100 focus:outline-none focus:border-indigo-500"
+                  placeholder="e.g. hello@yourdomain.com"
+                />
+              </div>
+            </div>
           </div>
 
           <div className="flex justify-end">

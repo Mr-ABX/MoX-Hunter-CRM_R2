@@ -42,7 +42,8 @@ export function OutreachPanel({ leads, onUpdateLead }: OutreachPanelProps) {
         ? 'Write as a professional agency team ("we", "our team").' 
         : 'Write as a solo contractor / freelancer ("I", "my").';
 
-      const prototypeUrl = selectedLead.prototypeId ? `https://mo-x.vercel.app/preview/${selectedLead.prototypeId}` : 'No prototype built yet, emphasize that we CAN build one.';
+      const baseUrl = import.meta.env.VITE_APP_URL || window.location.origin;
+      const prototypeUrl = selectedLead.prototypeId ? `${baseUrl}/preview/${selectedLead.prototypeId}` : 'No prototype built yet, emphasize that we CAN build one.';
 
       const prompt = `Write a highly converting 4-Step ${outreachType} follow-up sequence for a local business named "${selectedLead.name}" in the ${selectedLead.niche} niche.
       ${persona}
@@ -85,15 +86,32 @@ export function OutreachPanel({ leads, onUpdateLead }: OutreachPanelProps) {
     setIsSendingEmail(true);
 
     try {
-      // TESTING OVERRIDE: mock the email sending API response since there is no backend API set up
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const senderName = localStorage.getItem('brevoSenderName') || 'MoX Hunter Agent';
+      const senderEmail = localStorage.getItem('brevoSenderEmail') || 'agent@moxhunter.com';
+
+      const response = await fetch('/api/email/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          to: targetEmail,
+          subject: `Outreach from MoX Hunter`,
+          htmlContent: `<div style="font-family: sans-serif; white-space: pre-wrap;">${generatedMessage}</div>`,
+          senderName,
+          senderEmail
+        })
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to send email');
+      }
       
       onUpdateLead(selectedLead.id, { 
         status: 'Contacted', 
         lastActionDate: Date.now(),
         nextFollowUpDate: Date.now() + (3 * 24 * 60 * 60 * 1000) 
       });
-      alert('Mock: Email sent successfully!');
+      alert('Email sent successfully via Brevo!');
     } catch (error: any) {
       console.error('Email send failed:', error);
       alert(error.message || 'Failed to send email. Check console for details.');
