@@ -25,7 +25,6 @@ import { TasksPanel } from '@/components/tasks-panel';
 import { AnalyticsPanel } from '@/components/analytics-panel';
 import { ContractsPanel } from '@/components/contracts-panel';
 import { Sidebar } from '@/components/sidebar';
-import { AuthScreen } from '@/components/auth-screen';
 import { AlphasPanel } from '@/components/alphas-panel';
 
 import { useAuth } from '@/hooks/use-auth';
@@ -594,7 +593,7 @@ export default function Home() {
   }
 
   if (!user) {
-    return <AuthScreen handleSignIn={handleSignIn} />;
+    return null; // Handled by router
   }
 
   return (

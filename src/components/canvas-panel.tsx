@@ -336,14 +336,38 @@ export function CanvasPanel({
     }
   };
 
-  const handleGenerateLink = () => {
+  const handleGenerateLink = async () => {
     if (!currentVersionId) return;
     
     setIsGeneratingLink(true);
     
+    // Ask for custom slug
+    const customSlug = prompt('Enter a custom URL slug for this pitch (e.g., "nike"), or leave blank to use the default ID:');
+    
+    let targetId = currentVersionId;
+    
+    if (customSlug && customSlug.trim() !== '') {
+      const slug = customSlug.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-');
+      try {
+        const { doc, setDoc } = await import('firebase/firestore');
+        const { db } = await import('@/lib/firebase');
+        
+        await setDoc(doc(db, 'messages', slug), {
+          canvasContent: content,
+          isAlias: true,
+          originalId: currentVersionId,
+          createdAt: new Date().toISOString()
+        });
+        targetId = slug;
+      } catch (err) {
+        console.error('Failed to create custom slug alias:', err);
+        alert('Failed to create custom slug. Using default ID instead.');
+      }
+    }
+    
     // Generate the real public link
     const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
-    const pitchUrl = `${baseUrl}/pitch/${currentVersionId}`;
+    const pitchUrl = `${baseUrl}/preview/${targetId}`;
     
     // Copy to clipboard
     try {
