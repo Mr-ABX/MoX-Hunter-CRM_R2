@@ -15,6 +15,7 @@ import {
   Cpu
 } from 'lucide-react';
 import { Logo, WolfLogo } from './logo';
+import { ModelSelector } from './model-selector';
 
 interface SidebarProps {
   currentView: string;
@@ -137,6 +138,8 @@ export function Sidebar({ currentView, setCurrentView, leadsCount, messagesCount
         />
         
         <div className="flex-1" />
+        
+        <ModelSelector sidebarMode={true} />
         
         <SidebarTab 
           icon={<LogOut className="w-4 h-4 text-rose-500" />} 

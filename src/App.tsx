@@ -26,8 +26,6 @@ import { AnalyticsPanel } from '@/components/analytics-panel';
 import { ContractsPanel } from '@/components/contracts-panel';
 import { Sidebar } from '@/components/sidebar';
 import { AlphasPanel } from '@/components/alphas-panel';
-import { ModelSelector } from '@/components/model-selector';
-import { useModels } from '@/contexts/model-context';
 
 import { ALPHAS, SKILLS } from '@/lib/alphas';
 
@@ -195,6 +193,7 @@ export default function Home() {
   const [isSwitcherExpanded, setIsSwitcherExpanded] = useState(false);
   const [isActionMenuOpen, setIsActionMenuOpen] = useState(false);
   const [isAlphaMenuOpen, setIsAlphaMenuOpen] = useState(false);
+  const [autoMountSkills, setAutoMountSkills] = useState(true);
   const [activeAlphas, setActiveAlphas] = useState<string[]>(['web-architect']);
   const [activeSkills, setActiveSkills] = useState<string[]>([]);
   const [input, setInput] = useState('');
@@ -727,11 +726,9 @@ export default function Home() {
                 
                 <div className="p-4 border-b border-zinc-800/50 flex items-center justify-between">
                   <h2 className="font-display font-semibold tracking-tight text-zinc-100">Studio Chat</h2>
-                  <div className="flex items-center gap-2">
-                    <ModelSelector />
-                    <div className="relative z-50">
-                      <button 
-                        onClick={() => setIsAlphaMenuOpen(!isAlphaMenuOpen)}
+                  <div className="relative z-50">
+                    <button 
+                      onClick={() => setIsAlphaMenuOpen(!isAlphaMenuOpen)}
                         className="flex items-center gap-2 px-2.5 py-1.5 bg-zinc-900 border border-zinc-800 rounded-lg hover:border-zinc-700 hover:bg-zinc-800 transition-all select-none"
                       >
                         <Cpu className="w-3.5 h-3.5 text-indigo-400" />
@@ -752,8 +749,16 @@ export default function Home() {
                               exit={{ opacity: 0, scale: 0.95, y: 5 }}
                               className="absolute right-0 top-full mt-2 w-64 bg-zinc-900 border border-zinc-800 rounded-xl shadow-2xl p-1.5 overflow-hidden z-50 max-h-[60vh] overflow-y-auto custom-scrollbar"
                             >
-                              <div className="px-2 py-1.5 mb-1 border-b border-zinc-800/50">
+                              <div className="px-2 py-2 mb-1 border-b border-zinc-800/50 flex items-center justify-between">
                                 <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Mounted Alphas</span>
+                                <label className="flex items-center gap-1.5 cursor-pointer group">
+                                  <span className="text-[9px] font-medium text-zinc-500 group-hover:text-zinc-400 transition-colors">Auto-mount Skills</span>
+                                  <div className="relative inline-block w-6 h-3.5">
+                                    <input type="checkbox" className="opacity-0 w-0 h-0 peer" checked={autoMountSkills} onChange={(e) => setAutoMountSkills(e.target.checked)} />
+                                    <span className="absolute cursor-pointer top-0 left-0 right-0 bottom-0 bg-zinc-700 rounded-full transition-colors peer-checked:bg-indigo-500"></span>
+                                    <span className="absolute left-[2px] bottom-[2px] bg-white w-2.5 h-2.5 rounded-full transition-transform peer-checked:translate-x-[10px]"></span>
+                                  </div>
+                                </label>
                               </div>
                               {ALPHAS.map(alpha => {
                                 const isActive = activeAlphas.includes(alpha.id);
@@ -765,7 +770,7 @@ export default function Home() {
                                         setActiveAlphas(prev => prev.filter(id => id !== alpha.id));
                                       } else {
                                         setActiveAlphas(prev => [...prev, alpha.id]);
-                                        if (alpha.recommendedSkills) {
+                                        if (autoMountSkills && alpha.recommendedSkills) {
                                           setActiveSkills(prev => Array.from(new Set([...prev, ...alpha.recommendedSkills!])));
                                         }
                                       }
@@ -803,7 +808,6 @@ export default function Home() {
                         )}
                       </AnimatePresence>
                     </div>
-                  </div>
                 </div>
                 <ChatPanel 
                   messages={currentLeadMessages} isLoading={isLoading} activeMode={activeCanvasTab} leads={leads} selectedLeadId={selectedLeadId}

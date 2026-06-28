@@ -32,7 +32,7 @@ export function useChat(
   const [agentMessages, setAgentMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [loadingMode, setLoadingMode] = useState<CanvasMode | null>(null);
-  const chatRef = useRef<any>(null);
+
 
   useEffect(() => {
     if (!userId) {
@@ -110,21 +110,7 @@ export function useChat(
     return () => unsubAgentMessages();
   }, [userId, activeAgentSessionId, agentSessions]);
 
-  useEffect(() => {
-    if (!chatRef.current) {
-      const agentMode = typeof window !== 'undefined' ? localStorage.getItem('agentMode') || 'solo' : 'solo';
-      const persona = agentMode === 'agency' 
-        ? 'You are an expert agency growth consultant working with a professional agency team.' 
-        : 'You are an expert consultant helping a solo contractor / freelancer grow their business.';
 
-      chatRef.current = ai.chats.create({
-        model: models.chat,
-        config: {
-          systemInstruction: `${persona}\n\n${SYSTEM_INSTRUCTION}`,
-        },
-      });
-    }
-  }, []);
 
   const handleCreateSession = async (leadId: string | null) => {
     if (!userId) return null;
@@ -158,7 +144,13 @@ export function useChat(
     if (!text.trim() || isLoading || !userId) return;
 
     let finalSessionId = selectedSessionId;
-    let enhancedText = text;
+
+    const agentMode = typeof window !== 'undefined' ? localStorage.getItem('agentMode') || 'solo' : 'solo';
+    const persona = agentMode === 'agency' 
+      ? 'You are an expert agency growth consultant working with a professional agency team.' 
+      : 'You are an expert consultant helping a solo contractor / freelancer grow their business.';
+
+    let combinedSystemPrompt = `${persona}\n\n${SYSTEM_INSTRUCTION}`;
 
     if (activeAlphas && activeAlphas.length > 0) {
       const alphaPrompts = activeAlphas
@@ -166,7 +158,7 @@ export function useChat(
         .filter(Boolean)
         .join('\n\n');
       if (alphaPrompts) {
-        enhancedText = `[ACTIVE ALPHAS (SUB-AGENTS)]\n${alphaPrompts}\n\n` + enhancedText;
+        combinedSystemPrompt += `\n\n[ACTIVE ALPHAS (SUB-AGENTS)]\n${alphaPrompts}`;
       }
     }
 
@@ -176,7 +168,7 @@ export function useChat(
         .filter(Boolean)
         .join('\n\n');
       if (skillPrompts) {
-        enhancedText = `[ACTIVE SKILLS]\n${skillPrompts}\n\n` + enhancedText;
+        combinedSystemPrompt += `\n\n[ACTIVE SKILLS]\n${skillPrompts}`;
       }
     }
 
@@ -193,7 +185,7 @@ export function useChat(
 
       const userMessage = {
         role: 'user' as const,
-        text: enhancedText,
+        text: text,
         imageUrl: imageData || null,
         leadId: selectedLeadId || null,
         sessionId: finalSessionId,
@@ -216,7 +208,28 @@ export function useChat(
         ];
       }
 
-      const response = await chatRef.current.sendMessage({ message: messagePayload });
+      const history = messages.map(msg => {
+        const parts: any[] = [{ text: msg.text }];
+        if (msg.imageUrl) {
+           const base64Data = msg.imageUrl.split(',')[1] || msg.imageUrl;
+           const mimeType = msg.imageUrl.split(';')[0].split(':')[1] || 'image/jpeg';
+           parts.push({ inlineData: { data: base64Data, mimeType } });
+        }
+        return {
+          role: msg.role === 'model' ? 'model' : 'user',
+          parts
+        };
+      });
+
+      const currentChat = ai.chats.create({
+        model: models.chat,
+        history,
+        config: {
+          systemInstruction: combinedSystemPrompt,
+        }
+      });
+
+      const response = await currentChat.sendMessage({ message: messagePayload });
       const responseText = response.text;
       
       const parsed = parseMessage(responseText);
@@ -284,8 +297,14 @@ export function useChat(
            Help brainstorm angles, analyze their weaknesses, and suggest the exact outreach sequence for the kill.`
         : `${persona}\n\n${appStateContext}\n\nHelp the user brainstorm new hunting grounds (niches), track new business opportunities, analyze markets, and sharpen their operations.`;
 
+      const history = agentMessages.map(msg => ({
+        role: msg.role === 'model' ? 'model' : 'user',
+        parts: [{ text: msg.text }]
+      }));
+
       const agentChat = ai.chats.create({
         model: models.fast,
+        history,
         config: {
           systemInstruction,
         }
