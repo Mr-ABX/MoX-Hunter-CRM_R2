@@ -7,7 +7,7 @@ import { AuthScreen } from './components/auth-screen';
 import { Loader2 } from 'lucide-react';
 
 export function AppRouter() {
-  const { user, authLoading, handleSignIn } = useAuth();
+  const { user, authLoading, authError, handleSignIn } = useAuth();
 
   if (authLoading) {
     return (
@@ -24,7 +24,7 @@ export function AppRouter() {
         <Route path="/" element={<LandingPage />} />
         <Route 
           path="/login" 
-          element={!user ? <AuthScreen handleSignIn={handleSignIn} /> : <Navigate to="/dashboard" replace />} 
+          element={!user ? <AuthScreen handleSignIn={handleSignIn} authError={authError} /> : <Navigate to="/dashboard" replace />} 
         />
         <Route 
           path="/dashboard/*" 

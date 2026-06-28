@@ -19,6 +19,20 @@ export function PitchView() {
 
         if (docSnap.exists()) {
           const data = docSnap.data();
+          
+          // Resolve alias if present
+          if (data.isAlias && data.originalId) {
+            const originalDocRef = doc(db, 'messages', data.originalId);
+            const originalDocSnap = await getDoc(originalDocRef);
+            if (originalDocSnap.exists()) {
+              const originalData = originalDocSnap.data();
+              if (originalData.canvasContent) {
+                setContent(originalData.canvasContent);
+                return;
+              }
+            }
+          }
+
           if (data.canvasContent) {
             setContent(data.canvasContent);
           } else {

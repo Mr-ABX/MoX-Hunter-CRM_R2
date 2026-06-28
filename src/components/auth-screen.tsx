@@ -4,9 +4,10 @@ import { Logo } from './logo';
 
 interface AuthScreenProps {
   handleSignIn: () => void;
+  authError?: string | null;
 }
 
-export function AuthScreen({ handleSignIn }: AuthScreenProps) {
+export function AuthScreen({ handleSignIn, authError }: AuthScreenProps) {
   return (
     <div className="h-screen bg-zinc-950 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-grid-zinc bg-[size:32px_32px] pointer-events-none opacity-20" />
@@ -22,6 +23,13 @@ export function AuthScreen({ handleSignIn }: AuthScreenProps) {
         <p className="text-zinc-400 mb-8 leading-relaxed">
           The elite acquisition engine for solo contractors and agencies. Hunt, track, and close with AI precision.
         </p>
+        
+        {authError && (
+          <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm">
+            {authError}
+          </div>
+        )}
+
         <button 
           onClick={handleSignIn}
           className="w-full py-4 bg-white text-black rounded-2xl font-bold flex items-center justify-center gap-3 hover:bg-zinc-200 transition-all active:scale-[0.98] shadow-xl"

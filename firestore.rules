@@ -1,0 +1,27 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Check if the authenticated user is the exact admin email
+    function isAdmin() {
+      return request.auth != null && request.auth.token.email == 'digital.b3asts@gmail.com';
+    }
+
+    // ---------------------------------------------------------
+    // PUBLIC PITCH LINKS
+    // ---------------------------------------------------------
+    match /messages/{messageId} {
+      // Anyone can READ a specific message if they have the exact URL/ID (for client preview links)
+      allow get: if true;
+      // Only the admin can query/list all messages or write to them
+      allow list, write: if isAdmin();
+    }
+
+    // ---------------------------------------------------------
+    // ADMIN ONLY COLLECTIONS (Leads, Tasks, CRM data, etc.)
+    // ---------------------------------------------------------
+    match /{document=**} {
+      allow read, write: if isAdmin();
+    }
+  }
+}
