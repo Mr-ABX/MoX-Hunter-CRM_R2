@@ -135,6 +135,13 @@ export default function Home() {
   const [currentView, setCurrentView] = useState<ViewMode>('dashboard');
   const [chatWidth, setChatWidth] = useState(400); // Default chat panel width
   const [isResizing, setIsResizing] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1024);
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const startResize = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -762,14 +769,16 @@ export default function Home() {
           {currentView === 'canvas' && (
             <motion.div key="canvas" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.2 }} className="absolute inset-0 flex h-full">
               <div 
-                className="flex flex-col h-full border-r border-zinc-800/50 bg-zinc-900/30 backdrop-blur-md z-30 relative shrink-0 transition-none"
-                style={{ width: `${chatWidth}px` }}
+                className="flex flex-col h-full border-r border-zinc-800/50 bg-zinc-900/30 backdrop-blur-md z-30 relative shrink-0 transition-none w-full md:w-auto"
+                style={{ width: windowWidth < 768 ? '100%' : `${chatWidth}px` }}
               >
-                {/* Resize Handle */}
-                <div 
-                  className={`absolute top-0 right-0 w-1.5 h-full cursor-col-resize hover:bg-indigo-500/50 transition-colors z-50 ${isResizing ? 'bg-indigo-500/50' : 'bg-transparent'}`}
-                  onMouseDown={startResize}
-                />
+                {/* Resize Handle - only visible on md screens and up */}
+                {windowWidth >= 768 && (
+                  <div 
+                    className={`absolute top-0 right-0 w-1.5 h-full cursor-col-resize hover:bg-indigo-500/50 transition-colors z-50 ${isResizing ? 'bg-indigo-500/50' : 'bg-transparent'}`}
+                    onMouseDown={startResize}
+                  />
+                )}
                 
                 <div className="p-4 border-b border-zinc-800/50 flex items-center justify-between">
                   <h2 className="font-display font-semibold tracking-tight text-zinc-100">Studio Chat</h2>

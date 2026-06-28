@@ -341,6 +341,17 @@ export function CanvasPanel({
     
     setIsGeneratingLink(true);
     
+    // Force save any unsaved edits immediately before generating the link
+    if (isEdited && onSaveContent) {
+      if (autoSaveTimerRef.current) {
+        clearTimeout(autoSaveTimerRef.current);
+      }
+      setSaveStatus('saving');
+      onSaveContent(editedContent, true); // Auto-save updates in-place
+      setIsEdited(false);
+      setSaveStatus('saved');
+    }
+    
     // Ask for custom slug
     const customSlug = prompt('Enter a custom URL slug for this pitch (e.g., "nike"), or leave blank to use the default ID:');
     
@@ -353,7 +364,7 @@ export function CanvasPanel({
         const { db } = await import('@/lib/firebase');
         
         await setDoc(doc(db, 'messages', slug), {
-          canvasContent: content,
+          canvasContent: editedContent, // Use latest live edited content!
           isAlias: true,
           originalId: currentVersionId,
           createdAt: new Date().toISOString()

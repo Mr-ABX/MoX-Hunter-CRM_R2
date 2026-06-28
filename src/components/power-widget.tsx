@@ -23,10 +23,18 @@ export function PowerWidget({ currentView = 'dashboard' }: PowerWidgetProps) {
   const [transcript, setTranscript] = useState('');
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [snapPosition, setSnapPosition] = useState<'left' | 'right'>('left');
+  const dragConstraintsRef = useRef<HTMLDivElement>(null);
+  const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1024);
   
   // Use a generic user id for persistent notes storage
   const { handleAddNote } = useNotes('test-user');
   const recognitionRef = useRef<any>(null);
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     // Check if we have a saved snap position in local storage
@@ -97,13 +105,22 @@ export function PowerWidget({ currentView = 'dashboard' }: PowerWidgetProps) {
   };
 
   const handleDragEnd = (event: any, info: any) => {
-    const offsetThreshold = 80;
-    if (snapPosition === 'left' && info.offset.x > offsetThreshold) {
-      setSnapPosition('right');
-      localStorage.setItem('power-widget-snap', 'right');
-    } else if (snapPosition === 'right' && info.offset.x < -offsetThreshold) {
-      setSnapPosition('left');
-      localStorage.setItem('power-widget-snap', 'left');
+    if (dragConstraintsRef.current) {
+      const rect = dragConstraintsRef.current.getBoundingClientRect();
+      const containerWidth = rect.width;
+      const relativeX = info.point.x - rect.left;
+      const newPosition = relativeX > containerWidth / 2 ? 'right' : 'left';
+      setSnapPosition(newPosition);
+      localStorage.setItem('power-widget-snap', newPosition);
+    } else {
+      const offsetThreshold = 40;
+      if (snapPosition === 'left' && info.offset.x > offsetThreshold) {
+        setSnapPosition('right');
+        localStorage.setItem('power-widget-snap', 'right');
+      } else if (snapPosition === 'right' && info.offset.x < -offsetThreshold) {
+        setSnapPosition('left');
+        localStorage.setItem('power-widget-snap', 'left');
+      }
     }
   };
 
@@ -160,30 +177,31 @@ export function PowerWidget({ currentView = 'dashboard' }: PowerWidgetProps) {
     <>
       <AnimatePresence mode="wait">
         {!isOpen ? (
-          <motion.div
-            key="idle-widget"
-            drag="x"
-            dragConstraints={{ left: 0, right: 0 }}
-            dragElastic={0.4}
-            dragMomentum={false}
-            onDragEnd={handleDragEnd}
-            layout
-            className={`fixed bottom-6 z-[100] ${
-              snapPosition === 'left' ? 'left-20' : 'right-6'
-            }`}
-            transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-          >
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setIsOpen(true)}
-              className="w-12 h-12 rounded-full bg-zinc-900/85 backdrop-blur-md border border-zinc-700/50 shadow-[0_4px_24px_rgba(0,0,0,0.4)] flex items-center justify-center text-zinc-300 hover:text-indigo-400 hover:border-indigo-500/50 transition-colors group relative overflow-hidden cursor-grab active:cursor-grabbing"
-              title="Click to open or drag horizontally to snap"
+          <div ref={dragConstraintsRef} className="fixed bottom-6 left-20 right-6 h-12 z-[100] pointer-events-none flex items-center justify-between">
+            <motion.div
+              key="idle-widget"
+              drag="x"
+              dragConstraints={dragConstraintsRef}
+              dragElastic={0.1}
+              dragMomentum={false}
+              onDragEnd={handleDragEnd}
+              animate={{
+                x: snapPosition === 'left' ? 0 : (dragConstraintsRef.current ? (dragConstraintsRef.current.getBoundingClientRect().width - 48) : (windowWidth - 152))
+              }}
+              transition={{ type: 'spring', stiffness: 350, damping: 28 }}
+              className="w-12 h-12 rounded-full bg-zinc-900/85 backdrop-blur-md border border-zinc-700/50 shadow-[0_4px_24px_rgba(0,0,0,0.4)] flex items-center justify-center text-zinc-300 hover:text-indigo-400 hover:border-indigo-500/50 transition-colors group relative overflow-hidden cursor-grab active:cursor-grabbing pointer-events-auto"
+              style={{ x: snapPosition === 'left' ? 0 : (windowWidth - 152) }}
             >
-              <div className="absolute inset-0 bg-indigo-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-              <Sliders className="w-5 h-5 text-indigo-400" />
-            </motion.button>
-          </motion.div>
+              <button
+                onClick={() => setIsOpen(true)}
+                className="w-full h-full flex items-center justify-center relative"
+                title="Click to open or drag horizontally to snap"
+              >
+                <div className="absolute inset-0 bg-indigo-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <Sliders className="w-5 h-5 text-indigo-400" />
+              </button>
+            </motion.div>
+          </div>
         ) : (
           <div className="fixed bottom-6 left-0 right-0 flex justify-center z-[100] pointer-events-none">
             <motion.div

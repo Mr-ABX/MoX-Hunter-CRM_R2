@@ -1,6 +1,43 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <script>
+      // Intercept and swallow Monaco cancellation unhandled rejections as early as possible
+      window.addEventListener('unhandledrejection', (event) => {
+        try {
+          if (event.reason) {
+            const reason = event.reason;
+            const isCancelation = 
+              reason === 'cancelation' ||
+              reason.type === 'cancelation' ||
+              reason.msg === 'operation is manually canceled' ||
+              reason.message === 'operation is manually canceled' ||
+              (typeof reason === 'string' && (reason.includes('cancelation') || reason.includes('manually canceled'))) ||
+              (reason.stack && (reason.stack.includes('cancelation') || reason.stack.includes('manually canceled')));
+              
+            if (isCancelation) {
+              event.preventDefault();
+              event.stopPropagation();
+              event.stopImmediatePropagation();
+              return;
+            }
+
+            const reasonStr = typeof reason === 'object' ? JSON.stringify(reason) : String(reason);
+            if (reasonStr.includes('cancelation') || reasonStr.includes('manually canceled') || reasonStr.includes('operation is manually canceled')) {
+              event.preventDefault();
+              event.stopPropagation();
+              event.stopImmediatePropagation();
+            }
+          }
+        } catch (err) {
+          if (event.reason) {
+            event.preventDefault();
+            event.stopPropagation();
+            event.stopImmediatePropagation();
+          }
+        }
+      }, true); // Use capture phase!
+    </script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MoX Hunter | AI Acquisition Engine</title>

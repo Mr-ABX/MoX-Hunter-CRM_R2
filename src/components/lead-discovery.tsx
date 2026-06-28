@@ -74,10 +74,10 @@ export function LeadDiscovery({ onAddLead, state, setState }: LeadDiscoveryProps
       const prompt = `You are a real-world lead generation assistant. Your task is to find ${state.leadCount || 5} real, verified local businesses in the "${state.niche}" niche located in "${state.city}". ${filterPrompt}
 
 CRITICAL RULES FOR ACCURACY (ANTI-HALLUCINATION MANIFESTO):
-1. USE GOOGLE MAPS TOOL: You MUST use your \`googleMaps\` tool to query actual listings in "${state.city}" for the niche "${state.niche}". Do not generate fictional businesses.
-2. ABSOLUTELY NO GUESSING OR HALLUCINATION: Under NO circumstances are you allowed to invent, guess, or make up phone numbers, website URLs, email addresses, or ratings. If a business does not have a website or phone number in Google Maps, report it as null or empty. Do NOT generate plausible-looking filler or template URLs (e.g., do not write 'http://[businessname].com' or standard '555' numbers).
-3. FILTER INTEGRITY: If the filter requires "Needs Website (None/Poor)", you MUST verify that the business has NO website listed, or that the website listed is extremely poor or broken. Do not falsely claim a business has no website if it has a valid one listed on Google Maps.
-4. FAITHFUL DATA: Extract the real addresses, phone numbers, star ratings, and review counts exactly as reported by Google Maps.
+1. USE GOOGLE SEARCH GROUNDING: You MUST use your \`googleSearch\` tool to query actual live search results, local listings, and maps info in "${state.city}" for the niche "${state.niche}". Do not generate fictional businesses.
+2. ABSOLUTELY NO GUESSING OR HALLUCINATION: Under NO circumstances are you allowed to invent, guess, or make up phone numbers, website URLs, email addresses, or ratings. If a business does not have a website or phone number in the search results, report it as null or empty. Do NOT generate plausible-looking filler or template URLs (e.g., do not write 'http://[businessname].com' or standard '555' numbers).
+3. FILTER INTEGRITY: If the filter requires "Needs Website (None/Poor)", you MUST verify that the business has NO website listed, or that the website listed is extremely poor or broken. Do not falsely claim a business has no website if it has a valid one listed.
+4. FAITHFUL DATA: Extract the real addresses, phone numbers, star ratings, and review counts exactly as reported by Google Search.
 
 For each business, provide:
 1. Name
@@ -96,7 +96,7 @@ Format the output clearly and objectively.`;
         model: models.fast,
         contents: prompt,
         config: {
-          tools: [{ googleMaps: {} }],
+          tools: [{ googleSearch: {} }],
         },
       });
 
