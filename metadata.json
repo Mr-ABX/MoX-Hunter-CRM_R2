@@ -1,6 +1,6 @@
 {
   "name": "MoX Hunter CRM",
   "description": "The AI Wolf CRM Platform built in React.",
-  "requestFramePermissions": [],
+  "requestFramePermissions": ["microphone"],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

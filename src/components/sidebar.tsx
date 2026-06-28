@@ -15,7 +15,6 @@ import {
   Cpu
 } from 'lucide-react';
 import { Logo, WolfLogo } from './logo';
-import { ModelSelector } from './model-selector';
 
 interface SidebarProps {
   currentView: string;
@@ -29,6 +28,7 @@ function SidebarTab({ icon, label, isActive, hasIndicator, onClick }: { icon: Re
   return (
     <button
       onClick={onClick}
+      title={label}
       className={`shrink-0 relative flex items-center justify-center w-10 h-10 rounded-xl transition-all group ${
         isActive 
           ? 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 shadow-[0_0_15px_rgba(99,102,241,0.2)]' 
@@ -39,11 +39,6 @@ function SidebarTab({ icon, label, isActive, hasIndicator, onClick }: { icon: Re
       {hasIndicator && !isActive && (
         <span className="absolute top-2 right-2 w-2.5 h-2.5 bg-indigo-500 rounded-full border-2 border-zinc-950"></span>
       )}
-      
-      {/* Tooltip */}
-      <div className="fixed left-16 ml-2 px-3 py-1.5 bg-zinc-800 text-zinc-200 text-xs font-medium rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50 shadow-xl border border-zinc-700">
-        {label}
-      </div>
     </button>
   );
 }
@@ -138,8 +133,6 @@ export function Sidebar({ currentView, setCurrentView, leadsCount, messagesCount
         />
         
         <div className="flex-1" />
-        
-        <ModelSelector sidebarMode={true} />
         
         <SidebarTab 
           icon={<LogOut className="w-4 h-4 text-rose-500" />} 

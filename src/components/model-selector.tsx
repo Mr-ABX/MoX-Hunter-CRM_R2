@@ -3,7 +3,7 @@ import { Settings2, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { AVAILABLE_MODELS, ModelId, useModels } from '@/contexts/model-context';
 
-export function ModelSelector({ sidebarMode = false }: { sidebarMode?: boolean }) {
+export function ModelSelector({ sidebarMode = false, direction = 'down' }: { sidebarMode?: boolean, direction?: 'up' | 'down' }) {
   const { models, setModel } = useModels();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -31,10 +31,10 @@ export function ModelSelector({ sidebarMode = false }: { sidebarMode?: boolean }
           <>
             <div className="fixed inset-0" onClick={() => setIsOpen(false)} />
             <motion.div 
-              initial={{ opacity: 0, scale: 0.95, y: 5 }}
+              initial={{ opacity: 0, scale: 0.95, y: direction === 'up' ? 5 : -5 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 5 }}
-              className={`absolute ${sidebarMode ? 'left-full bottom-0 ml-2' : 'right-0 top-full mt-2'} w-72 bg-zinc-900 border border-zinc-800 rounded-xl shadow-2xl p-3 overflow-hidden z-50`}
+              exit={{ opacity: 0, scale: 0.95, y: direction === 'up' ? 5 : -5 }}
+              className={`absolute ${sidebarMode ? 'left-full bottom-0 ml-2' : direction === 'up' ? 'right-0 bottom-full mb-2' : 'right-0 top-full mt-2'} w-72 bg-zinc-900 border border-zinc-800 rounded-xl shadow-2xl p-3 overflow-hidden z-50`}
             >
               <div className="mb-4">
                 <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest block mb-2">Chat / Core Model</span>

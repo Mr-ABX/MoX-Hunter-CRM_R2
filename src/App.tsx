@@ -26,6 +26,7 @@ import { AnalyticsPanel } from '@/components/analytics-panel';
 import { ContractsPanel } from '@/components/contracts-panel';
 import { Sidebar } from '@/components/sidebar';
 import { AlphasPanel } from '@/components/alphas-panel';
+import { PowerWidget } from '@/components/power-widget';
 
 import { ALPHAS, SKILLS } from '@/lib/alphas';
 
@@ -1108,6 +1109,8 @@ export default function Home() {
           </div>
         )}
       </AnimatePresence>
+      
+      <PowerWidget />
     </div>
   );
 }
