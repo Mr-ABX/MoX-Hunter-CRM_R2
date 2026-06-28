@@ -210,16 +210,35 @@ export default function Home() {
   // Suppress Monaco editor 'cancelation' and ResizeObserver errors
   useEffect(() => {
     const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
-      if (
-        event.reason && 
-        typeof event.reason === 'object' && 
-        (event.reason.type === 'cancelation' || event.reason.msg === 'operation is manually canceled')
-      ) {
-        event.preventDefault(); // Suppress error
+      if (event.reason) {
+        const reasonStr = typeof event.reason === 'object' ? JSON.stringify(event.reason) : String(event.reason);
+        if (
+          reasonStr.includes('cancelation') || 
+          reasonStr.includes('operation is manually canceled') ||
+          event.reason.type === 'cancelation' || 
+          event.reason.msg === 'operation is manually canceled'
+        ) {
+          event.preventDefault(); // Suppress error
+        }
       }
     };
 
-    const handleResizeObserverError = (e: ErrorEvent) => {
+    const handleResizeObserverAndMonacoError = (e: ErrorEvent) => {
+      // Suppress Monaco editor cancelation error if it comes as an error event
+      if (e.error) {
+        const errorStr = typeof e.error === 'object' ? JSON.stringify(e.error) : String(e.error);
+        if (errorStr.includes('cancelation') || errorStr.includes('operation is manually canceled')) {
+          e.stopImmediatePropagation();
+          e.preventDefault();
+          return;
+        }
+      }
+      if (e.message?.includes('cancelation') || e.message?.includes('operation is manually canceled')) {
+        e.stopImmediatePropagation();
+        e.preventDefault();
+        return;
+      }
+
       // Catch all ResizeObserver variations including prefixes
       const isResizeObserverError = 
         e.message?.includes('ResizeObserver') || 
@@ -236,10 +255,10 @@ export default function Home() {
     };
     
     window.addEventListener('unhandledrejection', handleUnhandledRejection);
-    window.addEventListener('error', handleResizeObserverError);
+    window.addEventListener('error', handleResizeObserverAndMonacoError);
     return () => {
       window.removeEventListener('unhandledrejection', handleUnhandledRejection);
-      window.removeEventListener('error', handleResizeObserverError);
+      window.removeEventListener('error', handleResizeObserverAndMonacoError);
     };
   }, []);
 

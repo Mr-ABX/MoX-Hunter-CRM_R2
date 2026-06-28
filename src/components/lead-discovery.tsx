@@ -59,28 +59,38 @@ export function LeadDiscovery({ onAddLead, state, setState }: LeadDiscoveryProps
     try {
       let filterPrompt = "";
       if (state.searchQuery) filterPrompt += ` Specifically look for businesses matching or related to: "${state.searchQuery}".`;
-      if (state.websiteFilter === 'no') filterPrompt += " Prioritize businesses that DO NOT have a website or have a very poor one.";
-      if (state.websiteFilter === 'yes') filterPrompt += " Prioritize businesses that HAVE a website.";
-      if (state.reviewFilter === 'bad') filterPrompt += " Prioritize businesses with poor reviews (under 3.5 stars).";
+      if (state.websiteFilter === 'no') {
+        filterPrompt += " CRITICAL: You MUST select businesses that DO NOT have a website listed on Google Maps, or have a website marked as non-functional. Do not list businesses that have active, functional websites.";
+      } else if (state.websiteFilter === 'yes') {
+        filterPrompt += " Prioritize businesses that HAVE a registered, active website.";
+      }
+      if (state.reviewFilter === 'bad') filterPrompt += " Prioritize businesses with poor reviews (under 3.5 stars) or very few reviews, indicating they need reputation management.";
       if (state.reviewFilter === 'good') filterPrompt += " Prioritize businesses with excellent reviews (4.0+ stars).";
-      if (state.contactFilter === 'phone') filterPrompt += " Ensure the businesses have a listed phone number.";
-      if (state.contactFilter === 'email') filterPrompt += " Try to find businesses that have an email address listed. Search their website if necessary.";
-      if (state.contactFilter === 'both') filterPrompt += " Ensure the businesses have BOTH a listed phone number and an email address.";
-      if (state.socialFilter === 'yes') filterPrompt += " Try to find businesses that have social media links (Facebook, Instagram, etc).";
+      if (state.contactFilter === 'phone') filterPrompt += " Ensure the businesses have a verified phone number listed.";
+      if (state.contactFilter === 'email') filterPrompt += " Find businesses that have an email address listed or discoverable.";
+      if (state.contactFilter === 'both') filterPrompt += " Ensure the businesses have BOTH a phone number and an email address.";
+      if (state.socialFilter === 'yes') filterPrompt += " Prioritize businesses that have social media presence.";
 
-      const prompt = `Find ${state.leadCount || 5} real local businesses in the ${state.niche} niche located in ${state.city}.${filterPrompt}
-      For each business, provide:
-      1. Name
-      2. Address
-      3. Phone number (if available)
-      4. Email address (if available, search their website for it)
-      5. Website URL (if available)
-      6. Rating and number of reviews (if available)
-      7. Lead Quality Score (1-10) based on their digital presence and need for services (Return a number).
-      8. Key Metric: A concise guess at their "Estimated Monthly Revenue" (e.g., "$10k-$50k/mo").
-      9. A brief "Strategic Insight" paragraph detailing their likely market position, potential pain points, and a specific "closing hook" an agency could use to pitch them web design or marketing services.
-      
-      Format the output clearly so I can read it.`;
+      const prompt = `You are a real-world lead generation assistant. Your task is to find ${state.leadCount || 5} real, verified local businesses in the "${state.niche}" niche located in "${state.city}". ${filterPrompt}
+
+CRITICAL RULES FOR ACCURACY (ANTI-HALLUCINATION MANIFESTO):
+1. USE GOOGLE MAPS TOOL: You MUST use your \`googleMaps\` tool to query actual listings in "${state.city}" for the niche "${state.niche}". Do not generate fictional businesses.
+2. ABSOLUTELY NO GUESSING OR HALLUCINATION: Under NO circumstances are you allowed to invent, guess, or make up phone numbers, website URLs, email addresses, or ratings. If a business does not have a website or phone number in Google Maps, report it as null or empty. Do NOT generate plausible-looking filler or template URLs (e.g., do not write 'http://[businessname].com' or standard '555' numbers).
+3. FILTER INTEGRITY: If the filter requires "Needs Website (None/Poor)", you MUST verify that the business has NO website listed, or that the website listed is extremely poor or broken. Do not falsely claim a business has no website if it has a valid one listed on Google Maps.
+4. FAITHFUL DATA: Extract the real addresses, phone numbers, star ratings, and review counts exactly as reported by Google Maps.
+
+For each business, provide:
+1. Name
+2. Address (Verify it is in ${state.city})
+3. Phone number (Exact real listed number, or leave blank/null if none)
+4. Email address (If available or discoverable, or leave blank)
+5. Website URL (Exact real URL listed, or leave blank if none)
+6. Rating and number of reviews (Exact real star rating and count)
+7. Lead Quality Score (1-10) based on their digital presence and need for services.
+8. Key Metric: A concise realistic estimation of their "Estimated Monthly Revenue" (e.g., "$10k-$50k/mo").
+9. A brief "Strategic Insight" paragraph detailing their likely market position, potential pain points, and a specific "closing hook" an agency could use to pitch them web design or marketing services.
+
+Format the output clearly and objectively.`;
 
       const response = await ai.models.generateContent({
         model: models.fast,
@@ -90,7 +100,11 @@ export function LeadDiscovery({ onAddLead, state, setState }: LeadDiscoveryProps
         },
       });
 
-      const parsePrompt = `Extract the businesses from this text and return ONLY a valid JSON array of objects. Text: ${response.text}`;
+      const parsePrompt = `Extract the businesses from this text and return ONLY a valid JSON array of objects. 
+CRITICAL: Do NOT invent, change, or add any websites, phone numbers, or addresses. If a field is not present or listed as not available, make it an empty string or null. The extracted values MUST be 100% identical to the source text.
+
+Source Text: 
+${response.text}`;
       
       const parseResponse = await ai.models.generateContent({
         model: models.fast,

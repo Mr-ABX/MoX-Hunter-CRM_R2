@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Mic, X, Sparkles, StopCircle, Loader2 } from 'lucide-react';
+import { Mic, X, Sparkles, StopCircle, Loader2, Sliders } from 'lucide-react';
 import { ModelSelector } from './model-selector';
 import { useNotes } from '@/hooks/use-notes';
 
@@ -155,7 +155,7 @@ export function PowerWidget({ currentView = 'dashboard' }: PowerWidgetProps) {
               title="Open AI Command Center"
             >
               <div className="absolute inset-0 bg-indigo-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-              <Sparkles className="w-5 h-5 text-indigo-400 animate-pulse" />
+              <Sliders className="w-5 h-5 text-indigo-400" />
             </motion.button>
           </div>
         ) : (
