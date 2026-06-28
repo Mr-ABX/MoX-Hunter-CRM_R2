@@ -65,6 +65,7 @@ export interface Message {
   userId: string;
   createdAt: number;
   isAgent?: boolean;
+  imageUrl?: string | null;
 }
 
 export interface ChatSession {
@@ -1110,7 +1111,7 @@ export default function Home() {
         )}
       </AnimatePresence>
       
-      <PowerWidget />
+      <PowerWidget currentView={currentView} />
     </div>
   );
 }

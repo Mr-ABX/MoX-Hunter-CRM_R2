@@ -45,7 +45,8 @@ function SidebarTab({ icon, label, isActive, hasIndicator, onClick }: { icon: Re
 
 export function Sidebar({ currentView, setCurrentView, leadsCount, messagesCount, handleSignOut }: SidebarProps) {
   return (
-    <div className="w-16 h-screen shrink-0 flex flex-col items-center py-4 bg-zinc-950 border-r border-zinc-800/50 z-40 relative">
+    <div className="w-16 h-screen shrink-0 flex flex-col items-center py-4 bg-zinc-950 border-r border-zinc-800/50 z-40 relative select-none">
+      {/* Brand Header - Pinned */}
       <div className="flex flex-col items-center mb-6 shrink-0">
         <div className="w-8 h-8 bg-zinc-900 border border-zinc-800 rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(225,29,72,0.2)] mb-1">
           <Logo className="w-4 h-4 text-zinc-100" />
@@ -53,7 +54,8 @@ export function Sidebar({ currentView, setCurrentView, leadsCount, messagesCount
         <span className="text-[9px] font-display font-bold text-zinc-400 tracking-[0.2em] lowercase">mox</span>
       </div>
 
-      <div className="flex flex-col gap-3 w-full px-2 flex-1 overflow-y-auto no-scrollbar">
+      {/* Main Navigation - Scrollable with no clipping issues */}
+      <div className="flex flex-col gap-3 w-full px-2 flex-1 overflow-y-auto no-scrollbar pb-2">
         <SidebarTab 
           icon={<LayoutDashboard className="w-4 h-4" />} 
           label="Dashboard" 
@@ -131,20 +133,21 @@ export function Sidebar({ currentView, setCurrentView, leadsCount, messagesCount
           isActive={currentView === 'files'} 
           onClick={() => setCurrentView('files')} 
         />
-        
-        <div className="flex-1" />
-        
-        <SidebarTab 
-          icon={<LogOut className="w-4 h-4 text-rose-500" />} 
-          label="Sign Out" 
-          isActive={false} 
-          onClick={handleSignOut} 
-        />
+      </div>
+
+      {/* Control Actions - Pinned Pinned Bottom Container */}
+      <div className="flex flex-col gap-3 w-full px-2 mt-2 pt-2 border-t border-zinc-900 shrink-0">
         <SidebarTab 
           icon={<Settings className="w-4 h-4" />} 
           label="Settings" 
           isActive={currentView === 'settings'} 
           onClick={() => setCurrentView('settings')} 
+        />
+        <SidebarTab 
+          icon={<LogOut className="w-4 h-4 text-rose-500" />} 
+          label="Sign Out" 
+          isActive={false} 
+          onClick={handleSignOut} 
         />
       </div>
     </div>

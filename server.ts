@@ -2,6 +2,7 @@ import express from "express";
 import path from "path";
 import cors from "cors";
 import { createServer as createViteServer } from "vite";
+import { GoogleGenAI } from "@google/genai";
 
 async function startServer() {
   const app = express();
@@ -10,7 +11,53 @@ async function startServer() {
   app.use(cors());
   app.use(express.json());
 
+  // Initialize Gemini client with proper user agent header
+  const ai = new GoogleGenAI({
+    apiKey: process.env.GEMINI_API_KEY,
+    httpOptions: {
+      headers: {
+        'User-Agent': 'aistudio-build',
+      }
+    }
+  });
+
   // API Routes
+  app.post("/api/voice/process", async (req, res) => {
+    try {
+      const { transcript, currentView } = req.body;
+      if (!transcript || !transcript.trim()) {
+        return res.status(400).json({ error: 'Transcript is required' });
+      }
+
+      if (!process.env.GEMINI_API_KEY) {
+        return res.status(500).json({ error: 'GEMINI_API_KEY is not configured in .env' });
+      }
+
+      const prompt = `Reorganize, clean up, and format the following raw voice transcription into a highly professional, well-structured Markdown note. 
+The user is currently working on the "${currentView || 'general'}" section of their CRM workspace, so keep the context relevant if appropriate.
+
+Raw transcription:
+"${transcript}"
+
+Requirements:
+1. Fix any grammar, punctuation, and audio-to-text typos.
+2. Structure the note with clear hierarchical headings (using ## and ###).
+3. If any actionable tasks, follow-ups, or todo items are mentioned, extract and organize them as standard Markdown checklists (e.g., "- [ ] task name").
+4. Maintain a clean, concise, and professional tone. Return ONLY the Markdown note content without any extra conversational filler outside of the Markdown itself.`;
+
+      const response = await ai.models.generateContent({
+        model: "gemini-3.5-flash",
+        contents: prompt,
+      });
+
+      const formattedMarkdown = response.text || `## Voice Note\n\n${transcript}`;
+      return res.json({ success: true, formattedMarkdown });
+    } catch (error) {
+      console.error('Error in voice processing route:', error);
+      return res.status(500).json({ error: 'Internal Server Error', details: String(error) });
+    }
+  });
+
   app.post("/api/email/send", async (req, res) => {
     try {
       const { to, subject, htmlContent, senderName, senderEmail } = req.body;
