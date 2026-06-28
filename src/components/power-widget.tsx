@@ -22,12 +22,19 @@ export function PowerWidget({ currentView = 'dashboard' }: PowerWidgetProps) {
   const [isProcessing, setIsProcessing] = useState(false);
   const [transcript, setTranscript] = useState('');
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [snapPosition, setSnapPosition] = useState<'left' | 'right'>('left');
   
   // Use a generic user id for persistent notes storage
   const { handleAddNote } = useNotes('test-user');
   const recognitionRef = useRef<any>(null);
 
   useEffect(() => {
+    // Check if we have a saved snap position in local storage
+    const savedSnap = localStorage.getItem('power-widget-snap');
+    if (savedSnap === 'left' || savedSnap === 'right') {
+      setSnapPosition(savedSnap);
+    }
+
     // Initialize speech recognition
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (SpeechRecognition) {
@@ -89,6 +96,17 @@ export function PowerWidget({ currentView = 'dashboard' }: PowerWidgetProps) {
     }
   };
 
+  const handleDragEnd = (event: any, info: any) => {
+    const offsetThreshold = 80;
+    if (snapPosition === 'left' && info.offset.x > offsetThreshold) {
+      setSnapPosition('right');
+      localStorage.setItem('power-widget-snap', 'right');
+    } else if (snapPosition === 'right' && info.offset.x < -offsetThreshold) {
+      setSnapPosition('left');
+      localStorage.setItem('power-widget-snap', 'left');
+    }
+  };
+
   const processTranscript = async (text: string) => {
     setIsProcessing(true);
     setErrorMsg(null);
@@ -142,22 +160,30 @@ export function PowerWidget({ currentView = 'dashboard' }: PowerWidgetProps) {
     <>
       <AnimatePresence mode="wait">
         {!isOpen ? (
-          <div className="fixed bottom-6 left-20 z-[100]">
+          <motion.div
+            key="idle-widget"
+            drag="x"
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.4}
+            dragMomentum={false}
+            onDragEnd={handleDragEnd}
+            layout
+            className={`fixed bottom-6 z-[100] ${
+              snapPosition === 'left' ? 'left-20' : 'right-6'
+            }`}
+            transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+          >
             <motion.button
-              key="idle-widget"
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.8, opacity: 0 }}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setIsOpen(true)}
-              className="w-12 h-12 rounded-full bg-zinc-900/80 backdrop-blur-md border border-zinc-700/50 shadow-[0_4px_24px_rgba(0,0,0,0.4)] flex items-center justify-center text-zinc-300 hover:text-indigo-400 hover:border-indigo-500/50 transition-colors group relative overflow-hidden"
-              title="Open AI Command Center"
+              className="w-12 h-12 rounded-full bg-zinc-900/85 backdrop-blur-md border border-zinc-700/50 shadow-[0_4px_24px_rgba(0,0,0,0.4)] flex items-center justify-center text-zinc-300 hover:text-indigo-400 hover:border-indigo-500/50 transition-colors group relative overflow-hidden cursor-grab active:cursor-grabbing"
+              title="Click to open or drag horizontally to snap"
             >
               <div className="absolute inset-0 bg-indigo-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
               <Sliders className="w-5 h-5 text-indigo-400" />
             </motion.button>
-          </div>
+          </motion.div>
         ) : (
           <div className="fixed bottom-6 left-0 right-0 flex justify-center z-[100] pointer-events-none">
             <motion.div

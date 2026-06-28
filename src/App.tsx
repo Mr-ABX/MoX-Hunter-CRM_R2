@@ -210,33 +210,59 @@ export default function Home() {
   // Suppress Monaco editor 'cancelation' and ResizeObserver errors
   useEffect(() => {
     const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
-      if (event.reason) {
-        const reasonStr = typeof event.reason === 'object' ? JSON.stringify(event.reason) : String(event.reason);
-        if (
-          reasonStr.includes('cancelation') || 
-          reasonStr.includes('operation is manually canceled') ||
-          event.reason.type === 'cancelation' || 
-          event.reason.msg === 'operation is manually canceled'
-        ) {
-          event.preventDefault(); // Suppress error
+      try {
+        if (event.reason) {
+          const reason = event.reason;
+          const isCancelation = 
+            reason === 'cancelation' ||
+            reason.type === 'cancelation' ||
+            reason.msg === 'operation is manually canceled' ||
+            reason.message === 'operation is manually canceled' ||
+            (typeof reason === 'string' && (reason.includes('cancelation') || reason.includes('manually canceled'))) ||
+            (reason.stack && (reason.stack.includes('cancelation') || reason.stack.includes('manually canceled')));
+            
+          if (isCancelation) {
+            event.preventDefault();
+            event.stopPropagation();
+            event.stopImmediatePropagation();
+            return;
+          }
+
+          // Safe stringify check
+          const reasonStr = typeof reason === 'object' ? JSON.stringify(reason) : String(reason);
+          if (reasonStr.includes('cancelation') || reasonStr.includes('manually canceled') || reasonStr.includes('operation is manually canceled')) {
+            event.preventDefault();
+            event.stopPropagation();
+            event.stopImmediatePropagation();
+          }
+        }
+      } catch (err) {
+        if (event.reason) {
+          event.preventDefault();
+          event.stopPropagation();
+          event.stopImmediatePropagation();
         }
       }
     };
 
     const handleResizeObserverAndMonacoError = (e: ErrorEvent) => {
-      // Suppress Monaco editor cancelation error if it comes as an error event
-      if (e.error) {
-        const errorStr = typeof e.error === 'object' ? JSON.stringify(e.error) : String(e.error);
-        if (errorStr.includes('cancelation') || errorStr.includes('operation is manually canceled')) {
+      try {
+        // Suppress Monaco editor cancelation error if it comes as an error event
+        if (e.error) {
+          const errorStr = typeof e.error === 'object' ? JSON.stringify(e.error) : String(e.error);
+          if (errorStr.includes('cancelation') || errorStr.includes('operation is manually canceled')) {
+            e.stopImmediatePropagation();
+            e.preventDefault();
+            return;
+          }
+        }
+        if (e.message?.includes('cancelation') || e.message?.includes('operation is manually canceled')) {
           e.stopImmediatePropagation();
           e.preventDefault();
           return;
         }
-      }
-      if (e.message?.includes('cancelation') || e.message?.includes('operation is manually canceled')) {
-        e.stopImmediatePropagation();
-        e.preventDefault();
-        return;
+      } catch (err) {
+        // Ignore issues in error stringification
       }
 
       // Catch all ResizeObserver variations including prefixes
