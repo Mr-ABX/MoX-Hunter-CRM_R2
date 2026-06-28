@@ -2,8 +2,10 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Search, Globe, Loader2, Target, TrendingUp, AlertTriangle, CheckCircle2, ArrowRight, ExternalLink } from 'lucide-react';
 import { ai } from '@/lib/ai';
+import { useModels } from '@/contexts/model-context';
 
 export function CompetitorAnalysis() {
+  const { models } = useModels();
   const [websiteUrl, setWebsiteUrl] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [report, setReport] = useState<any>(null);
@@ -38,7 +40,7 @@ export function CompetitorAnalysis() {
       }`;
 
       const response = await ai.models.generateContent({
-        model: 'gemini-3-flash-preview',
+        model: models.fast,
         contents: prompt,
         config: {
           tools: [{ googleSearch: {} }],

@@ -5,6 +5,7 @@ import { ai } from '@/lib/ai';
 import { Type } from '@google/genai';
 import { Lead } from '@/App';
 import { Logo, LogoFull } from './logo';
+import { useModels } from '@/contexts/model-context';
 
 interface DiscoveryState {
   searchQuery: string;
@@ -26,6 +27,7 @@ interface LeadDiscoveryProps {
 }
 
 export function LeadDiscovery({ onAddLead, state, setState }: LeadDiscoveryProps) {
+  const { models } = useModels();
   const [isSearching, setIsSearching] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [selectedInsight, setSelectedInsight] = useState<{title: string, content: string} | null>(null);
@@ -81,7 +83,7 @@ export function LeadDiscovery({ onAddLead, state, setState }: LeadDiscoveryProps
       Format the output clearly so I can read it.`;
 
       const response = await ai.models.generateContent({
-        model: 'gemini-3-flash-preview',
+        model: models.fast,
         contents: prompt,
         config: {
           tools: [{ googleMaps: {} }],
@@ -91,7 +93,7 @@ export function LeadDiscovery({ onAddLead, state, setState }: LeadDiscoveryProps
       const parsePrompt = `Extract the businesses from this text and return ONLY a valid JSON array of objects. Text: ${response.text}`;
       
       const parseResponse = await ai.models.generateContent({
-        model: 'gemini-3-flash-preview',
+        model: models.fast,
         contents: parsePrompt,
         config: {
           responseMimeType: 'application/json',
@@ -146,7 +148,7 @@ export function LeadDiscovery({ onAddLead, state, setState }: LeadDiscoveryProps
       }`;
 
       const response = await ai.models.generateContent({
-        model: 'gemini-3-flash-preview',
+        model: models.fast,
         contents: prompt,
         config: {
           tools: [{ googleSearch: {} }],

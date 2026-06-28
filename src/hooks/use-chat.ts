@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 import { db } from '@/lib/firebase';
 import { ai, SYSTEM_INSTRUCTION } from '@/lib/ai';
 import { parseMessage, CanvasMode } from '@/lib/parser';
+import { ALPHAS, SKILLS } from '@/lib/alphas';
+import { useModels } from '@/contexts/model-context';
 import { 
   collection, 
   query, 
@@ -22,6 +24,7 @@ export function useChat(
   selectedSessionId: string | null,
   activeAgentSessionId: string | null
 ) {
+  const { models } = useModels();
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
   const [assets, setAssets] = useState<Message[]>([]);
@@ -115,7 +118,7 @@ export function useChat(
         : 'You are an expert consultant helping a solo contractor / freelancer grow their business.';
 
       chatRef.current = ai.chats.create({
-        model: 'gemini-3.1-pro-preview',
+        model: models.chat,
         config: {
           systemInstruction: `${persona}\n\n${SYSTEM_INSTRUCTION}`,
         },
@@ -148,11 +151,34 @@ export function useChat(
     onSessionCreated: (id: string) => void,
     onAssetCreated: (assetKey: string, messageId: string) => void,
     onImageGenerated: (prompt: string, messageId: string) => void,
-    imageData?: string // Base64 image data
+    imageData?: string, // Base64 image data
+    activeAlphas?: string[],
+    activeSkills?: string[]
   ) => {
     if (!text.trim() || isLoading || !userId) return;
 
     let finalSessionId = selectedSessionId;
+    let enhancedText = text;
+
+    if (activeAlphas && activeAlphas.length > 0) {
+      const alphaPrompts = activeAlphas
+        .map(id => ALPHAS.find(a => a.id === id)?.systemPrompt)
+        .filter(Boolean)
+        .join('\n\n');
+      if (alphaPrompts) {
+        enhancedText = `[ACTIVE ALPHAS (SUB-AGENTS)]\n${alphaPrompts}\n\n` + enhancedText;
+      }
+    }
+
+    if (activeSkills && activeSkills.length > 0) {
+      const skillPrompts = activeSkills
+        .map(id => SKILLS.find(s => s.id === id)?.systemPrompt)
+        .filter(Boolean)
+        .join('\n\n');
+      if (skillPrompts) {
+        enhancedText = `[ACTIVE SKILLS]\n${skillPrompts}\n\n` + enhancedText;
+      }
+    }
 
     try {
       if (!finalSessionId) {
@@ -167,7 +193,7 @@ export function useChat(
 
       const userMessage = {
         role: 'user' as const,
-        text: text,
+        text: enhancedText,
         imageUrl: imageData || null,
         leadId: selectedLeadId || null,
         sessionId: finalSessionId,
@@ -259,7 +285,7 @@ export function useChat(
         : `${persona}\n\n${appStateContext}\n\nHelp the user brainstorm new hunting grounds (niches), track new business opportunities, analyze markets, and sharpen their operations.`;
 
       const agentChat = ai.chats.create({
-        model: 'gemini-3-flash-preview',
+        model: models.fast,
         config: {
           systemInstruction,
         }

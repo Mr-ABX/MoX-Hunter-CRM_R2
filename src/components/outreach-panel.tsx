@@ -3,6 +3,7 @@ import { motion } from 'motion/react';
 import { Mail, MessageSquare, Send, Loader2, Target, CheckCircle2, FileText, Image as ImageIcon } from 'lucide-react';
 import { Lead } from '@/App';
 import { ai } from '@/lib/ai';
+import { useModels } from '@/contexts/model-context';
 
 interface OutreachPanelProps {
   leads: Lead[];
@@ -10,6 +11,7 @@ interface OutreachPanelProps {
 }
 
 export function OutreachPanel({ leads, onUpdateLead }: OutreachPanelProps) {
+  const { models } = useModels();
   const [selectedLeadId, setSelectedLeadId] = useState<string>('');
   const [outreachType, setOutreachType] = useState<'email' | 'whatsapp' | 'linkedin'>('email');
   const [tone, setTone] = useState<'professional' | 'casual' | 'urgent' | 'value-first'>('value-first');
@@ -64,7 +66,7 @@ export function OutreachPanel({ leads, onUpdateLead }: OutreachPanelProps) {
       Do not use generic templates. Make it sound like a real human wrote it. Make sure the calls to action are soft and clear.`;
 
       const response = await ai.models.generateContent({
-        model: 'gemini-3-flash-preview',
+        model: models.fast,
         contents: prompt,
       });
 

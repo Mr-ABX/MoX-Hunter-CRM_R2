@@ -26,6 +26,10 @@ import { AnalyticsPanel } from '@/components/analytics-panel';
 import { ContractsPanel } from '@/components/contracts-panel';
 import { Sidebar } from '@/components/sidebar';
 import { AlphasPanel } from '@/components/alphas-panel';
+import { ModelSelector } from '@/components/model-selector';
+import { useModels } from '@/contexts/model-context';
+
+import { ALPHAS, SKILLS } from '@/lib/alphas';
 
 import { useAuth } from '@/hooks/use-auth';
 import { useLeads } from '@/hooks/use-leads';
@@ -191,7 +195,8 @@ export default function Home() {
   const [isSwitcherExpanded, setIsSwitcherExpanded] = useState(false);
   const [isActionMenuOpen, setIsActionMenuOpen] = useState(false);
   const [isAlphaMenuOpen, setIsAlphaMenuOpen] = useState(false);
-  const [activeAlpha, setActiveAlpha] = useState('alpha-web');
+  const [activeAlphas, setActiveAlphas] = useState<string[]>(['web-architect']);
+  const [activeSkills, setActiveSkills] = useState<string[]>([]);
   const [input, setInput] = useState('');
   const [actionMode, setActionMode] = useState<'auto' | 'planning' | 'execution'>('auto');
   const [isRebrandMode, setIsRebrandMode] = useState(false);
@@ -328,7 +333,10 @@ export default function Home() {
             'WEB', 
             setSelectedSessionId, 
             (key, id) => setSelectedAssetIds(prev => ({ ...prev, [key]: id })),
-            generateImage
+            generateImage,
+            undefined,
+            activeAlphas,
+            activeSkills
           ), 100);
         } else {
           setInput(`Help me build a prototype for ${lead.name} (${lead.niche} in ${lead.city}).`);
@@ -364,7 +372,9 @@ export default function Home() {
       setSelectedSessionId, 
       (key, id) => setSelectedAssetIds(prev => ({ ...prev, [key]: id })),
       generateImage,
-      selectedImage || undefined
+      selectedImage || undefined,
+      activeAlphas,
+      activeSkills
     );
     setInput('');
     setSelectedImage(null);
@@ -385,7 +395,9 @@ export default function Home() {
       setSelectedSessionId, 
       (key, id) => setSelectedAssetIds(prev => ({ ...prev, [key]: id })),
       generateImage,
-      selectedImage || undefined
+      selectedImage || undefined,
+      activeAlphas,
+      activeSkills
     );
   };
 
@@ -400,7 +412,9 @@ export default function Home() {
       setSelectedSessionId, 
       (key, id) => setSelectedAssetIds(prev => ({ ...prev, [key]: id })),
       generateImage,
-      selectedImage || undefined
+      selectedImage || undefined,
+      activeAlphas,
+      activeSkills
     );
   };
 
@@ -415,7 +429,9 @@ export default function Home() {
       setSelectedSessionId, 
       (key, id) => setSelectedAssetIds(prev => ({ ...prev, [key]: id })),
       generateImage,
-      selectedImage || undefined
+      selectedImage || undefined,
+      activeAlphas,
+      activeSkills
     );
   };
 
@@ -434,7 +450,9 @@ export default function Home() {
       setSelectedSessionId, 
       (key, id) => setSelectedAssetIds(prev => ({ ...prev, [key]: id })),
       generateImage,
-      selectedImage || undefined
+      selectedImage || undefined,
+      activeAlphas,
+      activeSkills
     );
   };
 
@@ -481,7 +499,10 @@ export default function Home() {
       activeCanvasTab, 
       setSelectedSessionId, 
       (key, id) => setSelectedAssetIds(prev => ({ ...prev, [key]: id })),
-      generateImage
+      generateImage,
+      undefined,
+      activeAlphas,
+      activeSkills
     );
   };
 
@@ -706,57 +727,82 @@ export default function Home() {
                 
                 <div className="p-4 border-b border-zinc-800/50 flex items-center justify-between">
                   <h2 className="font-display font-semibold tracking-tight text-zinc-100">Studio Chat</h2>
-                  <div className="relative z-50">
-                    <button 
-                      onClick={() => setIsAlphaMenuOpen(!isAlphaMenuOpen)}
-                      className="flex items-center gap-2 px-2.5 py-1.5 bg-zinc-900 border border-zinc-800 rounded-lg hover:border-zinc-700 hover:bg-zinc-800 transition-all select-none"
-                    >
-                      <Cpu className="w-3.5 h-3.5 text-indigo-400" />
-                      <span className="text-xs font-medium text-zinc-300">
-                        {activeAlpha === 'none' ? 'No Alpha' :
-                         activeAlpha === 'alpha-web' ? 'Web Architect' : 
-                         activeAlpha === 'alpha-graphic' ? 'Graphic Synthesizer' : 
-                         activeAlpha === 'alpha-vector' ? 'Vector Artisan' : 
-                         activeAlpha === 'alpha-content' ? 'Content Strategist' : 'Custom Alpha'}
-                      </span>
-                      <ChevronDown className={`w-3 h-3 text-zinc-500 transition-transform ${isAlphaMenuOpen ? 'rotate-180' : ''}`} />
-                    </button>
+                  <div className="flex items-center gap-2">
+                    <ModelSelector />
+                    <div className="relative z-50">
+                      <button 
+                        onClick={() => setIsAlphaMenuOpen(!isAlphaMenuOpen)}
+                        className="flex items-center gap-2 px-2.5 py-1.5 bg-zinc-900 border border-zinc-800 rounded-lg hover:border-zinc-700 hover:bg-zinc-800 transition-all select-none"
+                      >
+                        <Cpu className="w-3.5 h-3.5 text-indigo-400" />
+                        <span className="text-xs font-medium text-zinc-300">
+                          {activeAlphas.length + activeSkills.length === 0 ? 'No Alphas/Skills' :
+                           `${activeAlphas.length} Alphas, ${activeSkills.length} Skills`}
+                        </span>
+                        <ChevronDown className={`w-3 h-3 text-zinc-500 transition-transform ${isAlphaMenuOpen ? 'rotate-180' : ''}`} />
+                      </button>
 
-                    <AnimatePresence>
-                      {isAlphaMenuOpen && (
-                        <>
-                          <div className="fixed inset-0" onClick={() => setIsAlphaMenuOpen(false)} />
-                          <motion.div 
-                            initial={{ opacity: 0, scale: 0.95, y: 5 }}
-                            animate={{ opacity: 1, scale: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.95, y: 5 }}
-                            className="absolute right-0 top-full mt-2 w-56 bg-zinc-900 border border-zinc-800 rounded-xl shadow-2xl p-1.5 overflow-hidden"
-                          >
-                            <div className="px-2 py-1.5 mb-1 border-b border-zinc-800/50">
-                              <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Mounted Alpha</span>
-                            </div>
-                            {[
-                              { id: 'none', name: 'No Alpha (Unmounted)', color: 'text-zinc-500' },
-                              { id: 'alpha-web', name: 'The Web Architect', color: 'text-indigo-400' },
-                              { id: 'alpha-graphic', name: 'The Graphic Synthesizer', color: 'text-fuchsia-400' },
-                              { id: 'alpha-vector', name: 'The Vector Artisan', color: 'text-emerald-400' },
-                              { id: 'alpha-content', name: 'The Content Strategist', color: 'text-amber-400' }
-                            ].map(alpha => (
-                              <button
-                                key={alpha.id}
-                                onClick={() => { setActiveAlpha(alpha.id); setIsAlphaMenuOpen(false); }}
-                                className={`w-full text-left px-2.5 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-between group ${activeAlpha === alpha.id ? 'bg-zinc-800 text-white' : 'text-zinc-400 hover:bg-zinc-800 hover:text-white'}`}
-                              >
-                                <div className="flex items-center gap-2">
-                                  <div className={`w-1.5 h-1.5 rounded-full ${alpha.color} ${activeAlpha === alpha.id ? 'shadow-[0_0_8px_currentColor]' : ''}`} />
-                                  {alpha.name}
-                                </div>
-                              </button>
-                            ))}
-                          </motion.div>
-                        </>
-                      )}
-                    </AnimatePresence>
+                      <AnimatePresence>
+                        {isAlphaMenuOpen && (
+                          <>
+                            <div className="fixed inset-0" onClick={() => setIsAlphaMenuOpen(false)} />
+                            <motion.div 
+                              initial={{ opacity: 0, scale: 0.95, y: 5 }}
+                              animate={{ opacity: 1, scale: 1, y: 0 }}
+                              exit={{ opacity: 0, scale: 0.95, y: 5 }}
+                              className="absolute right-0 top-full mt-2 w-64 bg-zinc-900 border border-zinc-800 rounded-xl shadow-2xl p-1.5 overflow-hidden z-50 max-h-[60vh] overflow-y-auto custom-scrollbar"
+                            >
+                              <div className="px-2 py-1.5 mb-1 border-b border-zinc-800/50">
+                                <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Mounted Alphas</span>
+                              </div>
+                              {ALPHAS.map(alpha => {
+                                const isActive = activeAlphas.includes(alpha.id);
+                                return (
+                                  <button
+                                    key={alpha.id}
+                                    onClick={() => {
+                                      if (isActive) {
+                                        setActiveAlphas(prev => prev.filter(id => id !== alpha.id));
+                                      } else {
+                                        setActiveAlphas(prev => [...prev, alpha.id]);
+                                        if (alpha.recommendedSkills) {
+                                          setActiveSkills(prev => Array.from(new Set([...prev, ...alpha.recommendedSkills!])));
+                                        }
+                                      }
+                                    }}
+                                    className={`w-full text-left px-2.5 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-between group ${isActive ? 'bg-zinc-800 text-white' : 'text-zinc-400 hover:bg-zinc-800 hover:text-white'}`}
+                                  >
+                                    <div className="flex items-center gap-2">
+                                      <div className={`w-1.5 h-1.5 rounded-full ${isActive ? 'bg-indigo-400 shadow-[0_0_8px_currentColor]' : 'bg-zinc-600'}`} />
+                                      {alpha.name}
+                                    </div>
+                                  </button>
+                                );
+                              })}
+                              
+                              <div className="px-2 py-1.5 mt-2 mb-1 border-b border-zinc-800/50">
+                                <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Active Skills</span>
+                              </div>
+                              {SKILLS.map(skill => {
+                                const isActive = activeSkills.includes(skill.id);
+                                return (
+                                  <button
+                                    key={skill.id}
+                                    onClick={() => setActiveSkills(prev => isActive ? prev.filter(id => id !== skill.id) : [...prev, skill.id])}
+                                    className={`w-full text-left px-2.5 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-between group ${isActive ? 'bg-zinc-800 text-white' : 'text-zinc-400 hover:bg-zinc-800 hover:text-white'}`}
+                                  >
+                                    <div className="flex items-center gap-2">
+                                      <div className={`w-1.5 h-1.5 rounded-full ${isActive ? 'bg-emerald-400 shadow-[0_0_8px_currentColor]' : 'bg-zinc-600'}`} />
+                                      {skill.name}
+                                    </div>
+                                  </button>
+                                );
+                              })}
+                            </motion.div>
+                          </>
+                        )}
+                      </AnimatePresence>
+                    </div>
                   </div>
                 </div>
                 <ChatPanel 
