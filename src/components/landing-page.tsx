@@ -67,7 +67,7 @@ export function LandingPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4"
+            className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-20"
           >
             <a 
               href="#prototype"
@@ -77,11 +77,58 @@ export function LandingPage() {
               Claim Free Prototype
             </a>
             <a 
-              href="#compare"
+              href="#services"
               className="w-full sm:w-auto px-8 py-4 bg-transparent border border-zinc-700 text-zinc-300 font-bold rounded-2xl hover:bg-zinc-800 transition-colors flex items-center justify-center gap-2"
             >
-              See The Blueprint
+              See Our Services
             </a>
+          </motion.div>
+
+          {/* Abstract Floating Hero Visual */}
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5, duration: 1, ease: "easeOut" }}
+            className="relative max-w-4xl mx-auto hidden sm:block perspective-1000"
+          >
+            <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-transparent to-transparent z-10" />
+            <motion.div
+              animate={{ y: [0, -10, 0] }}
+              transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
+              className="w-full h-80 bg-zinc-900 border border-zinc-800 rounded-t-3xl overflow-hidden shadow-2xl flex flex-col relative"
+            >
+              {/* Fake browser bar */}
+              <div className="h-10 border-b border-zinc-800/50 bg-zinc-900 flex items-center px-4 gap-2">
+                <div className="w-3 h-3 rounded-full bg-zinc-700" />
+                <div className="w-3 h-3 rounded-full bg-zinc-700" />
+                <div className="w-3 h-3 rounded-full bg-zinc-700" />
+                <div className="mx-auto w-1/3 h-4 rounded bg-zinc-800" />
+              </div>
+              {/* Fake website content */}
+              <div className="flex-1 p-8 flex flex-col gap-6 opacity-70">
+                <div className="flex justify-between items-center">
+                  <div className="w-20 h-6 bg-zinc-800 rounded" />
+                  <div className="flex gap-4">
+                    <div className="w-12 h-4 bg-zinc-800 rounded" />
+                    <div className="w-12 h-4 bg-zinc-800 rounded" />
+                  </div>
+                </div>
+                <div className="w-2/3 h-12 bg-indigo-500/20 rounded-lg border border-indigo-500/20 mt-4" />
+                <div className="w-1/2 h-4 bg-zinc-800 rounded" />
+                <div className="grid grid-cols-3 gap-6 mt-8">
+                  <div className="h-24 bg-zinc-800/50 rounded-xl" />
+                  <div className="h-24 bg-zinc-800/50 rounded-xl" />
+                  <div className="h-24 bg-zinc-800/50 rounded-xl" />
+                </div>
+              </div>
+              
+              {/* AI Overlay scanning effect */}
+              <motion.div 
+                animate={{ top: ['0%', '100%', '0%'] }}
+                transition={{ repeat: Infinity, duration: 4, ease: "linear" }}
+                className="absolute left-0 right-0 h-1 bg-indigo-500/50 shadow-[0_0_20px_rgba(99,102,241,0.5)] z-20"
+              />
+            </motion.div>
           </motion.div>
         </div>
       </section>
@@ -98,6 +145,50 @@ export function LandingPage() {
           <div className="flex items-center gap-3 font-display font-bold text-xl"><div className="w-6 h-6 rounded bg-white" /> Bloom Cafe</div>
           <div className="flex items-center gap-3 font-display font-bold text-xl"><div className="w-6 h-6 rotate-45 bg-white" /> Elite Roofing</div>
           <div className="flex items-center gap-3 font-display font-bold text-xl"><div className="w-6 h-6 rounded-tl-xl rounded-br-xl bg-white" /> NextGen Plumbers</div>
+        </div>
+      </section>
+
+      {/* Services Section */}
+      <section id="services" className="py-24 px-6 relative z-10 bg-zinc-900/10">
+        <div className="max-w-7xl mx-auto">
+          <div className="mb-16">
+            <h2 className="text-3xl sm:text-4xl font-display font-bold mb-4 text-white">What We Build</h2>
+            <p className="text-zinc-400 max-w-2xl">Complete digital infrastructure designed for small businesses to dominate local markets.</p>
+          </div>
+          
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="bg-zinc-950 border border-zinc-800 rounded-3xl p-8 hover:border-indigo-500/30 transition-colors group">
+              <div className="w-12 h-12 bg-zinc-900 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-indigo-500/20 transition-colors">
+                <Monitor className="w-6 h-6 text-indigo-400" />
+              </div>
+              <h3 className="text-lg font-bold mb-2 text-white">AI-Powered Websites</h3>
+              <p className="text-zinc-400 text-sm leading-relaxed">Lightning-fast, highly-converting websites built specifically for your brand. AI optimizations keep it ranking high.</p>
+            </div>
+            
+            <div className="bg-zinc-950 border border-zinc-800 rounded-3xl p-8 hover:border-indigo-500/30 transition-colors group">
+              <div className="w-12 h-12 bg-zinc-900 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-indigo-500/20 transition-colors">
+                <Rocket className="w-6 h-6 text-indigo-400" />
+              </div>
+              <h3 className="text-lg font-bold mb-2 text-white">Automated Outreach</h3>
+              <p className="text-zinc-400 text-sm leading-relaxed">We hunt your ideal clients, build custom prototypes for them, and handle the entire outbound sales process.</p>
+            </div>
+
+            <div className="bg-zinc-950 border border-zinc-800 rounded-3xl p-8 hover:border-indigo-500/30 transition-colors group">
+              <div className="w-12 h-12 bg-zinc-900 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-indigo-500/20 transition-colors">
+                <Sparkles className="w-6 h-6 text-indigo-400" />
+              </div>
+              <h3 className="text-lg font-bold mb-2 text-white">Social Media Content</h3>
+              <p className="text-zinc-400 text-sm leading-relaxed">Never worry about what to post. Our AI systems generate and schedule high-quality content that builds trust.</p>
+            </div>
+
+            <div className="bg-zinc-950 border border-zinc-800 rounded-3xl p-8 hover:border-indigo-500/30 transition-colors group">
+              <div className="w-12 h-12 bg-zinc-900 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-indigo-500/20 transition-colors">
+                <Cpu className="w-6 h-6 text-indigo-400" />
+              </div>
+              <h3 className="text-lg font-bold mb-2 text-white">Local SEO Dominance</h3>
+              <p className="text-zinc-400 text-sm leading-relaxed">We optimize your entire digital footprint so you show up first when local customers search for your services.</p>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -181,16 +272,60 @@ export function LandingPage() {
       <section id="prototype" className="py-32 px-6 relative z-10 overflow-hidden">
         <div className="absolute inset-0 bg-grid-zinc bg-[size:32px_32px] pointer-events-none opacity-[0.03]" />
         
-        <div className="max-w-4xl mx-auto relative z-10 text-center mb-24">
-          <Quote className="w-12 h-12 text-zinc-800 mx-auto mb-8" />
-          <h3 className="text-2xl sm:text-3xl font-light text-zinc-300 leading-relaxed mb-8">
-            "They didn't try to sell me. They just built the exact website I was missing and emailed me the working link. I signed the contract the next day and haven't touched a line of code since."
-          </h3>
-          <div className="flex items-center justify-center gap-4">
-            <div className="w-12 h-12 bg-zinc-900 border border-zinc-800 rounded-full flex items-center justify-center font-bold text-zinc-500 shadow-inner">M</div>
-            <div className="text-left">
-              <div className="font-bold text-white text-sm">Mark T.</div>
-              <div className="text-xs text-indigo-400 uppercase tracking-widest font-mono mt-1">Local Business Owner</div>
+        {/* Social Proof / Reviews Grid */}
+        <div className="max-w-6xl mx-auto relative z-10 mb-24">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl sm:text-4xl font-display font-bold mb-4 text-white">Don't Take Our Word For It</h2>
+            <p className="text-zinc-400 max-w-2xl mx-auto">Hear from businesses that let our AI handle their growth.</p>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-6">
+            <div className="bg-zinc-900/50 border border-zinc-800 rounded-3xl p-8 flex flex-col justify-between">
+              <div>
+                <Quote className="w-8 h-8 text-zinc-700 mb-6" />
+                <p className="text-zinc-300 leading-relaxed mb-8">
+                  "They didn't try to sell me. They just built the exact website I was missing and emailed me the working link. I signed the contract the next day and haven't touched a line of code since."
+                </p>
+              </div>
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 bg-zinc-800 rounded-full flex items-center justify-center font-bold text-zinc-400">MT</div>
+                <div>
+                  <div className="font-bold text-white text-sm">Mark T.</div>
+                  <div className="text-xs text-indigo-400 uppercase tracking-widest font-mono mt-1">Local Bakery Owner</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-zinc-900/50 border border-zinc-800 rounded-3xl p-8 flex flex-col justify-between">
+              <div>
+                <Quote className="w-8 h-8 text-zinc-700 mb-6" />
+                <p className="text-zinc-300 leading-relaxed mb-8">
+                  "I was paying an agency $2k a month for a website that looked like it was from 2010. MO-X delivered a completely AI-engineered overhaul in 24 hours that instantly boosted my leads by 40%."
+                </p>
+              </div>
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 bg-zinc-800 rounded-full flex items-center justify-center font-bold text-zinc-400">SJ</div>
+                <div>
+                  <div className="font-bold text-white text-sm">Sarah Jenkins</div>
+                  <div className="text-xs text-indigo-400 uppercase tracking-widest font-mono mt-1">HVAC Services</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-zinc-900/50 border border-zinc-800 rounded-3xl p-8 flex flex-col justify-between">
+              <div>
+                <Quote className="w-8 h-8 text-zinc-700 mb-6" />
+                <p className="text-zinc-300 leading-relaxed mb-8">
+                  "The automated social media content is mind-blowing. It writes better posts than my old marketing guy, schedules them, and actually brings people into the shop. Best investment ever."
+                </p>
+              </div>
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 bg-zinc-800 rounded-full flex items-center justify-center font-bold text-zinc-400">DL</div>
+                <div>
+                  <div className="font-bold text-white text-sm">David L.</div>
+                  <div className="text-xs text-indigo-400 uppercase tracking-widest font-mono mt-1">Auto Repair Shop</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
