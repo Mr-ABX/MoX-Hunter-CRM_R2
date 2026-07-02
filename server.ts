@@ -32,6 +32,90 @@ async function startServer() {
     next();
   };
 
+  // --- MCP OpenAPI Spec ---
+  app.get("/api/openapi.json", (req, res) => {
+    const serverUrl = `${req.protocol}://${req.get('host')}`;
+    res.json({
+      openapi: "3.1.0",
+      info: {
+        title: "MoX Hunter AI Agent API",
+        version: "1.0.0",
+        description: "API for external AI agents to fetch leads and draft outreach."
+      },
+      servers: [{ url: serverUrl }],
+      paths: {
+        "/api/mcp/leads": {
+          get: {
+            operationId: "getLeads",
+            summary: "Fetch a list of leads",
+            parameters: [
+              { name: "industry", in: "query", schema: { type: "string" }, description: "Filter by industry" },
+              { name: "minScore", in: "query", schema: { type: "integer" }, description: "Filter by minimum lead score" }
+            ],
+            responses: {
+              "200": {
+                description: "List of leads",
+                content: { "application/json": { schema: { type: "object" } } }
+              }
+            }
+          }
+        },
+        "/api/mcp/leads/{id}": {
+          get: {
+            operationId: "getLeadById",
+            summary: "Fetch a single lead by ID",
+            parameters: [
+              { name: "id", in: "path", required: true, schema: { type: "string" }, description: "The ID of the lead" }
+            ],
+            responses: {
+              "200": {
+                description: "Single lead details",
+                content: { "application/json": { schema: { type: "object" } } }
+              }
+            }
+          }
+        },
+        "/api/mcp/outreach": {
+          post: {
+            operationId: "draftOutreach",
+            summary: "Draft an outreach email for a lead",
+            requestBody: {
+              required: true,
+              content: {
+                "application/json": {
+                  schema: {
+                    type: "object",
+                    required: ["leadId", "angle"],
+                    properties: {
+                      leadId: { type: "string", description: "The ID of the lead to draft an email for" },
+                      angle: { type: "string", description: "The angle or strategy to use in the email (e.g. 'direct pitch', 'soft value-add')" }
+                    }
+                  }
+                }
+              }
+            },
+            responses: {
+              "200": {
+                description: "Generated draft",
+                content: { "application/json": { schema: { type: "object" } } }
+              }
+            }
+          }
+        }
+      },
+      components: {
+        securitySchemes: {
+          ApiKeyAuth: {
+            type: "apiKey",
+            in: "header",
+            name: "mo-x-api-key"
+          }
+        }
+      },
+      security: [{ ApiKeyAuth: [] }]
+    });
+  });
+
   // --- MCP API Routes ---
   
   // 1. Fetch Leads

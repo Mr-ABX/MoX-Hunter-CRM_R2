@@ -60,7 +60,7 @@ export function LandingPage() {
             transition={{ delay: 0.2 }}
             className="text-xl text-zinc-400 max-w-2xl mx-auto mb-12 leading-relaxed font-light"
           >
-            Stop losing local customers to competitors with better digital presence. We build elite, hyper-optimized websites for you. Sit back, chill, and let AI do the heavy lifting.
+            Your leads are buying right now—just not from you. Stop losing local market share to competitors with inferior services but a better digital presence. We build elite, AI-optimized websites. Zero upfront costs. Zero risk. Just aggressive growth.
           </motion.p>
           
           <motion.div 
@@ -69,13 +69,17 @@ export function LandingPage() {
             transition={{ delay: 0.3 }}
             className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-20"
           >
-            <a 
+            <motion.a 
               href="#prototype"
-              className="w-full sm:w-auto px-8 py-4 bg-indigo-500 text-white font-bold rounded-2xl hover:bg-indigo-400 transition-colors flex items-center justify-center gap-2 shadow-[0_0_30px_rgba(99,102,241,0.4)]"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              animate={{ boxShadow: ["0px 0px 0px rgba(99,102,241,0)", "0px 0px 25px rgba(99,102,241,0.5)", "0px 0px 0px rgba(99,102,241,0)"] }}
+              transition={{ repeat: Infinity, duration: 2 }}
+              className="w-full sm:w-auto px-8 py-4 bg-indigo-500 text-white font-bold rounded-2xl flex items-center justify-center gap-2"
             >
               <Monitor className="w-5 h-5" />
               Claim Free Prototype
-            </a>
+            </motion.a>
             <a 
               href="#services"
               className="w-full sm:w-auto px-8 py-4 bg-transparent border border-zinc-700 text-zinc-300 font-bold rounded-2xl hover:bg-zinc-800 transition-colors flex items-center justify-center gap-2"
@@ -86,16 +90,17 @@ export function LandingPage() {
 
           {/* Abstract Floating Hero Visual */}
           <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, duration: 1, ease: "easeOut" }}
-            className="relative max-w-4xl mx-auto hidden sm:block perspective-1000"
+            initial={{ opacity: 0, y: 60, scale: 0.95, rotateX: 10 }}
+            animate={{ opacity: 1, y: 0, scale: 1, rotateX: 0 }}
+            transition={{ delay: 0.4, duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+            style={{ perspective: 1200 }}
+            className="relative max-w-4xl mx-auto hidden sm:block"
           >
             <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-transparent to-transparent z-10" />
             <motion.div
-              animate={{ y: [0, -10, 0] }}
+              animate={{ y: [0, -12, 0] }}
               transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
-              className="w-full h-80 bg-zinc-900 border border-zinc-800 rounded-t-3xl overflow-hidden shadow-2xl flex flex-col relative"
+              className="w-full h-80 bg-zinc-900 border border-zinc-800 rounded-t-3xl overflow-hidden shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5)] flex flex-col relative"
             >
               {/* Fake browser bar */}
               <div className="h-10 border-b border-zinc-800/50 bg-zinc-900 flex items-center px-4 gap-2">
@@ -107,18 +112,18 @@ export function LandingPage() {
               {/* Fake website content */}
               <div className="flex-1 p-8 flex flex-col gap-6 opacity-70">
                 <div className="flex justify-between items-center">
-                  <div className="w-20 h-6 bg-zinc-800 rounded" />
+                  <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.8, duration: 0.8, ease: "easeOut" }} className="w-20 h-6 bg-zinc-800 rounded" />
                   <div className="flex gap-4">
-                    <div className="w-12 h-4 bg-zinc-800 rounded" />
-                    <div className="w-12 h-4 bg-zinc-800 rounded" />
+                    <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.9, duration: 0.5 }} className="w-12 h-4 bg-zinc-800 rounded" />
+                    <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.0, duration: 0.5 }} className="w-12 h-4 bg-zinc-800 rounded" />
                   </div>
                 </div>
-                <div className="w-2/3 h-12 bg-indigo-500/20 rounded-lg border border-indigo-500/20 mt-4" />
-                <div className="w-1/2 h-4 bg-zinc-800 rounded" />
+                <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 1.2, duration: 0.8, ease: [0.16, 1, 0.3, 1] }} className="w-2/3 h-12 bg-indigo-500/20 rounded-lg border border-indigo-500/20 mt-4" />
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.4 }} className="w-1/2 h-4 bg-zinc-800 rounded" />
                 <div className="grid grid-cols-3 gap-6 mt-8">
-                  <div className="h-24 bg-zinc-800/50 rounded-xl" />
-                  <div className="h-24 bg-zinc-800/50 rounded-xl" />
-                  <div className="h-24 bg-zinc-800/50 rounded-xl" />
+                  <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.5, duration: 0.6 }} className="h-24 bg-zinc-800/50 rounded-xl" />
+                  <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.6, duration: 0.6 }} className="h-24 bg-zinc-800/50 rounded-xl" />
+                  <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.7, duration: 0.6 }} className="h-24 bg-zinc-800/50 rounded-xl" />
                 </div>
               </div>
               
@@ -156,37 +161,29 @@ export function LandingPage() {
             <p className="text-zinc-400 max-w-2xl">Complete digital infrastructure designed for small businesses to dominate local markets.</p>
           </div>
           
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid sm:grid-cols-3 gap-8">
             <div className="bg-zinc-950 border border-zinc-800 rounded-3xl p-8 hover:border-indigo-500/30 transition-colors group">
               <div className="w-12 h-12 bg-zinc-900 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-indigo-500/20 transition-colors">
                 <Monitor className="w-6 h-6 text-indigo-400" />
               </div>
-              <h3 className="text-lg font-bold mb-2 text-white">AI-Powered Websites</h3>
-              <p className="text-zinc-400 text-sm leading-relaxed">Lightning-fast, highly-converting websites built specifically for your brand. AI optimizations keep it ranking high.</p>
+              <h3 className="text-xl font-bold mb-3 text-white">AI-Powered Websites</h3>
+              <p className="text-zinc-400 leading-relaxed">Lightning-fast, highly-converting websites built specifically for your brand. AI optimizations keep it ranking high.</p>
             </div>
             
             <div className="bg-zinc-950 border border-zinc-800 rounded-3xl p-8 hover:border-indigo-500/30 transition-colors group">
               <div className="w-12 h-12 bg-zinc-900 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-indigo-500/20 transition-colors">
-                <Rocket className="w-6 h-6 text-indigo-400" />
-              </div>
-              <h3 className="text-lg font-bold mb-2 text-white">Automated Outreach</h3>
-              <p className="text-zinc-400 text-sm leading-relaxed">We hunt your ideal clients, build custom prototypes for them, and handle the entire outbound sales process.</p>
-            </div>
-
-            <div className="bg-zinc-950 border border-zinc-800 rounded-3xl p-8 hover:border-indigo-500/30 transition-colors group">
-              <div className="w-12 h-12 bg-zinc-900 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-indigo-500/20 transition-colors">
                 <Sparkles className="w-6 h-6 text-indigo-400" />
               </div>
-              <h3 className="text-lg font-bold mb-2 text-white">Social Media Content</h3>
-              <p className="text-zinc-400 text-sm leading-relaxed">Never worry about what to post. Our AI systems generate and schedule high-quality content that builds trust.</p>
+              <h3 className="text-xl font-bold mb-3 text-white">Social Media Automation</h3>
+              <p className="text-zinc-400 leading-relaxed">Never worry about what to post. Our AI systems generate and schedule high-quality content that builds trust.</p>
             </div>
 
             <div className="bg-zinc-950 border border-zinc-800 rounded-3xl p-8 hover:border-indigo-500/30 transition-colors group">
               <div className="w-12 h-12 bg-zinc-900 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-indigo-500/20 transition-colors">
-                <Cpu className="w-6 h-6 text-indigo-400" />
+                <Rocket className="w-6 h-6 text-indigo-400" />
               </div>
-              <h3 className="text-lg font-bold mb-2 text-white">Local SEO Dominance</h3>
-              <p className="text-zinc-400 text-sm leading-relaxed">We optimize your entire digital footprint so you show up first when local customers search for your services.</p>
+              <h3 className="text-xl font-bold mb-3 text-white">Hands-Free Growth</h3>
+              <p className="text-zinc-400 leading-relaxed">You handle the customers, we handle the internet. From automated lead capture to zero-touch maintenance.</p>
             </div>
           </div>
         </div>
@@ -353,10 +350,16 @@ export function LandingPage() {
             </div>
           </div>
           
-          <button className="relative z-10 px-12 py-5 bg-white text-black font-bold text-lg rounded-2xl hover:bg-zinc-200 transition-colors shadow-[0_0_40px_rgba(255,255,255,0.2)] flex items-center gap-3 mx-auto group">
+          <motion.button 
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            animate={{ boxShadow: ["0px 0px 0px rgba(255,255,255,0)", "0px 0px 30px rgba(255,255,255,0.4)", "0px 0px 0px rgba(255,255,255,0)"] }}
+            transition={{ repeat: Infinity, duration: 2.5 }}
+            className="relative z-10 px-12 py-5 bg-white text-black font-bold text-lg rounded-2xl flex items-center gap-3 mx-auto group"
+          >
             <Play className="w-5 h-5 group-hover:text-indigo-600 transition-colors" />
             Request Free Prototype Now
-          </button>
+          </motion.button>
         </div>
       </section>
 

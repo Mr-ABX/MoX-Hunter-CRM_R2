@@ -108,16 +108,73 @@ export function SettingsPanel() {
               External AI Agent (MCP) Connection
             </h2>
             <p className="text-zinc-400 text-sm mb-6 leading-relaxed">
-              Connect external AI agents to MoX Hunter to autonomously fetch leads, analyze data, and draft outreach on your behalf.
+              Connect external AI agents (like AntiGravity or Claude) to MoX Hunter to autonomously fetch leads, analyze data, and draft outreach on your behalf.
             </p>
 
             <div className="bg-zinc-950 border border-zinc-800 rounded-xl p-5 mb-6">
-              <h3 className="text-sm font-semibold text-zinc-300 mb-3 uppercase tracking-wider">How to connect:</h3>
-              <ol className="list-decimal list-inside text-sm text-zinc-400 space-y-3">
-                <li>Go to the <strong className="text-zinc-200">Secrets</strong> panel in AI Studio (Settings menu).</li>
-                <li>Add a new secret named <code className="bg-zinc-800 px-1.5 py-0.5 rounded text-indigo-400">MOX_MCP_API_KEY</code> and set it to a secure random string (e.g., <code className="bg-zinc-800 px-1.5 py-0.5 rounded">my-super-secret-key-123</code>).</li>
-                <li>Provide your external AI Agent with your MoX Hunter API URL and tell it to use the header <code className="bg-zinc-800 px-1.5 py-0.5 rounded text-indigo-400">mo-x-api-key</code> with the value you set above.</li>
-              </ol>
+              <div className="flex flex-col gap-4">
+                <div>
+                  <h3 className="text-sm font-semibold text-zinc-200 mb-2">1. Your Web Applet URL</h3>
+                  <div className="flex items-center gap-2">
+                    <code className="flex-1 bg-zinc-900 border border-zinc-800 px-3 py-2 rounded text-zinc-300 text-sm overflow-hidden text-ellipsis whitespace-nowrap">
+                      {typeof window !== 'undefined' ? window.location.origin : 'https://mox-hunter-pro.vercel.app'}
+                    </code>
+                  </div>
+                  <p className="text-xs text-zinc-500 mt-2">This is the live URL that your local agent will connect to.</p>
+                </div>
+
+                <div className="mt-2">
+                  <h3 className="text-sm font-semibold text-zinc-200 mb-2">2. Local Agent Configuration (JSON)</h3>
+                  <p className="text-xs text-zinc-400 mb-3">
+                    Copy the configuration block below and paste it into your local agent's MCP setup (e.g. Claude Desktop config). Make sure to replace <code className="text-indigo-400">YOUR_SECRET_KEY</code> with the actual key you set in your AI Studio secrets (<code>MOX_MCP_API_KEY</code>).
+                  </p>
+                  
+                  <div className="relative group">
+                    <pre className="bg-zinc-900 border border-zinc-800 p-4 rounded-lg text-xs font-mono text-zinc-300 overflow-x-auto">
+{`{
+  "mcpServers": {
+    "mox-hunter": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-openapi", "${typeof window !== 'undefined' ? window.location.origin : 'https://app.url'}/api/openapi.json"],
+      "env": {
+        "MO_X_API_KEY": "YOUR_SECRET_KEY"
+      }
+    }
+  }
+}`}
+                    </pre>
+                    <button 
+                      onClick={() => {
+                        const config = `{
+  "mcpServers": {
+    "mox-hunter": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-openapi", "${typeof window !== 'undefined' ? window.location.origin : 'https://app.url'}/api/openapi.json"],
+      "env": {
+        "MO_X_API_KEY": "YOUR_SECRET_KEY"
+      }
+    }
+  }
+}`;
+                        navigator.clipboard.writeText(config);
+                        alert('Configuration copied to clipboard!');
+                      }}
+                      className="absolute top-2 right-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 px-3 py-1.5 rounded text-xs font-medium transition-colors border border-zinc-700 opacity-0 group-hover:opacity-100"
+                    >
+                      Copy JSON
+                    </button>
+                  </div>
+                </div>
+
+                <div className="mt-4 p-4 bg-indigo-500/10 border border-indigo-500/20 rounded-lg">
+                  <h4 className="text-sm font-semibold text-indigo-400 mb-2 flex items-center gap-2">
+                    <Check className="w-4 h-4" /> Final Step
+                  </h4>
+                  <p className="text-xs text-zinc-300 leading-relaxed">
+                    Don't forget to go to the <strong>Settings &rarr; Secrets</strong> panel in this AI Studio workspace and add a secret named <code className="bg-zinc-800 px-1.5 py-0.5 rounded text-indigo-400">MOX_MCP_API_KEY</code> with your chosen key. Your local agent will send this key to authenticate its requests.
+                  </p>
+                </div>
+              </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
