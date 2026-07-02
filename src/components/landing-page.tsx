@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import { ArrowRight, Sparkles, Target, Zap, Globe, Shield, MessageSquare, Briefcase } from 'lucide-react';
+import { ArrowRight, Sparkles, Monitor, Rocket, CheckCircle2, Quote, Play, XCircle, Check, Code2, Cpu } from 'lucide-react';
 import { Logo } from './logo';
 import { Link } from 'react-router-dom';
 
@@ -13,11 +13,11 @@ export function LandingPage() {
             <div className="w-10 h-10 bg-zinc-900 border border-zinc-800 rounded-xl flex items-center justify-center shadow-[0_0_15px_rgba(99,102,241,0.2)]">
               <Logo className="w-5 h-5 text-zinc-100" />
             </div>
-            <span className="font-display font-bold text-xl tracking-tight">MO-X</span>
+            <span className="font-display font-bold text-xl tracking-tight text-white">MO-X Agency</span>
           </div>
           <div className="flex items-center gap-6">
-            <a href="#services" className="text-sm font-medium text-zinc-400 hover:text-zinc-100 transition-colors hidden sm:block">Services</a>
-            <a href="#about" className="text-sm font-medium text-zinc-400 hover:text-zinc-100 transition-colors hidden sm:block">About</a>
+            <a href="#compare" className="text-sm font-medium text-zinc-400 hover:text-white transition-colors hidden sm:block">The New Way</a>
+            <a href="#prototype" className="text-sm font-medium text-zinc-400 hover:text-white transition-colors hidden sm:block">Free Prototype</a>
             <Link 
               to="/login"
               className="text-sm font-bold bg-white text-black px-6 py-2.5 rounded-full hover:bg-zinc-200 transition-colors flex items-center gap-2"
@@ -38,28 +38,29 @@ export function LandingPage() {
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-sm font-medium mb-8"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-sm font-semibold mb-8 shadow-[0_0_15px_rgba(99,102,241,0.2)]"
           >
             <Sparkles className="w-4 h-4" />
-            <span>Next-Generation Digital Agency</span>
+            <span className="tracking-wide uppercase text-xs">AI-Powered Digital Dominance</span>
           </motion.div>
           
           <motion.h1 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-6xl sm:text-7xl lg:text-8xl font-display font-bold tracking-tight mb-8 leading-[1.1]"
+            className="text-5xl sm:text-6xl lg:text-7xl font-display font-bold tracking-tight mb-8 leading-[1.1] text-white"
           >
-            We design <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400">digital experiences</span> that dominate.
+            You Run Your Business.<br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-cyan-400">AI Builds Your Website.</span>
           </motion.h1>
           
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-xl text-zinc-400 max-w-2xl mx-auto mb-12 leading-relaxed"
+            className="text-xl text-zinc-400 max-w-2xl mx-auto mb-12 leading-relaxed font-light"
           >
-            MO-X partners with ambitious brands to build elite websites, outbound systems, and high-converting marketing campaigns.
+            Stop losing local customers to competitors with better digital presence. We build elite, hyper-optimized websites for you. Sit back, chill, and let AI do the heavy lifting.
           </motion.p>
           
           <motion.div 
@@ -69,48 +70,158 @@ export function LandingPage() {
             className="flex flex-col sm:flex-row items-center justify-center gap-4"
           >
             <a 
-              href="mailto:contact@mo-x.vercel.app"
-              className="w-full sm:w-auto px-8 py-4 bg-white text-black font-bold rounded-2xl hover:bg-zinc-200 transition-colors flex items-center justify-center gap-2"
+              href="#prototype"
+              className="w-full sm:w-auto px-8 py-4 bg-indigo-500 text-white font-bold rounded-2xl hover:bg-indigo-400 transition-colors flex items-center justify-center gap-2 shadow-[0_0_30px_rgba(99,102,241,0.4)]"
             >
-              <MessageSquare className="w-5 h-5" />
-              Start a Project
+              <Monitor className="w-5 h-5" />
+              Claim Free Prototype
             </a>
             <a 
-              href="#services"
-              className="w-full sm:w-auto px-8 py-4 bg-zinc-900 border border-zinc-800 text-white font-bold rounded-2xl hover:bg-zinc-800 transition-colors flex items-center justify-center gap-2"
+              href="#compare"
+              className="w-full sm:w-auto px-8 py-4 bg-transparent border border-zinc-700 text-zinc-300 font-bold rounded-2xl hover:bg-zinc-800 transition-colors flex items-center justify-center gap-2"
             >
-              View Our Services
+              See The Blueprint
             </a>
           </motion.div>
         </div>
       </section>
 
-      {/* Services Section */}
-      <section id="services" className="py-24 px-6 bg-zinc-900/50 border-y border-zinc-800/50 relative z-10">
-        <div className="max-w-7xl mx-auto">
+      {/* Social Proof (Marquee Style) */}
+      <section className="py-12 border-y border-zinc-800/50 bg-zinc-950/50 relative z-10 overflow-hidden">
+        <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-zinc-950 to-transparent z-20 pointer-events-none" />
+        <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-zinc-950 to-transparent z-20 pointer-events-none" />
+        
+        <p className="text-center text-xs font-mono text-zinc-500 uppercase tracking-[0.2em] mb-8">Trusted by elite local businesses</p>
+        
+        <div className="flex justify-center gap-16 opacity-40 grayscale items-center flex-wrap px-6">
+          <div className="flex items-center gap-3 font-display font-bold text-xl"><div className="w-6 h-6 rounded-full bg-white" /> Apex Auto</div>
+          <div className="flex items-center gap-3 font-display font-bold text-xl"><div className="w-6 h-6 rounded bg-white" /> Bloom Cafe</div>
+          <div className="flex items-center gap-3 font-display font-bold text-xl"><div className="w-6 h-6 rotate-45 bg-white" /> Elite Roofing</div>
+          <div className="flex items-center gap-3 font-display font-bold text-xl"><div className="w-6 h-6 rounded-tl-xl rounded-br-xl bg-white" /> NextGen Plumbers</div>
+        </div>
+      </section>
+
+      {/* The Pain Agitation (Old Way vs New Way) */}
+      <section id="compare" className="py-24 px-6 relative z-10">
+        <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-display font-bold mb-4">Our Capabilities</h2>
-            <p className="text-zinc-400 max-w-2xl mx-auto">We combine cutting-edge technology with premium design to deliver unmatched results.</p>
+            <h2 className="text-3xl sm:text-4xl font-display font-bold mb-4 text-white">The Old Way vs. The MO-X Way</h2>
+            <p className="text-zinc-400 max-w-2xl mx-auto">Stop paying thousands upfront for clunky templates that don't convert.</p>
           </div>
           
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              { icon: Globe, title: 'Web Development', desc: 'Blazing fast, responsive, and stunning websites built with modern frameworks.' },
-              { icon: Zap, title: 'Growth Systems', desc: 'Automated lead generation and outbound infrastructure that scales.' },
-              { icon: Target, title: 'Conversion Optimization', desc: 'Data-driven redesigns focused on maximizing your ROI and sales.' },
-              { icon: Briefcase, title: 'Brand Identity', desc: 'Cohesive, premium visual identities that set you apart from competitors.' },
-              { icon: Shield, title: 'Secure Architecture', desc: 'Enterprise-grade security and scalable backend infrastructure.' },
-              { icon: Sparkles, title: 'AI Integration', desc: 'Custom AI solutions to streamline your business operations.' },
-            ].map((service, i) => (
-              <div key={i} className="bg-zinc-950 border border-zinc-800 rounded-3xl p-8 hover:border-indigo-500/50 transition-colors group">
-                <div className="w-12 h-12 bg-zinc-900 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-indigo-500/20 transition-colors">
-                  <service.icon className="w-6 h-6 text-indigo-400" />
+          <div className="grid md:grid-cols-2 gap-8">
+            <div className="bg-zinc-900/40 border border-zinc-800 rounded-3xl p-8">
+              <div className="flex items-center gap-3 mb-8">
+                <div className="w-10 h-10 rounded-full bg-red-500/10 flex items-center justify-center">
+                  <XCircle className="w-5 h-5 text-red-400" />
                 </div>
-                <h3 className="text-xl font-bold mb-3">{service.title}</h3>
-                <p className="text-zinc-400 leading-relaxed">{service.desc}</p>
+                <h3 className="text-xl font-bold text-zinc-300">The Industry Standard</h3>
               </div>
-            ))}
+              <ul className="space-y-4 text-zinc-400 font-medium">
+                <li className="flex items-start gap-3"><XCircle className="w-5 h-5 text-red-500/50 shrink-0 mt-0.5" /> High upfront costs ($3k-$10k+) before seeing any work.</li>
+                <li className="flex items-start gap-3"><XCircle className="w-5 h-5 text-red-500/50 shrink-0 mt-0.5" /> Slow delivery times taking weeks or months.</li>
+                <li className="flex items-start gap-3"><XCircle className="w-5 h-5 text-red-500/50 shrink-0 mt-0.5" /> Generic templates that look exactly like your competitors.</li>
+                <li className="flex items-start gap-3"><XCircle className="w-5 h-5 text-red-500/50 shrink-0 mt-0.5" /> Requires constant input and technical setup from your end.</li>
+              </ul>
+            </div>
+            
+            <div className="bg-gradient-to-b from-indigo-500/10 to-zinc-900/40 border border-indigo-500/30 rounded-3xl p-8 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/20 blur-3xl rounded-full" />
+              <div className="flex items-center gap-3 mb-8 relative z-10">
+                <div className="w-10 h-10 rounded-full bg-indigo-500/20 flex items-center justify-center">
+                  <Check className="w-5 h-5 text-indigo-400" />
+                </div>
+                <h3 className="text-xl font-bold text-white">The MO-X Standard</h3>
+              </div>
+              <ul className="space-y-4 text-zinc-200 font-medium relative z-10">
+                <li className="flex items-start gap-3"><Check className="w-5 h-5 text-indigo-400 shrink-0 mt-0.5" /> Instant, fully functional custom prototype. <span className="text-indigo-300 font-bold">100% Free.</span></li>
+                <li className="flex items-start gap-3"><Check className="w-5 h-5 text-indigo-400 shrink-0 mt-0.5" /> Rapid deployment in under 24 hours.</li>
+                <li className="flex items-start gap-3"><Check className="w-5 h-5 text-indigo-400 shrink-0 mt-0.5" /> AI-engineered designs tuned specifically for local conversions.</li>
+                <li className="flex items-start gap-3"><Check className="w-5 h-5 text-indigo-400 shrink-0 mt-0.5" /> Zero-touch experience. We handle the tech; you handle the leads.</li>
+              </ul>
+            </div>
           </div>
+        </div>
+      </section>
+
+      {/* The 3-Step Mechanism */}
+      <section className="py-24 px-6 bg-zinc-900/20 border-y border-zinc-800/50 relative z-10">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl sm:text-4xl font-display font-bold mb-4 text-white">The 3-Step Automation Sequence</h2>
+            <p className="text-zinc-400 max-w-2xl mx-auto">We don't do guesswork. Our AI autonomously builds the perfect funnel for your business.</p>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-6 relative">
+            {/* Connecting Line */}
+            <div className="hidden md:block absolute top-12 left-1/6 right-1/6 h-[1px] bg-gradient-to-r from-zinc-800 via-indigo-500/50 to-zinc-800 -z-10" />
+
+            <div className="bg-zinc-950 border border-zinc-800 rounded-3xl p-8 relative">
+              <div className="w-12 h-12 bg-zinc-900 border border-zinc-700 rounded-2xl flex items-center justify-center mb-6 text-zinc-300 font-mono font-bold">01</div>
+              <h3 className="text-xl font-bold mb-3 text-white flex items-center gap-2"><Cpu className="w-5 h-5 text-indigo-400"/> The Analysis</h3>
+              <p className="text-zinc-400 leading-relaxed text-sm">We ingest data about your local market, competitors, and ideal customers to craft the perfect digital strategy.</p>
+            </div>
+            
+            <div className="bg-zinc-950 border border-indigo-500/30 rounded-3xl p-8 relative shadow-[0_0_30px_rgba(99,102,241,0.05)]">
+              <div className="w-12 h-12 bg-indigo-500/10 border border-indigo-500/30 rounded-2xl flex items-center justify-center mb-6 text-indigo-400 font-mono font-bold">02</div>
+              <h3 className="text-xl font-bold mb-3 text-white flex items-center gap-2"><Code2 className="w-5 h-5 text-indigo-400"/> The Build</h3>
+              <p className="text-zinc-400 leading-relaxed text-sm">Our AI generates a high-converting website prototype instantly. Tailored copy, aggressive CTAs, and sleek UI.</p>
+            </div>
+            
+            <div className="bg-zinc-950 border border-zinc-800 rounded-3xl p-8 relative">
+              <div className="w-12 h-12 bg-zinc-900 border border-zinc-700 rounded-2xl flex items-center justify-center mb-6 text-zinc-300 font-mono font-bold">03</div>
+              <h3 className="text-xl font-bold mb-3 text-white flex items-center gap-2"><Rocket className="w-5 h-5 text-indigo-400"/> The Close</h3>
+              <p className="text-zinc-400 leading-relaxed text-sm">You review the live link. If it blows your mind, we push it to production and manage everything. You just relax.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Free Prototype Pitch & Heavy Quote */}
+      <section id="prototype" className="py-32 px-6 relative z-10 overflow-hidden">
+        <div className="absolute inset-0 bg-grid-zinc bg-[size:32px_32px] pointer-events-none opacity-[0.03]" />
+        
+        <div className="max-w-4xl mx-auto relative z-10 text-center mb-24">
+          <Quote className="w-12 h-12 text-zinc-800 mx-auto mb-8" />
+          <h3 className="text-2xl sm:text-3xl font-light text-zinc-300 leading-relaxed mb-8">
+            "They didn't try to sell me. They just built the exact website I was missing and emailed me the working link. I signed the contract the next day and haven't touched a line of code since."
+          </h3>
+          <div className="flex items-center justify-center gap-4">
+            <div className="w-12 h-12 bg-zinc-900 border border-zinc-800 rounded-full flex items-center justify-center font-bold text-zinc-500 shadow-inner">M</div>
+            <div className="text-left">
+              <div className="font-bold text-white text-sm">Mark T.</div>
+              <div className="text-xs text-indigo-400 uppercase tracking-widest font-mono mt-1">Local Business Owner</div>
+            </div>
+          </div>
+        </div>
+
+        <div className="max-w-5xl mx-auto relative z-10 bg-gradient-to-b from-indigo-500/10 to-transparent border border-indigo-500/20 rounded-[3rem] p-12 text-center overflow-hidden">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[200px] bg-indigo-500/20 blur-[100px] pointer-events-none" />
+          
+          <h2 className="text-4xl sm:text-5xl font-display font-bold mb-6 text-white relative z-10">Stop Waiting. Start Dominating.</h2>
+          <p className="text-xl text-zinc-400 mb-10 max-w-2xl mx-auto relative z-10">
+            Your leads are searching for you online right now—but finding your competitors. Claim your free, custom-built AI prototype today.
+          </p>
+          
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12 relative z-10">
+            <div className="flex items-center gap-2 bg-zinc-950/50 px-4 py-2 rounded-lg border border-zinc-800">
+              <CheckCircle2 className="w-4 h-4 text-indigo-400" />
+              <span className="font-medium text-sm text-zinc-300">No Credit Card</span>
+            </div>
+            <div className="flex items-center gap-2 bg-zinc-950/50 px-4 py-2 rounded-lg border border-zinc-800">
+              <CheckCircle2 className="w-4 h-4 text-indigo-400" />
+              <span className="font-medium text-sm text-zinc-300">Delivered in 24h</span>
+            </div>
+            <div className="flex items-center gap-2 bg-zinc-950/50 px-4 py-2 rounded-lg border border-zinc-800">
+              <CheckCircle2 className="w-4 h-4 text-indigo-400" />
+              <span className="font-medium text-sm text-zinc-300">Zero Obligation</span>
+            </div>
+          </div>
+          
+          <button className="relative z-10 px-12 py-5 bg-white text-black font-bold text-lg rounded-2xl hover:bg-zinc-200 transition-colors shadow-[0_0_40px_rgba(255,255,255,0.2)] flex items-center gap-3 mx-auto group">
+            <Play className="w-5 h-5 group-hover:text-indigo-600 transition-colors" />
+            Request Free Prototype Now
+          </button>
         </div>
       </section>
 
@@ -118,17 +229,18 @@ export function LandingPage() {
       <footer className="py-12 px-6 border-t border-zinc-800 relative z-10 bg-zinc-950">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6 text-sm text-zinc-500">
           <div className="flex items-center gap-2">
-            <Logo className="w-5 h-5 text-zinc-400" />
-            <span className="font-bold">MO-X</span>
+            <Logo className="w-5 h-5 text-indigo-500" />
+            <span className="font-bold text-white">MO-X Agency</span>
             <span>© {new Date().getFullYear()}</span>
           </div>
           <div className="flex gap-6">
-            <a href="#" className="hover:text-zinc-300 transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-zinc-300 transition-colors">Terms of Service</a>
-            <Link to="/login" className="hover:text-indigo-400 transition-colors">Client Login</Link>
+            <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
+            <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
+            <Link to="/login" className="hover:text-indigo-400 transition-colors font-medium">Client Login</Link>
           </div>
         </div>
       </footer>
     </div>
   );
 }
+
