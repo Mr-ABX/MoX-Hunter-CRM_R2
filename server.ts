@@ -3,6 +3,8 @@ import path from "path";
 import cors from "cors";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI } from "@google/genai";
+import { db } from "./src/lib/firebase";
+import { collection, query, where, limit, getDocs, doc, getDoc } from 'firebase/firestore';
 
 async function startServer() {
   const app = express();
@@ -21,7 +23,109 @@ async function startServer() {
     }
   });
 
-  // API Routes
+  // --- MCP API Authentication Middleware ---
+  const mcpAuth = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    const apiKey = req.headers['mo-x-api-key'];
+    if (!apiKey || apiKey !== process.env.MOX_MCP_API_KEY) {
+      return res.status(401).json({ error: 'Unauthorized: Invalid or missing mo-x-api-key header' });
+    }
+    next();
+  };
+
+  // --- MCP API Routes ---
+  
+  // 1. Fetch Leads
+  app.get("/api/mcp/leads", mcpAuth, async (req, res) => {
+    try {
+      const { industry, minScore } = req.query;
+      
+      let leadsQuery: any = collection(db, 'leads');
+      
+      if (industry && typeof industry === 'string') {
+        leadsQuery = query(leadsQuery, where('industry', '==', industry));
+      }
+      if (minScore && typeof minScore === 'string') {
+        leadsQuery = query(leadsQuery, where('score', '>=', Number(minScore)));
+      }
+      
+      // Limit to 50 for performance
+      leadsQuery = query(leadsQuery, limit(50));
+      
+      const snapshot = await getDocs(leadsQuery);
+      const leads = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      
+      res.json({ success: true, count: leads.length, leads });
+    } catch (error) {
+      console.error('Error fetching leads via MCP:', error);
+      res.status(500).json({ error: 'Failed to fetch leads' });
+    }
+  });
+
+  // 2. Fetch Single Lead
+  app.get("/api/mcp/leads/:id", mcpAuth, async (req, res) => {
+    try {
+      const leadRef = doc(db, 'leads', req.params.id);
+      const snapshot = await getDoc(leadRef);
+      
+      if (!snapshot.exists()) {
+        return res.status(404).json({ error: 'Lead not found' });
+      }
+      
+      res.json({ success: true, lead: { id: snapshot.id, ...snapshot.data() } });
+    } catch (error) {
+      console.error('Error fetching single lead via MCP:', error);
+      res.status(500).json({ error: 'Failed to fetch lead' });
+    }
+  });
+
+  // 3. Process Outreach
+  app.post("/api/mcp/outreach", mcpAuth, async (req, res) => {
+    try {
+      const { leadId, angle } = req.body;
+      
+      if (!leadId || !angle) {
+        return res.status(400).json({ error: 'Missing leadId or angle in request body' });
+      }
+
+      // Fetch the lead to give the AI context
+      const leadRef = doc(db, 'leads', leadId);
+      const snapshot = await getDoc(leadRef);
+      let leadContext = "";
+      if (snapshot.exists()) {
+        leadContext = JSON.stringify(snapshot.data());
+      }
+      
+      if (!process.env.GEMINI_API_KEY) {
+         return res.status(500).json({ error: 'GEMINI_API_KEY is not configured' });
+      }
+
+      // Draft the email based on the angle and lead data
+      const prompt = `Draft a cold outreach email for a lead. 
+      Lead Data: ${leadContext}
+      Outreach Angle/Strategy: ${angle}
+      
+      Make it professional, concise, and compelling. Return only the email subject and body.`;
+      
+      const response = await ai.models.generateContent({
+        model: "gemini-3.5-flash",
+        contents: prompt,
+      });
+
+      res.json({ 
+        success: true, 
+        message: 'Outreach drafted successfully',
+        draft: response.text, 
+        leadId, 
+        angle 
+      });
+    } catch (error) {
+      console.error('Error processing outreach via MCP:', error);
+      res.status(500).json({ error: 'Failed to process outreach' });
+    }
+  });
+
+  // --- Regular API Routes ---
+
   app.post("/api/voice/process", async (req, res) => {
     try {
       const { transcript, currentView } = req.body;

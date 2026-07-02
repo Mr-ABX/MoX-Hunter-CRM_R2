@@ -99,6 +99,43 @@ export function SettingsPanel() {
             </button>
           </div>
 
+          {/* MCP External AI Agent Settings */}
+          <div className="bg-zinc-900/50 border border-zinc-800/50 rounded-2xl p-6 mb-8">
+            <h2 className="text-xl font-semibold text-zinc-100 mb-4 flex items-center gap-2">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-indigo-400"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+              External AI Agent (MCP) Connection
+            </h2>
+            <p className="text-zinc-400 text-sm mb-6 leading-relaxed">
+              Connect external AI agents to MoX Hunter to autonomously fetch leads, analyze data, and draft outreach on your behalf.
+            </p>
+
+            <div className="bg-zinc-950 border border-zinc-800 rounded-xl p-5 mb-6">
+              <h3 className="text-sm font-semibold text-zinc-300 mb-3 uppercase tracking-wider">How to connect:</h3>
+              <ol className="list-decimal list-inside text-sm text-zinc-400 space-y-3">
+                <li>Go to the <strong className="text-zinc-200">Secrets</strong> panel in AI Studio (Settings menu).</li>
+                <li>Add a new secret named <code className="bg-zinc-800 px-1.5 py-0.5 rounded text-indigo-400">MOX_MCP_API_KEY</code> and set it to a secure random string (e.g., <code className="bg-zinc-800 px-1.5 py-0.5 rounded">my-super-secret-key-123</code>).</li>
+                <li>Provide your external AI Agent with your MoX Hunter API URL and tell it to use the header <code className="bg-zinc-800 px-1.5 py-0.5 rounded text-indigo-400">mo-x-api-key</code> with the value you set above.</li>
+              </ol>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4">
+                <div className="text-xs font-semibold text-zinc-500 uppercase mb-1">Get Leads</div>
+                <div className="text-sm font-mono text-zinc-300 break-all">GET /api/mcp/leads</div>
+                <div className="text-xs text-zinc-500 mt-2">Params: ?industry, ?minScore</div>
+              </div>
+              <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4">
+                <div className="text-xs font-semibold text-zinc-500 uppercase mb-1">Get Single Lead</div>
+                <div className="text-sm font-mono text-zinc-300 break-all">GET /api/mcp/leads/:id</div>
+              </div>
+              <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4">
+                <div className="text-xs font-semibold text-zinc-500 uppercase mb-1">Draft Outreach</div>
+                <div className="text-sm font-mono text-zinc-300 break-all">POST /api/mcp/outreach</div>
+                <div className="text-xs text-zinc-500 mt-2">Body: &#123; leadId, angle &#125;</div>
+              </div>
+            </div>
+          </div>
+
           <div className="bg-zinc-900/50 border border-zinc-800/50 rounded-2xl p-6 mb-8">
             <h2 className="text-xl font-semibold text-zinc-100 mb-4">Brevo Email Settings</h2>
             <p className="text-zinc-400 text-sm mb-6">
