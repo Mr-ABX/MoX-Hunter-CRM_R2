@@ -118,7 +118,8 @@ export function OutreachPanel({ leads, onUpdateLead }: OutreachPanelProps) {
         ? 'Write as an elite digital growth agency team ("we", "our team").' 
         : 'Write as a solo growth consultant and developer ("I", "my").';
 
-      const baseUrl = import.meta.env.VITE_APP_URL || window.location.origin;
+      const customDomain = localStorage.getItem('customDomain');
+      const baseUrl = customDomain || import.meta.env.VITE_APP_URL || window.location.origin;
       const prototypeUrl = selectedLead.prototypeId ? `${baseUrl}/preview/${selectedLead.prototypeId}` : '';
 
       const prompt = `You are an elite, high-converting B2B growth and digital marketing copywriter.
@@ -168,6 +169,24 @@ Make the copywriting sound authentic, professional, deeply personalized, and hig
     } finally {
       setIsGenerating(false);
     }
+  };
+
+  const handleOpenEmailClient = (subject: string, bodyText: string) => {
+    if (!selectedLead) return;
+    const targetEmail = selectedLead.email || '';
+    
+    // Construct mailto URI
+    const encodedSubject = encodeURIComponent(subject || `Outreach for ${selectedLead.name}`);
+    const encodedBody = encodeURIComponent(bodyText);
+    const mailtoUrl = `mailto:${targetEmail}?subject=${encodedSubject}&body=${encodedBody}`;
+    
+    // Open email client
+    window.location.href = mailtoUrl;
+
+    onUpdateLead(selectedLead.id, { 
+      status: 'Contacted', 
+      lastActionDate: Date.now()
+    });
   };
 
   const handleSendEmail = async (subject: string, bodyText: string) => {
@@ -363,14 +382,23 @@ Make the copywriting sound authentic, professional, deeply personalized, and hig
                       {activeTab !== 'full' && activeStep && (
                         <>
                           {outreachType === 'email' && activeStep.subject && (
-                            <button
-                              onClick={() => handleSendEmail(activeStep.subject, activeStep.body)}
-                              disabled={isSendingEmail}
-                              className="text-[11px] font-semibold text-white bg-indigo-500 hover:bg-indigo-600 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 disabled:opacity-50"
-                            >
-                              {isSendingEmail ? <Loader2 className="w-3 h-3 animate-spin" /> : <Send className="w-3 h-3" />}
-                              Send This Step
-                            </button>
+                            <>
+                              <button
+                                onClick={() => handleOpenEmailClient(activeStep.subject, activeStep.body)}
+                                className="text-[11px] font-semibold text-zinc-300 hover:text-white bg-zinc-800 hover:bg-zinc-700 px-3 py-1.5 rounded-lg border border-zinc-700 transition-colors flex items-center gap-1.5"
+                              >
+                                <Mail className="w-3 h-3" />
+                                Open in Mail
+                              </button>
+                              <button
+                                onClick={() => handleSendEmail(activeStep.subject, activeStep.body)}
+                                disabled={isSendingEmail}
+                                className="text-[11px] font-semibold text-white bg-indigo-500 hover:bg-indigo-600 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 disabled:opacity-50"
+                              >
+                                {isSendingEmail ? <Loader2 className="w-3 h-3 animate-spin" /> : <Send className="w-3 h-3" />}
+                                Send via API
+                              </button>
+                            </>
                           )}
                           <button
                             onClick={() => {

@@ -8,6 +8,7 @@ export function SettingsPanel() {
   const [hunterMode, setHunterMode] = useState(() => localStorage.getItem('hunterMode') === 'true');
   const [senderName, setSenderName] = useState(() => localStorage.getItem('brevoSenderName') || 'MoX Hunter Agent');
   const [senderEmail, setSenderEmail] = useState(() => localStorage.getItem('brevoSenderEmail') || 'agent@moxhunter.com');
+  const [customDomain, setCustomDomain] = useState(() => localStorage.getItem('customDomain') || '');
   const [saved, setSaved] = useState(false);
 
   const handleSave = () => {
@@ -15,6 +16,7 @@ export function SettingsPanel() {
     localStorage.setItem('hunterMode', hunterMode.toString());
     localStorage.setItem('brevoSenderName', senderName);
     localStorage.setItem('brevoSenderEmail', senderEmail);
+    localStorage.setItem('customDomain', customDomain);
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   };
@@ -118,7 +120,7 @@ export function SettingsPanel() {
               </ol>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
               <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4">
                 <div className="text-xs font-semibold text-zinc-500 uppercase mb-1">Get Leads</div>
                 <div className="text-sm font-mono text-zinc-300 break-all">GET /api/mcp/leads</div>
@@ -133,6 +135,20 @@ export function SettingsPanel() {
                 <div className="text-sm font-mono text-zinc-300 break-all">POST /api/mcp/outreach</div>
                 <div className="text-xs text-zinc-500 mt-2">Body: &#123; leadId, angle &#125;</div>
               </div>
+            </div>
+            
+            <div className="mt-8 pt-6 border-t border-zinc-800/50">
+              <h3 className="text-sm font-semibold text-zinc-100 mb-2">Live Deployed Domain (e.g., Vercel)</h3>
+              <p className="text-zinc-400 text-xs mb-4">
+                If you have deployed this app to a custom domain (like Vercel), enter it here. This URL will be used for sharing prototype links with clients instead of the AI Studio preview URL.
+              </p>
+              <input
+                type="text"
+                value={customDomain}
+                onChange={(e) => setCustomDomain(e.target.value)}
+                className="w-full max-w-md bg-zinc-900 border border-zinc-800 rounded-lg px-4 py-3 text-zinc-100 focus:outline-none focus:border-indigo-500 font-mono text-sm"
+                placeholder="https://mox-hunter-pro.vercel.app"
+              />
             </div>
           </div>
 
