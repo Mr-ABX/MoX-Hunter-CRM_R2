@@ -149,46 +149,26 @@ export function LandingPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="flex flex-col items-center justify-center gap-4 mb-24 max-w-2xl mx-auto w-full"
+            className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-24"
           >
-            <div className="flex flex-col sm:flex-row w-full gap-3 p-2 bg-zinc-900/50 backdrop-blur-md border border-zinc-800 rounded-3xl sm:rounded-full shadow-[0_0_40px_rgba(0,0,0,0.5)] transition-colors focus-within:border-indigo-500/50 focus-within:bg-zinc-900/80">
-              <div className="flex-1 flex items-center px-4 py-2 sm:py-0">
-                <Monitor className="w-5 h-5 text-zinc-500 mr-3 shrink-0" />
-                <input
-                  type="text"
-                  placeholder="Enter your current website URL..."
-                  className="w-full bg-transparent border-none text-white focus:outline-none placeholder:text-zinc-600 text-lg"
-                />
-              </div>
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                animate={{
-                  boxShadow: [
-                    "0px 0px 0px rgba(99,102,241,0)",
-                    "0px 0px 20px rgba(99,102,241,0.4)",
-                    "0px 0px 0px rgba(99,102,241,0)",
-                  ],
-                }}
-                transition={{ repeat: Infinity, duration: 2.5 }}
-                className="w-full sm:w-auto px-8 py-4 bg-white text-black font-bold rounded-2xl sm:rounded-full flex items-center justify-center gap-2 relative overflow-hidden group shrink-0"
-              >
-                <div className="absolute inset-0 bg-zinc-200 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
-                <Sparkles className="w-4 h-4 relative z-10" />
-                <span className="relative z-10 whitespace-nowrap">
-                  Rebuild with AI
-                </span>
-              </motion.button>
-            </div>
-            <p className="text-sm text-zinc-500 font-medium">
-              No site?{" "}
-              <a
-                href="#prototype"
-                className="text-indigo-400 hover:text-indigo-300 underline underline-offset-4 transition-colors"
-              >
-                Generate from scratch
-              </a>
-            </p>
+            <motion.a 
+              href="#prototype"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              animate={{ boxShadow: ["0px 0px 0px rgba(99,102,241,0)", "0px 0px 30px rgba(99,102,241,0.4)", "0px 0px 0px rgba(99,102,241,0)"] }}
+              transition={{ repeat: Infinity, duration: 2.5 }}
+              className="w-full sm:w-auto px-8 py-4 bg-white text-black font-bold rounded-full flex items-center justify-center gap-2 relative overflow-hidden group"
+            >
+              <div className="absolute inset-0 bg-zinc-200 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
+              <Monitor className="w-5 h-5 relative z-10" />
+              <span className="relative z-10">Claim Free Prototype</span>
+            </motion.a>
+            <a 
+              href="#services"
+              className="w-full sm:w-auto px-8 py-4 bg-transparent border border-zinc-700 text-zinc-300 font-bold rounded-full hover:bg-zinc-800 hover:border-zinc-600 transition-colors flex items-center justify-center gap-2"
+            >
+              See Our Services
+            </a>
           </motion.div>
 
           {/* Interactive Hero Visual (Multi-layered 3D Cards) */}
