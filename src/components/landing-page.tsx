@@ -1070,21 +1070,21 @@ export function LandingPage() {
               className="bg-gradient-to-br from-indigo-500/10 via-zinc-900/40 to-zinc-950/80 backdrop-blur-xl border border-indigo-500/30 hover:border-indigo-500/50 rounded-3xl p-8 relative overflow-hidden shadow-[0_0_40px_rgba(99,102,241,0.1)] hover:shadow-[0_0_50px_rgba(99,102,241,0.2)] transition-all duration-500"
             >
               <div className="absolute top-0 right-0 w-48 h-48 bg-indigo-500/20 blur-[80px] rounded-full pointer-events-none" />
-              <div className="flex items-center gap-3 mb-8 relative z-10">
-                <div className="w-10 h-10 rounded-full bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center shadow-[0_0_20px_rgba(99,102,241,0.3)]">
+              <div className="flex items-center gap-3 mb-8 relative z-10 flex-wrap">
+                <div className="w-10 h-10 rounded-full bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center shadow-[0_0_20px_rgba(99,102,241,0.3)] shrink-0">
                   <Check className="w-5 h-5 text-indigo-400" />
                 </div>
                 <h3 className="text-xl font-bold text-white">
                   The MO-X Standard
                 </h3>
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold font-mono uppercase tracking-widest bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 shadow-[0_0_15px_rgba(99,102,241,0.2)] ml-auto">
+                  100% Free
+                </span>
               </div>
               <ul className="space-y-4 text-zinc-200 font-medium relative z-10">
-                <li className="flex items-center flex-wrap gap-3">
-                  <Check className="w-5 h-5 text-indigo-400 shrink-0" />{" "}
-                  <span>Instant, fully functional custom prototype.</span>{" "}
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold font-mono uppercase tracking-widest bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 shadow-[0_0_15px_rgba(99,102,241,0.2)] ml-auto sm:ml-0">
-                    100% Free
-                  </span>
+                <li className="flex items-start gap-3">
+                  <Check className="w-5 h-5 text-indigo-400 shrink-0 mt-0.5" />{" "}
+                  Instant, fully functional custom prototype.
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-indigo-400 shrink-0 mt-0.5" />{" "}
