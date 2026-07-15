@@ -167,11 +167,12 @@ async function startServer() {
                 "application/json": {
                   schema: {
                     type: "object",
-                    required: ["leadId", "prototypeType", "description"],
+                    required: ["leadId"],
                     properties: {
                       leadId: { type: "string", description: "The ID of the lead to associate the prototype with" },
-                      prototypeType: { type: "string", description: "The type of prototype to generate: 'WEB', 'GRAPHIC', 'SVG', or 'CONTENT'" },
-                      description: { type: "string", description: "A description of what the prototype should contain" }
+                      prototypeType: { type: "string", description: "The type of prototype to generate: 'WEB', 'GRAPHIC', 'SVG', or 'CONTENT' (defaults to 'WEB')" },
+                      description: { type: "string", description: "A description of what the prototype should contain (e.g., custom sections, specific themes)" },
+                      businessContext: { type: "string", description: "Optional override/enrichment about the lead's business context to customize the pitch" }
                     }
                   }
                 }
@@ -179,8 +180,8 @@ async function startServer() {
             },
             responses: {
               "200": {
-                description: "Generated live preview link and content",
-                content: { "application/json": { schema: { type: "object" } } }
+                "description": "Generated live preview link and content",
+                "content": { "application/json": { schema: { type: "object" } } }
               }
             }
           }
@@ -325,11 +326,14 @@ async function startServer() {
   // 4. Generate Prototype Preview
   app.post("/api/mcp/generate-preview", mcpAuth, async (req, res) => {
     try {
-      const { leadId, prototypeType, description } = req.body;
+      const { leadId, prototypeType, description, businessContext } = req.body;
       
-      if (!leadId || !prototypeType || !description) {
-        return res.status(400).json({ error: 'Missing required fields: leadId, prototypeType, description' });
+      if (!leadId) {
+        return res.status(400).json({ error: 'Missing required field: leadId' });
       }
+
+      // Default prototypeType to 'WEB' if not specified
+      const finalPrototypeType = prototypeType || 'WEB';
 
       // Fetch the lead context
       const leadRef = doc(db, 'leads', leadId);
@@ -344,19 +348,28 @@ async function startServer() {
         return res.status(404).json({ error: 'Lead not found' });
       }
 
+      // Combine database lead data with optional direct business context
+      let combinedBusinessContext = leadContext;
+      if (businessContext) {
+        combinedBusinessContext += `\nAdditional/Override Business Context: ${businessContext}`;
+      }
+
+      // Use description or default to standard instructions
+      const finalDescription = description || `A high-converting personalized pitch/prototype tailored for ${leadData.company || 'the business'} in the ${leadData.industry || 'general'} industry.`;
+
       if (!process.env.GEMINI_API_KEY) {
          return res.status(500).json({ error: 'GEMINI_API_KEY is not configured' });
       }
 
-      const modeInstruction = prototypeType === 'WEB' ? 'React component using Tailwind CSS. Wrap the code in <canvas_web>...</canvas_web> tags.' :
-                              prototypeType === 'GRAPHIC' ? 'HTML graphic/banner. Wrap the code in <canvas_graphic>...</canvas_graphic> tags.' :
-                              prototypeType === 'SVG' ? 'SVG illustration. Wrap the code in <canvas_svg>...</canvas_svg> tags.' :
-                              prototypeType === 'CONTENT' ? 'Markdown content block. Wrap the content in <canvas_content>...</canvas_content> tags.' :
+      const modeInstruction = finalPrototypeType === 'WEB' ? 'React component using Tailwind CSS. Wrap the code in <canvas_web>...</canvas_web> tags.' :
+                              finalPrototypeType === 'GRAPHIC' ? 'HTML graphic/banner. Wrap the code in <canvas_graphic>...</canvas_graphic> tags.' :
+                              finalPrototypeType === 'SVG' ? 'SVG illustration. Wrap the code in <canvas_svg>...</canvas_svg> tags.' :
+                              finalPrototypeType === 'CONTENT' ? 'Markdown content block. Wrap the content in <canvas_content>...</canvas_content> tags.' :
                               'React component using Tailwind CSS. Wrap the code in <canvas_web>...</canvas_web> tags.';
 
-      const prompt = `Generate a ${prototypeType} prototype for this lead.
-      Lead Data: ${leadContext}
-      Description/Requirements: ${description}
+      const prompt = `Generate a ${finalPrototypeType} prototype for this lead.
+      Lead Data & Business Context: ${combinedBusinessContext}
+      Description/Requirements: ${finalDescription}
       
       You must return ONLY the requested format: ${modeInstruction} Do not include any other markdown formatting or explanation outside the tags.`;
 
@@ -366,23 +379,106 @@ async function startServer() {
       });
 
       const content = response.text || '';
+
+      // Parse the generated response to extract canvasContent and canvasMode
+      let text = content;
+      let canvasContent = null;
+      let canvasMode = finalPrototypeType;
+
+      const webMatch = content.match(/<canvas_web>([\s\S]*?)<\/canvas_web>/);
+      if (webMatch) {
+        canvasContent = webMatch[1].trim();
+        canvasMode = 'WEB';
+        text = text.replace(webMatch[0], '').trim();
+      }
+
+      const graphicMatch = content.match(/<canvas_graphic>([\s\S]*?)<\/canvas_graphic>/);
+      if (graphicMatch) {
+        canvasContent = graphicMatch[1].trim();
+        canvasMode = 'GRAPHIC';
+        text = text.replace(graphicMatch[0], '').trim();
+      }
+
+      const svgMatch = content.match(/<canvas_svg>([\s\S]*?)<\/canvas_svg>/);
+      if (svgMatch) {
+        canvasContent = svgMatch[1].trim();
+        canvasMode = 'SVG';
+        text = text.replace(svgMatch[0], '').trim();
+      }
+
+      const contentMatch = content.match(/<canvas_content>([\s\S]*?)<\/canvas_content>/);
+      if (contentMatch) {
+        canvasContent = contentMatch[1].trim();
+        canvasMode = 'CONTENT';
+        text = text.replace(contentMatch[0], '').trim();
+      }
+
+      // If no tag is matched, clean up any markdown block formatting and treat it as the pure canvas content
+      if (!canvasContent) {
+        canvasContent = content.replace(/^```[a-z]*/i, '').replace(/```$/i, '').trim();
+      }
+
+      // Find or create an active chat session for this lead so it shows up in the UI
+      let sessionId = 'automated-outreach-session';
+      try {
+        const sessionsRef = collection(db, 'sessions');
+        const sessionQuery = query(
+          sessionsRef,
+          where('leadId', '==', leadId),
+          where('userId', '==', leadData.userId || ''),
+          limit(10)
+        );
+        const sessionSnap = await getDocs(sessionQuery);
+        if (!sessionSnap.empty) {
+          const sortedSessions = sessionSnap.docs.map(doc => ({ id: doc.id, ...doc.data() } as any));
+          sortedSessions.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+          sessionId = sortedSessions[0].id;
+        } else {
+          const sessionDoc = await addDoc(collection(db, 'sessions'), {
+            leadId,
+            name: 'Agent Generated Pitch',
+            createdAt: Date.now(),
+            userId: leadData.userId || 'automated-agent'
+          });
+          sessionId = sessionDoc.id;
+        }
+      } catch (sessionErr) {
+        console.error('Error finding or creating session for preview:', sessionErr);
+      }
+
+      // Save the generated prototype to the messages collection so the PitchView and Canvas components render it instantly
+      const messageDoc = {
+        role: 'model',
+        text: text || `Generated custom ${canvasMode.toLowerCase()} prototype.`,
+        canvasContent: canvasContent,
+        canvasMode: canvasMode,
+        leadId: leadId,
+        sessionId: sessionId,
+        userId: leadData.userId || 'automated-agent',
+        createdAt: Date.now()
+      };
       
-      // Update the lead to show prototype was built
+      const docRef = await addDoc(collection(db, 'messages'), messageDoc);
+
+      // Update the lead to show prototype was built and associate it with the created message ID
       await updateDoc(leadRef, {
         status: 'Built',
-        prototypeId: `proto_${Date.now()}`,
+        prototypeId: docRef.id,
         updatedAt: new Date().toISOString()
       });
 
-      // Generate a mock live preview link
-      const previewLink = `https://moxhunter.com/preview/${leadId}/${prototypeType.toLowerCase()}`;
+      // Generate the premium, live preview link referencing the newly saved document ID
+      const hostUrl = `${req.protocol}://${req.get('host')}`;
+      const previewLink = `${hostUrl}/preview/${docRef.id}`;
 
       res.json({ 
         success: true, 
-        message: 'Prototype generated successfully',
+        message: 'Prototype generated and saved successfully',
+        previewId: docRef.id,
         previewLink,
-        content,
-        prototypeType
+        content: canvasContent,
+        prototypeType: canvasMode,
+        sessionId
       });
     } catch (error) {
       console.error('Error generating prototype via MCP:', error);

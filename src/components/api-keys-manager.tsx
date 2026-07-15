@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { collection, query, getDocs, addDoc, deleteDoc, doc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../lib/firebase';
-import { Key, Plus, Trash2, Copy, Check, Eye, EyeOff, Loader2 } from 'lucide-react';
-import { motion } from 'motion/react';
+import { Key, Plus, Trash2, Copy, Check, Eye, EyeOff, Loader2, Edit2, X } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 
 interface ApiKey {
   id: string;
@@ -20,6 +20,12 @@ export function ApiKeysManager() {
   const [showNewKey, setShowNewKey] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [visibleKeys, setVisibleKeys] = useState<Record<string, boolean>>({});
+  
+  // Edit & Inline Delete states
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingName, setEditingName] = useState('');
+  const [savingId, setSavingId] = useState<string | null>(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchKeys();
@@ -79,11 +85,32 @@ export function ApiKeysManager() {
     }
   };
 
+  const handleStartRename = (apiKey: ApiKey) => {
+    setEditingId(apiKey.id);
+    setEditingName(apiKey.name);
+  };
+
+  const handleSaveRename = async (id: string) => {
+    if (!editingName.trim()) return;
+    setSavingId(id);
+    try {
+      await updateDoc(doc(db, 'mcp_keys', id), {
+        name: editingName.trim()
+      });
+      setKeys(keys.map(k => k.id === id ? { ...k, name: editingName.trim() } : k));
+      setEditingId(null);
+    } catch (error) {
+      console.error("Error saving key name:", error);
+    } finally {
+      setSavingId(null);
+    }
+  };
+
   const handleDeleteKey = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this key? Any connections using it will break.')) return;
     try {
       await deleteDoc(doc(db, 'mcp_keys', id));
       setKeys(keys.filter(k => k.id !== id));
+      setConfirmDeleteId(null);
     } catch (error) {
       console.error("Error deleting key:", error);
     }
@@ -126,8 +153,48 @@ export function ApiKeysManager() {
             <div className="space-y-3">
               {keys.map(apiKey => (
                 <div key={apiKey.id} className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                  <div>
-                    <h4 className="font-medium text-zinc-200">{apiKey.name}</h4>
+                  <div className="flex-1">
+                    {editingId === apiKey.id ? (
+                      <div className="flex items-center gap-2 max-w-md">
+                        <input
+                          type="text"
+                          value={editingName}
+                          onChange={(e) => setEditingName(e.target.value)}
+                          className="flex-1 bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-1 text-sm text-zinc-200 focus:outline-none focus:border-indigo-500"
+                          disabled={savingId === apiKey.id}
+                          autoFocus
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') handleSaveRename(apiKey.id);
+                            if (e.key === 'Escape') setEditingId(null);
+                          }}
+                        />
+                        <button
+                          onClick={() => handleSaveRename(apiKey.id)}
+                          disabled={savingId === apiKey.id || !editingName.trim()}
+                          className="p-1.5 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 rounded-lg transition-colors"
+                        >
+                          {savingId === apiKey.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
+                        </button>
+                        <button
+                          onClick={() => setEditingId(null)}
+                          className="p-1.5 hover:bg-zinc-800 text-zinc-400 rounded-lg transition-colors"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <h4 className="font-medium text-zinc-200">{apiKey.name}</h4>
+                        <button
+                          onClick={() => handleStartRename(apiKey)}
+                          className="p-1 text-zinc-500 hover:text-zinc-300 transition-colors rounded hover:bg-zinc-800"
+                          title="Rename API key"
+                        >
+                          <Edit2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    )}
+                    
                     <div className="flex items-center gap-2 mt-2">
                       <code className="text-xs font-mono text-indigo-300 bg-indigo-500/10 px-2 py-1 rounded">
                         {visibleKeys[apiKey.id] ? apiKey.key : 'mox_' + '•'.repeat(32)}
@@ -140,20 +207,42 @@ export function ApiKeysManager() {
                       </button>
                     </div>
                   </div>
+
                   <div className="flex items-center gap-2 self-end sm:self-auto">
-                    <button
-                      onClick={() => copyToClipboard(apiKey.key, apiKey.id)}
-                      className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-zinc-300 bg-zinc-800 hover:bg-zinc-700 rounded-lg transition-colors"
-                    >
-                      {copiedId === apiKey.id ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                      {copiedId === apiKey.id ? 'Copied' : 'Copy'}
-                    </button>
-                    <button
-                      onClick={() => handleDeleteKey(apiKey.id)}
-                      className="p-1.5 text-zinc-500 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
+                    {confirmDeleteId === apiKey.id ? (
+                      <div className="flex items-center gap-2 bg-rose-500/10 border border-rose-500/20 px-3 py-1.5 rounded-lg animate-pulse">
+                        <span className="text-xs font-semibold text-rose-400">Sure?</span>
+                        <button
+                          onClick={() => handleDeleteKey(apiKey.id)}
+                          className="px-2 py-1 text-xs font-semibold bg-rose-500 text-white rounded hover:bg-rose-600 transition-colors"
+                        >
+                          Delete
+                        </button>
+                        <button
+                          onClick={() => setConfirmDeleteId(null)}
+                          className="px-2 py-1 text-xs font-semibold bg-zinc-800 text-zinc-300 rounded hover:bg-zinc-700 transition-colors"
+                        >
+                          No
+                        </button>
+                      </div>
+                    ) : (
+                      <>
+                        <button
+                          onClick={() => copyToClipboard(apiKey.key, apiKey.id)}
+                          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-zinc-300 bg-zinc-800 hover:bg-zinc-700 rounded-lg transition-colors"
+                        >
+                          {copiedId === apiKey.id ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                          {copiedId === apiKey.id ? 'Copied' : 'Copy'}
+                        </button>
+                        <button
+                          onClick={() => setConfirmDeleteId(apiKey.id)}
+                          className="p-1.5 text-zinc-500 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors"
+                          title="Delete API key"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </>
+                    )}
                   </div>
                 </div>
               ))}
