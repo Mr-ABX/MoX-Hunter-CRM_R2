@@ -185,7 +185,7 @@ export function Sidebar({ currentView, setCurrentView, leadsCount, messagesCount
         />
       </div>
 
-      {/* Control Actions - Pinned Pinned Bottom Container */}
+      {/* Control Actions - Pinned Bottom Container */}
       <div className="flex flex-col gap-3 w-full px-2 mt-2 pt-2 border-t border-zinc-900 shrink-0">
         <SidebarTab 
           icon={<Settings className="w-4 h-4" />} 
@@ -193,14 +193,6 @@ export function Sidebar({ currentView, setCurrentView, leadsCount, messagesCount
           isActive={currentView === 'settings'} 
           onClick={() => setCurrentView('settings')} 
           onMouseEnter={(e) => handleMouseEnter("Settings", e)}
-          onMouseLeave={handleMouseLeave}
-        />
-        <SidebarTab 
-          icon={<LogOut className="w-4 h-4 text-rose-500" />} 
-          label="Sign Out" 
-          isActive={false} 
-          onClick={handleSignOut} 
-          onMouseEnter={(e) => handleMouseEnter("Sign Out", e)}
           onMouseLeave={handleMouseLeave}
         />
       </div>

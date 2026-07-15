@@ -746,7 +746,7 @@ export default function Home() {
 
           {currentView === 'settings' && (
             <motion.div key="settings" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.2 }} className="absolute inset-0 flex h-full">
-              <SettingsPanel />
+              <SettingsPanel onSignOut={handleSignOut} />
             </motion.div>
           )}
 
