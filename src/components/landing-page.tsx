@@ -103,9 +103,17 @@ function PricingReveal() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const lastPos = useRef<{ x: number; y: number } | null>(null);
+  const [isResetting, setIsResetting] = useState(false);
+  const [pointerPos, setPointerPos] = useState<{ x: number; y: number } | null>(
+    null,
+  );
 
   const resetScratch = () => {
-    setRevealed(false);
+    setIsResetting(true);
+    setTimeout(() => {
+      setRevealed(false);
+      setIsResetting(false);
+    }, 400);
   };
 
   useEffect(() => {
@@ -211,9 +219,20 @@ function PricingReveal() {
       }
     }
     const percent = transparent / (pixels.length / 64);
-    if (percent > 0.4) {
+    const threshold = window.innerWidth < 768 ? 0.25 : 0.4;
+    if (percent > threshold) {
       setRevealed(true);
+      setPointerPos(null);
     }
+  };
+
+  const updatePointer = (e: React.PointerEvent) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    setPointerPos({ x, y });
   };
 
   const scratch = (e: React.PointerEvent) => {
@@ -229,11 +248,11 @@ function PricingReveal() {
     ctx.globalCompositeOperation = "destination-out";
     ctx.lineJoin = "round";
     ctx.lineCap = "round";
-    ctx.lineWidth = 100;
+    ctx.lineWidth = window.innerWidth < 768 ? 80 : 100;
 
     if (!isDrawing || !lastPos.current) {
       ctx.beginPath();
-      ctx.arc(x, y, 50, 0, Math.PI * 2);
+      ctx.arc(x, y, window.innerWidth < 768 ? 40 : 50, 0, Math.PI * 2);
       ctx.fill();
       lastPos.current = { x, y };
     } else {
@@ -252,12 +271,19 @@ function PricingReveal() {
   const handlePointerDown = (e: React.PointerEvent) => {
     setIsDrawing(true);
     lastPos.current = null;
+    updatePointer(e);
     scratch(e);
+  };
+
+  const handlePointerMove = (e: React.PointerEvent) => {
+    updatePointer(e);
+    if (isDrawing) scratch(e);
   };
 
   const handlePointerUp = () => {
     setIsDrawing(false);
     lastPos.current = null;
+    setPointerPos(null);
   };
 
   return (
@@ -280,25 +306,43 @@ function PricingReveal() {
 
       <AnimatePresence>
         {!revealed && (
-          <motion.canvas
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             exit={{ opacity: 0, scale: 1.05 }}
             transition={{ duration: 0.5 }}
-            ref={canvasRef}
-            onPointerDown={handlePointerDown}
-            onPointerMove={(e) => {
-              if (isDrawing) scratch(e);
-            }}
-            onPointerUp={handlePointerUp}
-            onPointerLeave={handlePointerUp}
-            className="absolute inset-0 top-14 w-full h-[calc(100%-3.5rem)] z-20 rounded-[2rem] touch-none cursor-crosshair shadow-2xl border border-zinc-800"
-          />
+            className="absolute inset-0 top-14 w-full h-[calc(100%-3.5rem)] z-20 rounded-[2rem] shadow-2xl border border-zinc-800 overflow-hidden"
+          >
+            <canvas
+              ref={canvasRef}
+              onPointerDown={handlePointerDown}
+              onPointerMove={handlePointerMove}
+              onPointerUp={handlePointerUp}
+              onPointerLeave={handlePointerUp}
+              className="w-full h-full touch-none cursor-crosshair"
+            />
+            {pointerPos && (
+              <div
+                className="absolute pointer-events-none rounded-full w-32 h-32 blur-[40px] bg-indigo-500/40 mix-blend-screen transition-opacity duration-200"
+                style={{
+                  left: pointerPos.x,
+                  top: pointerPos.y,
+                  transform: "translate(-50%, -50%)",
+                }}
+              />
+            )}
+          </motion.div>
         )}
       </AnimatePresence>
 
       {/* The Pricing Plans underneath */}
-      <div className="grid lg:grid-cols-2 gap-6 w-full h-full relative z-10 mb-6">
+      <motion.div
+        animate={{ opacity: isResetting ? 0 : 1 }}
+        transition={{ duration: 0.4 }}
+        className="grid lg:grid-cols-2 gap-6 w-full h-full relative z-10 mb-6"
+      >
         {/* Plan 1 */}
-        <div className="bg-zinc-900/50 backdrop-blur-xl border border-zinc-800 rounded-[2rem] p-8 shadow-2xl relative flex flex-col">
+        <div className="bg-zinc-900/50 backdrop-blur-xl border border-zinc-800 rounded-[2rem] p-6 sm:p-8 shadow-2xl relative flex flex-col">
           <div className="mb-8 flex-1">
             <div className="inline-block px-3 py-1 bg-zinc-800 border border-zinc-700 text-zinc-300 text-xs font-bold font-mono uppercase tracking-widest rounded-full mb-4">
               Core Identity
@@ -342,7 +386,7 @@ function PricingReveal() {
         </div>
 
         {/* Plan 2 */}
-        <div className="bg-zinc-900/80 backdrop-blur-xl border border-indigo-500/30 rounded-[2rem] p-8 shadow-2xl relative flex flex-col overflow-hidden">
+        <div className="bg-zinc-900/80 backdrop-blur-xl border border-indigo-500/30 rounded-[2rem] p-6 sm:p-8 shadow-2xl relative flex flex-col overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 blur-[60px] pointer-events-none rounded-full" />
           <div className="mb-8 flex-1 relative z-10">
             <div className="inline-block px-3 py-1 bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 text-xs font-bold font-mono uppercase tracking-widest rounded-full mb-4">
@@ -385,7 +429,7 @@ function PricingReveal() {
             Get Started Now
           </a>
         </div>
-      </div>
+      </motion.div>
 
       <div className="relative z-10 text-center">
         <p className="text-zinc-500 text-sm">

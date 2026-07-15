@@ -4,7 +4,7 @@ import cors from "cors";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI } from "@google/genai";
 import { db } from "./src/lib/firebase";
-import { collection, query, where, limit, getDocs, doc, getDoc } from 'firebase/firestore';
+import { collection, query, where, limit, getDocs, doc, getDoc, addDoc, updateDoc } from 'firebase/firestore';
 
 async function startServer() {
   const app = express();
@@ -24,12 +24,33 @@ async function startServer() {
   });
 
   // --- MCP API Authentication Middleware ---
-  const mcpAuth = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+  const mcpAuth = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     const apiKey = req.headers['mo-x-api-key'];
-    if (!apiKey || apiKey !== process.env.MOX_MCP_API_KEY) {
-      return res.status(401).json({ error: 'Unauthorized: Invalid or missing mo-x-api-key header' });
+    if (!apiKey) {
+      res.status(401).json({ error: 'Unauthorized: Missing mo-x-api-key header' });
+      return;
     }
-    next();
+    
+    // Master override for legacy/dev
+    if (apiKey === process.env.MOX_MCP_API_KEY) {
+      next();
+      return;
+    }
+
+    try {
+      const keysRef = collection(db, 'mcp_keys');
+      const q = query(keysRef, where('key', '==', apiKey), where('active', '==', true), limit(1));
+      const querySnapshot = await getDocs(q);
+      
+      if (!querySnapshot.empty) {
+        next();
+        return;
+      }
+    } catch (e) {
+      console.error('API Key Auth error:', e);
+    }
+    
+    res.status(401).json({ error: 'Unauthorized: Invalid mo-x-api-key' });
   };
 
   // --- MCP OpenAPI Spec ---
@@ -55,6 +76,40 @@ async function startServer() {
             responses: {
               "200": {
                 description: "List of leads",
+                content: { "application/json": { schema: { type: "object" } } }
+              }
+            }
+          },
+          post: {
+            operationId: "addLead",
+            summary: "Add a new lead to the CRM",
+            requestBody: {
+              required: true,
+              content: {
+                "application/json": {
+                  schema: {
+                    type: "object",
+                    required: ["company", "email", "industry", "score"],
+                    properties: {
+                      company: { type: "string" },
+                      website: { type: "string" },
+                      contactPerson: { type: "string" },
+                      email: { type: "string" },
+                      phone: { type: "string" },
+                      industry: { type: "string" },
+                      score: { type: "integer" },
+                      painPoints: { type: "array", items: { type: "string" } },
+                      techStack: { type: "array", items: { type: "string" } },
+                      notes: { type: "string" },
+                      status: { type: "string", description: "e.g. 'New', 'Contacted', 'Built', 'Lost'" }
+                    }
+                  }
+                }
+              }
+            },
+            responses: {
+              "200": {
+                description: "Successfully added the lead",
                 content: { "application/json": { schema: { type: "object" } } }
               }
             }
@@ -101,6 +156,34 @@ async function startServer() {
               }
             }
           }
+        },
+        "/api/mcp/generate-preview": {
+          post: {
+            operationId: "generatePreview",
+            summary: "Generate a custom prototype (web, graphic, or content) and return a live preview link",
+            requestBody: {
+              required: true,
+              content: {
+                "application/json": {
+                  schema: {
+                    type: "object",
+                    required: ["leadId", "prototypeType", "description"],
+                    properties: {
+                      leadId: { type: "string", description: "The ID of the lead to associate the prototype with" },
+                      prototypeType: { type: "string", description: "The type of prototype to generate: 'WEB', 'GRAPHIC', 'SVG', or 'CONTENT'" },
+                      description: { type: "string", description: "A description of what the prototype should contain" }
+                    }
+                  }
+                }
+              }
+            },
+            responses: {
+              "200": {
+                description: "Generated live preview link and content",
+                content: { "application/json": { schema: { type: "object" } } }
+              }
+            }
+          }
         }
       },
       components: {
@@ -136,7 +219,7 @@ async function startServer() {
       leadsQuery = query(leadsQuery, limit(50));
       
       const snapshot = await getDocs(leadsQuery);
-      const leads = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const leads = snapshot.docs.map(doc => ({ id: doc.id, ...(doc.data() as any) }));
       
       res.json({ success: true, count: leads.length, leads });
     } catch (error) {
@@ -159,6 +242,37 @@ async function startServer() {
     } catch (error) {
       console.error('Error fetching single lead via MCP:', error);
       res.status(500).json({ error: 'Failed to fetch lead' });
+    }
+  });
+
+  // 2b. Add a new Lead
+  app.post("/api/mcp/leads", mcpAuth, async (req, res) => {
+    try {
+      const newLeadData = req.body;
+      
+      if (!newLeadData.company || !newLeadData.email || !newLeadData.industry) {
+        return res.status(400).json({ error: 'Missing required fields: company, email, industry' });
+      }
+
+      const leadWithDefaults = {
+        website: '',
+        contactPerson: '',
+        phone: '',
+        score: 50,
+        painPoints: [],
+        techStack: [],
+        notes: '',
+        status: 'New',
+        ...newLeadData,
+        createdAt: new Date().toISOString()
+      };
+
+      const docRef = await addDoc(collection(db, 'leads'), leadWithDefaults);
+      
+      res.json({ success: true, lead: { id: docRef.id, ...leadWithDefaults } });
+    } catch (error) {
+      console.error('Error adding lead via MCP:', error);
+      res.status(500).json({ error: 'Failed to add lead' });
     }
   });
 
@@ -205,6 +319,74 @@ async function startServer() {
     } catch (error) {
       console.error('Error processing outreach via MCP:', error);
       res.status(500).json({ error: 'Failed to process outreach' });
+    }
+  });
+
+  // 4. Generate Prototype Preview
+  app.post("/api/mcp/generate-preview", mcpAuth, async (req, res) => {
+    try {
+      const { leadId, prototypeType, description } = req.body;
+      
+      if (!leadId || !prototypeType || !description) {
+        return res.status(400).json({ error: 'Missing required fields: leadId, prototypeType, description' });
+      }
+
+      // Fetch the lead context
+      const leadRef = doc(db, 'leads', leadId);
+      const snapshot = await getDoc(leadRef);
+      let leadContext = "";
+      let leadData: any = {};
+      
+      if (snapshot.exists()) {
+        leadData = snapshot.data();
+        leadContext = JSON.stringify(leadData);
+      } else {
+        return res.status(404).json({ error: 'Lead not found' });
+      }
+
+      if (!process.env.GEMINI_API_KEY) {
+         return res.status(500).json({ error: 'GEMINI_API_KEY is not configured' });
+      }
+
+      const modeInstruction = prototypeType === 'WEB' ? 'React component using Tailwind CSS. Wrap the code in <canvas_web>...</canvas_web> tags.' :
+                              prototypeType === 'GRAPHIC' ? 'HTML graphic/banner. Wrap the code in <canvas_graphic>...</canvas_graphic> tags.' :
+                              prototypeType === 'SVG' ? 'SVG illustration. Wrap the code in <canvas_svg>...</canvas_svg> tags.' :
+                              prototypeType === 'CONTENT' ? 'Markdown content block. Wrap the content in <canvas_content>...</canvas_content> tags.' :
+                              'React component using Tailwind CSS. Wrap the code in <canvas_web>...</canvas_web> tags.';
+
+      const prompt = `Generate a ${prototypeType} prototype for this lead.
+      Lead Data: ${leadContext}
+      Description/Requirements: ${description}
+      
+      You must return ONLY the requested format: ${modeInstruction} Do not include any other markdown formatting or explanation outside the tags.`;
+
+      const response = await ai.models.generateContent({
+        model: "gemini-3.5-flash",
+        contents: prompt,
+      });
+
+      const content = response.text || '';
+      
+      // Update the lead to show prototype was built
+      await updateDoc(leadRef, {
+        status: 'Built',
+        prototypeId: `proto_${Date.now()}`,
+        updatedAt: new Date().toISOString()
+      });
+
+      // Generate a mock live preview link
+      const previewLink = `https://moxhunter.com/preview/${leadId}/${prototypeType.toLowerCase()}`;
+
+      res.json({ 
+        success: true, 
+        message: 'Prototype generated successfully',
+        previewLink,
+        content,
+        prototypeType
+      });
+    } catch (error) {
+      console.error('Error generating prototype via MCP:', error);
+      res.status(500).json({ error: 'Failed to generate prototype' });
     }
   });
 

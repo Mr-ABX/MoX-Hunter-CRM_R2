@@ -10,11 +10,12 @@ import {
   X,
 } from "lucide-react";
 import { WolfLogo } from "./logo";
+import { ApiKeysManager } from "./api-keys-manager";
+
 
 interface SettingsPanelProps {
   onSignOut: () => void;
 }
-
 export function SettingsPanel({ onSignOut }: SettingsPanelProps) {
   const [mode, setMode] = useState<"solo" | "agency">("solo");
   const [hunterMode, setHunterMode] = useState(
@@ -152,6 +153,8 @@ export function SettingsPanel({ onSignOut }: SettingsPanelProps) {
           </div>
 
           {/* MCP External AI Agent Settings */}
+          <ApiKeysManager />
+
           <div className="bg-zinc-900/50 border border-zinc-800/50 rounded-2xl p-6 mb-8">
             <h2 className="text-xl font-semibold text-zinc-100 mb-4 flex items-center gap-2">
               <svg
@@ -168,7 +171,7 @@ export function SettingsPanel({ onSignOut }: SettingsPanelProps) {
                 <path d="M12 2v20" />
                 <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
               </svg>
-              External AI Agent (MCP) Connection
+              Local Agent Configuration
             </h2>
             <p className="text-zinc-400 text-sm mb-6 leading-relaxed">
               Connect external AI agents (like AntiGravity or Claude) to MoX
@@ -202,9 +205,8 @@ export function SettingsPanel({ onSignOut }: SettingsPanelProps) {
                     Copy the configuration block below and paste it into your
                     local agent's MCP setup (e.g. Claude Desktop config). Make
                     sure to replace{" "}
-                    <code className="text-indigo-400">YOUR_SECRET_KEY</code>{" "}
-                    with the actual key you set in your AI Studio secrets (
-                    <code>MOX_MCP_API_KEY</code>).
+                    <code className="text-indigo-400">YOUR_GENERATED_KEY</code>{" "}
+                    with one of the API keys you generated above.
                   </p>
 
                   <div className="relative group">
@@ -215,7 +217,7 @@ export function SettingsPanel({ onSignOut }: SettingsPanelProps) {
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-openapi", "${typeof window !== "undefined" ? window.location.origin : "https://app.url"}/api/openapi.json"],
       "env": {
-        "MO_X_API_KEY": "YOUR_SECRET_KEY"
+        "MO_X_API_KEY": "YOUR_GENERATED_KEY"
       }
     }
   }
@@ -229,7 +231,7 @@ export function SettingsPanel({ onSignOut }: SettingsPanelProps) {
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-openapi", "${typeof window !== "undefined" ? window.location.origin : "https://app.url"}/api/openapi.json"],
       "env": {
-        "MO_X_API_KEY": "YOUR_SECRET_KEY"
+        "MO_X_API_KEY": "YOUR_GENERATED_KEY"
       }
     }
   }
@@ -242,22 +244,6 @@ export function SettingsPanel({ onSignOut }: SettingsPanelProps) {
                       Copy JSON
                     </button>
                   </div>
-                </div>
-
-                <div className="mt-4 p-4 bg-indigo-500/10 border border-indigo-500/20 rounded-lg">
-                  <h4 className="text-sm font-semibold text-indigo-400 mb-2 flex items-center gap-2">
-                    <Check className="w-4 h-4" /> Final Step
-                  </h4>
-                  <p className="text-xs text-zinc-300 leading-relaxed">
-                    Don't forget to go to the{" "}
-                    <strong>Settings &rarr; Secrets</strong> panel in this AI
-                    Studio workspace and add a secret named{" "}
-                    <code className="bg-zinc-800 px-1.5 py-0.5 rounded text-indigo-400">
-                      MOX_MCP_API_KEY
-                    </code>{" "}
-                    with your chosen key. Your local agent will send this key to
-                    authenticate its requests.
-                  </p>
                 </div>
               </div>
             </div>
