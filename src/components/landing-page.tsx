@@ -26,6 +26,7 @@ import {
 import { Logo, WolfLogo } from "./logo";
 import { Link } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
+import { TestimonialCarousel } from "./testimonial-carousel";
 
 const faqs = [
   {
@@ -1347,95 +1348,7 @@ export function LandingPage() {
             </div>
           </motion.div>
 
-          <div className="grid md:grid-cols-3 gap-6">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
-              className="bg-zinc-900/40 backdrop-blur-sm border border-zinc-800 rounded-3xl p-8 flex flex-col justify-between hover:border-indigo-500/30 transition-colors"
-            >
-              <div>
-                <Quote className="w-8 h-8 text-zinc-700 mb-6" />
-                <p className="text-zinc-300 leading-relaxed mb-8">
-                  "They didn't try to sell me. They just built the exact website
-                  I was missing and emailed me the working link. I signed the
-                  contract the next day and haven't touched a line of code
-                  since."
-                </p>
-              </div>
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 bg-zinc-800 rounded-full flex items-center justify-center font-bold text-zinc-400">
-                  MT
-                </div>
-                <div>
-                  <div className="font-bold text-white text-sm">Mark T.</div>
-                  <div className="text-xs text-indigo-400 uppercase tracking-widest font-mono mt-1">
-                    Local Bakery Owner
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.2 }}
-              className="bg-zinc-900/40 backdrop-blur-sm border border-zinc-800 rounded-3xl p-8 flex flex-col justify-between hover:border-rose-500/30 transition-colors"
-            >
-              <div>
-                <Quote className="w-8 h-8 text-zinc-700 mb-6" />
-                <p className="text-zinc-300 leading-relaxed mb-8">
-                  "I was paying an agency $2k a month for a website that looked
-                  like it was from 2010. MO-X delivered a completely
-                  AI-engineered overhaul in 24 hours that instantly boosted my
-                  leads by 40%."
-                </p>
-              </div>
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 bg-zinc-800 rounded-full flex items-center justify-center font-bold text-zinc-400">
-                  SJ
-                </div>
-                <div>
-                  <div className="font-bold text-white text-sm">
-                    Sarah Jenkins
-                  </div>
-                  <div className="text-xs text-rose-400 uppercase tracking-widest font-mono mt-1">
-                    HVAC Services
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.3 }}
-              className="bg-zinc-900/40 backdrop-blur-sm border border-zinc-800 rounded-3xl p-8 flex flex-col justify-between hover:border-indigo-500/30 transition-colors"
-            >
-              <div>
-                <Quote className="w-8 h-8 text-zinc-700 mb-6" />
-                <p className="text-zinc-300 leading-relaxed mb-8">
-                  "The automated social media content is mind-blowing. It writes
-                  better posts than my old marketing guy, schedules them, and
-                  actually brings people into the shop. Best investment ever."
-                </p>
-              </div>
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 bg-zinc-800 rounded-full flex items-center justify-center font-bold text-zinc-400">
-                  DL
-                </div>
-                <div>
-                  <div className="font-bold text-white text-sm">David L.</div>
-                  <div className="text-xs text-indigo-400 uppercase tracking-widest font-mono mt-1">
-                    Auto Repair Shop
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          </div>
+          <TestimonialCarousel />
         </div>
 
         {/* FAQ Section */}
