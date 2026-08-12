@@ -14,11 +14,15 @@ const firebaseConfig = {
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 
 let db: Firestore;
-try {
-  db = initializeFirestore(app, {
-    experimentalForceLongPolling: true
-  });
-} catch (e) {
+if (typeof window !== 'undefined') {
+  try {
+    db = initializeFirestore(app, {
+      experimentalForceLongPolling: true
+    });
+  } catch (e) {
+    db = getFirestore(app);
+  }
+} else {
   db = getFirestore(app);
 }
 

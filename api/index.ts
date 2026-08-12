@@ -1,12 +1,159 @@
 import express from "express";
 import cors from "cors";
-import { db } from "../src/lib/firebase"; // Adjust import path if needed.
+import { GoogleGenAI } from "@google/genai";
+import { db } from "../src/lib/firebase";
 import { collection, query, where, limit, getDocs, doc, getDoc, addDoc, updateDoc } from 'firebase/firestore';
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+
+// Safely lazy-initialize GoogleGenAI so it never throws on cold start if GEMINI_API_KEY is missing
+let aiInstance: GoogleGenAI | null = null;
+function getAI(): GoogleGenAI {
+  if (!aiInstance) {
+    aiInstance = new GoogleGenAI({
+      apiKey: process.env.GEMINI_API_KEY || "dummy-key",
+      httpOptions: {
+        headers: {
+          'User-Agent': 'aistudio-build',
+        },
+      },
+    });
+  }
+  return aiInstance;
+}
+
+// --- Public OpenAPI Specification Endpoint ---
+app.get("/api/openapi.json", (req, res) => {
+  const host = req.headers.host || 'mox.infni-t.online';
+  const protocol = req.headers['x-forwarded-proto'] || req.protocol || 'https';
+  const serverUrl = `${protocol}://${host}`;
+  
+  res.json({
+    openapi: "3.1.0",
+    info: {
+      title: "MoX Hunter AI Agent API",
+      version: "1.0.0",
+      description: "API for external AI agents to fetch leads and draft outreach."
+    },
+    servers: [{ url: serverUrl }],
+    paths: {
+      "/api/mcp/leads": {
+        get: {
+          operationId: "getLeads",
+          summary: "Fetch a list of leads",
+          parameters: [
+            { name: "industry", in: "query", schema: { type: "string" }, description: "Filter by industry" },
+            { name: "minScore", in: "query", schema: { type: "integer" }, description: "Filter by minimum lead score" }
+          ],
+          responses: {
+            "200": {
+              description: "List of leads",
+              content: { "application/json": { schema: { type: "object" } } }
+            }
+          }
+        },
+        post: {
+          operationId: "addLead",
+          summary: "Add a new lead to the CRM",
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    name: { type: "string" },
+                    industry: { type: "string" },
+                    city: { type: "string" },
+                    email: { type: "string" },
+                    phone: { type: "string" },
+                    website: { type: "string" },
+                    score: { type: "integer" }
+                  }
+                }
+              }
+            }
+          },
+          responses: {
+            "200": {
+              description: "Successfully added the lead",
+              content: { "application/json": { schema: { type: "object" } } }
+            }
+          }
+        }
+      },
+      "/api/mcp/leads/{id}": {
+        get: {
+          operationId: "getLeadById",
+          summary: "Fetch a single lead by ID",
+          parameters: [
+            { name: "id", in: "path", required: true, schema: { type: "string" }, description: "The ID of the lead" }
+          ],
+          responses: {
+            "200": {
+              description: "Single lead details",
+              content: { "application/json": { schema: { type: "object" } } }
+            }
+          }
+        },
+        patch: {
+          operationId: "updateLead",
+          summary: "Update lead properties",
+          parameters: [
+            { name: "id", in: "path", required: true, schema: { type: "string" }, description: "The ID of the lead" }
+          ],
+          responses: {
+            "200": {
+              description: "Lead updated successfully",
+              content: { "application/json": { schema: { type: "object" } } }
+            }
+          }
+        }
+      },
+      "/api/mcp/publish-prototype": {
+        post: {
+          operationId: "publishPrototype",
+          summary: "Publish a clean HTML prototype string",
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  required: ["htmlContent"],
+                  properties: {
+                    htmlContent: { type: "string" },
+                    title: { type: "string" },
+                    leadId: { type: "string" }
+                  }
+                }
+              }
+            }
+          },
+          responses: {
+            "200": {
+              description: "Prototype published successfully",
+              content: { "application/json": { schema: { type: "object" } } }
+            }
+          }
+        }
+      }
+    },
+    components: {
+      securitySchemes: {
+        ApiKeyAuth: {
+          type: "apiKey",
+          in: "header",
+          name: "mo-x-api-key"
+        }
+      }
+    },
+    security: [{ ApiKeyAuth: [] }]
+  });
+});
 
 // --- MCP API Authentication Middleware ---
 const mcpAuth = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
@@ -17,7 +164,7 @@ const mcpAuth = async (req: express.Request, res: express.Response, next: expres
   }
 
   // 1. Check against master env variable
-  if (apiKey === process.env.MOX_MCP_API_KEY) {
+  if (process.env.MOX_MCP_API_KEY && apiKey === process.env.MOX_MCP_API_KEY) {
     return next();
   }
 
@@ -41,13 +188,57 @@ const mcpAuth = async (req: express.Request, res: express.Response, next: expres
 // Apply auth to all /api/mcp/* routes
 app.use('/api/mcp', mcpAuth);
 
-// 1. POST /api/mcp/leads
+// 1. GET /api/mcp/leads
+app.get("/api/mcp/leads", async (req, res) => {
+  try {
+    const { industry, minScore } = req.query;
+    
+    let leadsQuery: any = collection(db, 'leads');
+    
+    if (industry && typeof industry === 'string') {
+      leadsQuery = query(leadsQuery, where('industry', '==', industry));
+    }
+    if (minScore && typeof minScore === 'string') {
+      leadsQuery = query(leadsQuery, where('score', '>=', Number(minScore)));
+    }
+    
+    leadsQuery = query(leadsQuery, limit(50));
+    
+    const snapshot = await getDocs(leadsQuery);
+    const leads = snapshot.docs.map(doc => ({ id: doc.id, ...(doc.data() as any) }));
+    
+    res.json({ success: true, count: leads.length, leads });
+  } catch (error) {
+    console.error('Error fetching leads via MCP:', error);
+    res.status(500).json({ error: 'Failed to fetch leads' });
+  }
+});
+
+// 2. GET /api/mcp/leads/:id
+app.get("/api/mcp/leads/:id", async (req, res) => {
+  try {
+    const leadRef = doc(db, 'leads', req.params.id);
+    const snapshot = await getDoc(leadRef);
+    
+    if (!snapshot.exists()) {
+      return res.status(404).json({ error: 'Lead not found' });
+    }
+    
+    res.json({ success: true, lead: { id: snapshot.id, ...snapshot.data() } });
+  } catch (error) {
+    console.error('Error fetching single lead via MCP:', error);
+    res.status(500).json({ error: 'Failed to fetch lead' });
+  }
+});
+
+// 3. POST /api/mcp/leads
 app.post("/api/mcp/leads", async (req, res) => {
   try {
-    const { name, industry, city, email, phone, website, score, insights, logo, tagline, colors, reviews } = req.body;
+    const { name, industry, city, email, phone, website, score, insights, logo, tagline, colors, reviews, company } = req.body;
     
     const leadData = {
-      name: name || '',
+      name: name || company || '',
+      company: company || name || '',
       industry: industry || '',
       city: city || '',
       email: email || '',
@@ -72,7 +263,7 @@ app.post("/api/mcp/leads", async (req, res) => {
   }
 });
 
-// 2. PATCH /api/mcp/leads/:id
+// 4. PATCH /api/mcp/leads/:id
 app.patch("/api/mcp/leads/:id", async (req, res) => {
   try {
     const leadId = req.params.id;
@@ -88,7 +279,7 @@ app.patch("/api/mcp/leads/:id", async (req, res) => {
   }
 });
 
-// 3. POST /api/mcp/publish-prototype
+// 5. POST /api/mcp/publish-prototype
 app.post("/api/mcp/publish-prototype", async (req, res) => {
   try {
     const { htmlContent, title, leadId } = req.body;
