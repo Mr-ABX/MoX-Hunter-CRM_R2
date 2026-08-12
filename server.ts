@@ -280,31 +280,47 @@ async function startServer() {
   // 2b. Add a new Lead
   app.post("/api/mcp/leads", mcpAuth, async (req, res) => {
     try {
-      const newLeadData = req.body;
+      const { name, industry, city, email, phone, website, score, insights, logo, tagline, colors, reviews } = req.body;
       
-      if (!newLeadData.company || !newLeadData.email || !newLeadData.industry) {
-        return res.status(400).json({ error: 'Missing required fields: company, email, industry' });
-      }
-
-      const leadWithDefaults = {
-        website: '',
-        contactPerson: '',
-        phone: '',
-        score: 50,
-        painPoints: [],
-        techStack: [],
-        notes: '',
+      const leadData = {
+        name: name || '',
+        industry: industry || '',
+        city: city || '',
+        email: email || '',
+        phone: phone || '',
+        website: website || '',
+        score: score || 0,
+        insights: insights || '',
+        logo: logo || '',
+        tagline: tagline || '',
+        colors: colors || [],
+        reviews: reviews || [],
         status: 'New',
-        ...newLeadData,
         createdAt: new Date().toISOString()
       };
 
-      const docRef = await addDoc(collection(db, 'leads'), leadWithDefaults);
+      const docRef = await addDoc(collection(db, 'leads'), leadData);
       
-      res.json({ success: true, lead: { id: docRef.id, ...leadWithDefaults } });
+      res.json({ success: true, id: docRef.id, lead: { id: docRef.id, ...leadData } });
     } catch (error) {
       console.error('Error adding lead via MCP:', error);
       res.status(500).json({ error: 'Failed to add lead' });
+    }
+  });
+
+  // 2c. Update an existing Lead
+  app.patch("/api/mcp/leads/:id", mcpAuth, async (req, res) => {
+    try {
+      const leadId = req.params.id;
+      const updates = req.body;
+      
+      const leadRef = doc(db, 'leads', leadId);
+      await updateDoc(leadRef, updates);
+      
+      res.json({ success: true, id: leadId, message: 'Lead updated successfully' });
+    } catch (error) {
+      console.error('Error updating lead via MCP:', error);
+      res.status(500).json({ error: 'Failed to update lead' });
     }
   });
 
@@ -356,6 +372,46 @@ async function startServer() {
 
 
   // --- Phase 1 & 2: Public Prototypes ---
+  // API Endpoint to publish prototype directly to messages collection
+  app.post("/api/mcp/publish-prototype", mcpAuth, async (req, res) => {
+    try {
+      const { htmlContent, title, leadId } = req.body;
+      
+      if (!htmlContent) {
+        return res.status(400).json({ error: 'Missing required field: htmlContent' });
+      }
+
+      // Clean markdown code blocks from htmlContent
+      const cleanedHtml = htmlContent.replace(/^```[a-z]*\n/i, '').replace(/\n```$/i, '').trim();
+
+      const messageData = {
+        canvasContent: cleanedHtml,
+        canvasMode: 'web',
+        title: title || 'Live Prototype',
+        leadId: leadId || null,
+        createdAt: Date.now()
+      };
+
+      const docRef = await addDoc(collection(db, 'messages'), messageData);
+      const docId = docRef.id;
+      const previewUrl = `https://mox.infni-t.online/preview/${docId}`;
+
+      if (leadId) {
+        try {
+          const leadRef = doc(db, 'leads', leadId);
+          await updateDoc(leadRef, { prototypeId: docId, previewUrl });
+        } catch (e) {
+          console.error(`Failed to update lead ${leadId} with prototypeId:`, e);
+        }
+      }
+
+      res.json({ success: true, previewUrl, id: docId, title: messageData.title });
+    } catch (error) {
+      console.error('Error publishing prototype via MCP:', error);
+      res.status(500).json({ error: 'Failed to publish prototype' });
+    }
+  });
+
   // API Endpoint to save custom prototypes
   app.post("/api/mcp/prototypes", mcpAuth, async (req, res) => {
     try {
