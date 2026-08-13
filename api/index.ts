@@ -16,16 +16,12 @@ const firebaseConfig = {
 };
 
 const firebaseApp = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-let db: Firestore;
-if (typeof window !== 'undefined') {
-  try {
-    db = initializeFirestore(firebaseApp, {
-      experimentalForceLongPolling: true
-    });
-  } catch (e) {
-    db = getFirestore(firebaseApp);
-  }
-} else {
+let db: any;
+try {
+  db = initializeFirestore(firebaseApp, {
+    experimentalForceLongPolling: true
+  });
+} catch (e) {
   db = getFirestore(firebaseApp);
 }
 
