@@ -13,15 +13,15 @@ async function startServer() {
   app.use(cors());
   app.use(express.json());
 
-  // Initialize Gemini client with proper user agent header
-  const ai = new GoogleGenAI({
-    apiKey: process.env.GEMINI_API_KEY || "PLACEHOLDER_KEY",
+  const getAI = () => new GoogleGenAI({
+    apiKey: process.env.GEMINI_API_KEY || "",
     httpOptions: {
       headers: {
         'User-Agent': 'aistudio-build',
       }
     }
   });
+
 
   // --- MCP API Authentication Middleware ---
   const mcpAuth = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
@@ -353,6 +353,7 @@ async function startServer() {
       
       Make it professional, concise, and compelling. Return only the email subject and body.`;
       
+      const ai = getAI();
       const response = await ai.models.generateContent({
         model: "gemini-3.5-flash",
         contents: prompt,
@@ -558,6 +559,7 @@ async function startServer() {
       
       You must return ONLY the requested format: ${modeInstruction} Do not include any other markdown formatting or explanation outside the tags.`;
 
+      const ai = getAI();
       const response = await ai.models.generateContent({
         model: "gemini-3.5-flash",
         contents: prompt,
@@ -696,6 +698,7 @@ Requirements:
 3. If any actionable tasks, follow-ups, or todo items are mentioned, extract and organize them as standard Markdown checklists (e.g., "- [ ] task name").
 4. Maintain a clean, concise, and professional tone. Return ONLY the Markdown note content without any extra conversational filler outside of the Markdown itself.`;
 
+      const ai = getAI();
       const response = await ai.models.generateContent({
         model: "gemini-3.5-flash",
         contents: prompt,
