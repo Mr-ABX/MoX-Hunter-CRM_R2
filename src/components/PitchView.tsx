@@ -15,7 +15,20 @@ export function PitchView() {
       if (!id) return;
       try {
         const docRef = doc(db, 'messages', id as string);
-        const docSnap = await getDoc(docRef);
+        let docSnap = await getDoc(docRef);
+
+        if (!docSnap.exists()) {
+          // Check prototypes collection fallback
+          const protoRef = doc(db, 'prototypes', id as string);
+          const protoSnap = await getDoc(protoRef);
+          if (protoSnap.exists()) {
+            const pData = protoSnap.data();
+            if (pData.htmlCode) {
+              setContent(pData.htmlCode);
+              return;
+            }
+          }
+        }
 
         if (docSnap.exists()) {
           const data = docSnap.data();

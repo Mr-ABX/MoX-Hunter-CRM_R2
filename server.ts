@@ -861,23 +861,22 @@ async function createUniqueSlug(baseText: string, customSlug?: string): Promise<
   });
 
   // Public Renderer Route
-  app.get("/preview/:prototypeId", async (req, res) => {
+  app.get("/preview/:prototypeId", async (req, res, next) => {
     try {
       const { prototypeId } = req.params;
-      const docRef = doc(db, 'prototypes', prototypeId);
-      const snapshot = await getDoc(docRef);
       
-      if (!snapshot.exists()) {
-        return res.status(404).send('<h1>404 - Prototype Not Found</h1><p>The requested prototype does not exist or has been removed.</p>');
-      }
-      
-      const data = snapshot.data();
-      const htmlCode = data.htmlCode || '';
-      const cssCode = data.cssCode || '';
-      const clientName = data.clientName || 'Live Prototype';
+      // 1. Check prototypes collection
+      try {
+        const docRef = doc(db, 'prototypes', prototypeId);
+        const snapshot = await getDoc(docRef);
+        
+        if (snapshot.exists()) {
+          const data = snapshot.data();
+          const htmlCode = data.htmlCode || '';
+          const cssCode = data.cssCode || '';
+          const clientName = data.clientName || 'Live Prototype';
 
-      // Construct a clean HTML document wrapping the custom code
-      const responseHtml = `
+          const responseHtml = `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -893,21 +892,77 @@ async function createUniqueSlug(baseText: string, customSlug?: string): Promise<
 <body>
     ${htmlCode}
     
-    <!-- Optional: Floating MO-X Watermark / Lead Capture button could go here -->
     <div style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;">
         <a href="https://mox.infni-t.online/" target="_blank" style="background: rgba(0,0,0,0.8); color: white; padding: 8px 12px; border-radius: 6px; text-decoration: none; font-family: sans-serif; font-size: 12px; border: 1px solid rgba(255,255,255,0.2);">
             Powered by <b>MO-X</b>
         </a>
     </div>
 </body>
-</html>
-      `;
-      
-      res.setHeader('Content-Type', 'text/html');
-      res.send(responseHtml);
+</html>`;
+          
+          res.setHeader('Content-Type', 'text/html');
+          return res.send(responseHtml);
+        }
+      } catch (err) {
+        // Continue to check messages
+      }
+
+      // 2. Check messages collection (where MCP agent & canvas pitch prototypes are saved)
+      try {
+        const msgRef = doc(db, 'messages', prototypeId);
+        const msgSnap = await getDoc(msgRef);
+        
+        if (msgSnap.exists()) {
+          let msgData = msgSnap.data();
+          
+          // Alias resolution
+          if (msgData.isAlias && msgData.originalId) {
+            const origSnap = await getDoc(doc(db, 'messages', msgData.originalId));
+            if (origSnap.exists()) {
+              msgData = origSnap.data();
+            }
+          }
+
+          if (msgData.canvasContent) {
+            const clientName = msgData.title || 'Live Prototype';
+            const content = msgData.canvasContent;
+
+            if (content.includes('<html') || content.includes('<!DOCTYPE html>') || content.includes('<body')) {
+              res.setHeader('Content-Type', 'text/html');
+              return res.send(content);
+            }
+
+            const responseHtml = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${clientName} - MO-X Preview</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    ${content}
+    <div style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;">
+        <a href="https://mox.infni-t.online/" target="_blank" style="background: rgba(0,0,0,0.8); color: white; padding: 8px 12px; border-radius: 6px; text-decoration: none; font-family: sans-serif; font-size: 12px; border: 1px solid rgba(255,255,255,0.2);">
+            Powered by <b>MO-X</b>
+        </a>
+    </div>
+</body>
+</html>`;
+            res.setHeader('Content-Type', 'text/html');
+            return res.send(responseHtml);
+          }
+        }
+      } catch (err) {
+        // Fallback to SPA
+      }
+
+      // 3. Fall through to SPA PitchView route
+      return next();
     } catch (error) {
       console.error('Error rendering public prototype:', error);
-      res.status(500).send('<h1>500 - Internal Server Error</h1><p>Failed to load the prototype.</p>');
+      return next();
     }
   });
 

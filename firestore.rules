@@ -8,12 +8,18 @@ service cloud.firestore {
     }
 
     // ---------------------------------------------------------
-    // PUBLIC PITCH LINKS
+    // PUBLIC PITCH LINKS & PROTOTYPES
     // ---------------------------------------------------------
     match /messages/{messageId} {
       // Anyone can READ a specific message if they have the exact URL/ID (for client preview links)
       allow get: if true;
       // Only the admin can query/list all messages or write to them
+      allow list, write: if isAdmin();
+    }
+
+    match /prototypes/{prototypeId} {
+      // Anyone can READ a specific prototype if they have the exact URL/ID
+      allow get: if true;
       allow list, write: if isAdmin();
     }
 

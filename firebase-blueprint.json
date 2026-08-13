@@ -1,0 +1,59 @@
+{
+  "entities": {
+    "Message": {
+      "title": "Message",
+      "description": "Chat messages and published prototypes / pitches",
+      "type": "object",
+      "properties": {
+        "text": { "type": "string", "description": "Message content text" },
+        "title": { "type": "string", "description": "Draft or prototype title" },
+        "status": { "type": "string", "description": "Status (draft, published, etc.)" },
+        "canvasMode": { "type": "string", "description": "Canvas mode (WEB, GRAPHIC, SVG, CONTENT)" },
+        "canvasContent": { "type": "string", "description": "Full HTML/SVG/text prototype payload" },
+        "leadId": { "type": "string", "description": "Associated lead ID" },
+        "userId": { "type": "string", "description": "Author user ID" },
+        "createdAt": { "type": "number", "description": "Creation timestamp in ms" }
+      }
+    },
+    "Prototype": {
+      "title": "Prototype",
+      "description": "Generated HTML/CSS prototypes",
+      "type": "object",
+      "properties": {
+        "leadId": { "type": "string", "description": "Associated lead ID" },
+        "clientName": { "type": "string", "description": "Client or company name" },
+        "htmlCode": { "type": "string", "description": "HTML source code" },
+        "cssCode": { "type": "string", "description": "CSS styles" },
+        "createdAt": { "type": "string", "description": "ISO timestamp" }
+      }
+    },
+    "Lead": {
+      "title": "Lead",
+      "description": "CRM Lead record",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Contact or business name" },
+        "company": { "type": "string", "description": "Company name" },
+        "email": { "type": "string", "description": "Email address" },
+        "phone": { "type": "string", "description": "Phone number" },
+        "niche": { "type": "string", "description": "Industry or niche" },
+        "city": { "type": "string", "description": "Location / City" },
+        "status": { "type": "string", "description": "Lead pipeline status" }
+      }
+    }
+  },
+  "firestore": {
+    "/messages/{messageId}": {
+      "schema": "Message",
+      "description": "Collection of chat messages and generated prototype drafts"
+    },
+    "/prototypes/{prototypeId}": {
+      "schema": "Prototype",
+      "description": "Collection of HTML prototypes"
+    },
+    "/leads/{leadId}": {
+      "schema": "Lead",
+      "description": "Collection of CRM leads"
+    }
+  }
+}
