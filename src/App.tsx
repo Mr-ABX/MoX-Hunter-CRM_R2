@@ -60,6 +60,8 @@ export interface Message {
   text: string;
   canvasContent?: string | null;
   canvasMode?: CanvasMode;
+  title?: string;
+  status?: string;
   leadId?: string | null;
   sessionId?: string | null;
   userId: string;

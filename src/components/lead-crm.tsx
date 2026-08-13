@@ -57,9 +57,9 @@ export function LeadCRM({ leads, onGeneratePrototype, onNavigate, onUpdateLead, 
   const [filterStatus, setFilterStatus] = useState<string>('all');
 
   const filteredLeads = leads.filter(lead => {
-    const matchesSearch = lead.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          lead.niche.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          lead.city.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch = (lead.name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          (lead.niche || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          (lead.city || "").toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus = filterStatus === 'all' || lead.status === filterStatus;
     return matchesSearch && matchesStatus;
   });

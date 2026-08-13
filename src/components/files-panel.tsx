@@ -22,7 +22,8 @@ export function FilesPanel({ messages, leads, initialLeadId, isCompact = false, 
   const assets = messages.filter(m => m.canvasContent && m.canvasMode);
   
   const filteredAssets = assets.filter(asset => {
-    const matchesSearch = asset.text.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    const searchText = (asset.text || asset.title || '').toLowerCase();
+    const matchesSearch = searchText.includes(searchQuery.toLowerCase()) || 
                           (asset.canvasContent && asset.canvasContent.toLowerCase().includes(searchQuery.toLowerCase()));
     const matchesFilter = filterMode === 'all' || asset.canvasMode === filterMode;
     const matchesLead = !selectedLeadId || asset.leadId === selectedLeadId;

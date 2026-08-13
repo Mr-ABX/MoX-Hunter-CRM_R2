@@ -23,8 +23,8 @@ export function ContractsPanel({ leads }: ContractsPanelProps) {
   const contractLeads = leads.filter(l => l.status === 'Closed' || l.contractStatus);
   
   const filteredLeads = contractLeads.filter(l => 
-    l.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    l.niche.toLowerCase().includes(searchQuery.toLowerCase())
+    (l.name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (l.niche || "").toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const handleEditClick = (lead: Lead) => {
