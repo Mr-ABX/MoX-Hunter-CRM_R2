@@ -104,6 +104,15 @@ app.get("/api/openapi.json", (req, res) => {
               "type": "integer"
             },
             "description": "Filter by minimum lead score"
+          },
+          {
+            "name": "hasWebsite",
+            "in": "query",
+            "description": "Filter leads by website presence (true or false)",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
           }
         ],
         "responses": {
@@ -156,6 +165,25 @@ app.get("/api/openapi.json", (req, res) => {
                   "userId": {
                     "type": "string",
                     "description": "Optional user ID associated with this lead"
+                  },
+                  "rating": {
+                    "type": "number",
+                    "description": "Google or Yelp rating"
+                  },
+                  "reviewCount": {
+                    "type": "integer",
+                    "description": "Total number of reviews"
+                  },
+                  "socials": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "List of social media URLs"
+                  },
+                  "niche": {
+                    "type": "string",
+                    "description": "Specific niche (same as industry)"
                   }
                 }
               }
@@ -550,21 +578,28 @@ app.use('/api/mcp', mcpAuth);
 // 1. GET /api/mcp/leads
 app.get("/api/mcp/leads", async (req, res) => {
   try {
-    const { industry, minScore } = req.query;
-    
-    let leadsQuery: any = collection(db, 'leads');
-    
-    if (industry && typeof industry === 'string') {
-      leadsQuery = query(leadsQuery, where('industry', '==', industry));
-    }
-    if (minScore && typeof minScore === 'string') {
-      leadsQuery = query(leadsQuery, where('score', '>=', Number(minScore)));
-    }
-    
-    leadsQuery = query(leadsQuery, limit(50));
-    
-    const snapshot = await getDocs(leadsQuery);
-    const leads = snapshot.docs.map(doc => ({ id: doc.id, ...(doc.data() as any) }));
+          const { industry, minScore, hasWebsite } = req.query;
+      
+      let leadsQuery: any = collection(db, 'leads');
+      
+      if (industry && typeof industry === 'string') {
+        leadsQuery = query(leadsQuery, where('industry', '==', industry));
+      }
+      if (minScore && typeof minScore === 'string') {
+        leadsQuery = query(leadsQuery, where('score', '>=', Number(minScore)));
+      }
+      
+      // Limit to 100 for better post-fetch filtering
+      leadsQuery = query(leadsQuery, limit(100));
+      
+      const snapshot = await getDocs(leadsQuery);
+      let leads = snapshot.docs.map(doc => ({ id: doc.id, ...(doc.data() as any) }));
+      
+      if (hasWebsite === 'true') {
+        leads = leads.filter(lead => lead.website && lead.website.trim() !== '');
+      } else if (hasWebsite === 'false') {
+        leads = leads.filter(lead => !lead.website || lead.website.trim() === '');
+      }
     
     res.json({ success: true, count: leads.length, leads });
   } catch (error) {
@@ -592,57 +627,112 @@ app.get("/api/mcp/leads/:id", async (req, res) => {
 
 // 3. POST /api/mcp/leads
 app.post("/api/mcp/leads", async (req, res) => {
-  try {
-    const { name, industry, city, email, phone, website, score, insights, logo, tagline, colors, reviews, company, userId } = req.body;
-    
-    const leadData = {
-      name: name || company || '',
-      company: company || name || '',
-      industry: industry || '',
-      city: city || '',
-      email: email || '',
-      phone: phone || '',
-      website: website || '',
-      score: score || 0,
-      insights: insights || '',
-      logo: logo || '',
-      tagline: tagline || '',
-      colors: colors || [],
-      reviews: reviews || [],
-      status: 'New',
-      userId: userId || null,
-      createdAt: new Date().toISOString()
-    };
+    try {
+      const { name, company, industry, niche, city, email, phone, website, score, insights, logo, tagline, colors, reviews, reviewCount, rating, socials, userId } = req.body;
+      
+      const finalName = name || company || '';
+      const finalCompany = company || name || '';
+      const finalNiche = niche || industry || '';
+      
+      const leadData: any = {
+        name: finalName,
+        company: finalCompany,
+        niche: finalNiche,
+        industry: finalNiche,
+        city: city || '',
+        email: email || '',
+        phone: phone || '',
+        website: website || '',
+        score: score || 0,
+        insights: insights || '',
+        logo: logo || '',
+        tagline: tagline || '',
+        colors: colors || [],
+        reviews: reviews || reviewCount || 0,
+        rating: rating || 0,
+        socials: socials || [],
+        status: 'Qualified',
+        updatedAt: new Date().toISOString()
+      };
+      
+      if (userId) {
+        leadData.userId = userId;
+      }
 
-    const docRef = await addDoc(collection(db, 'leads'), leadData);
-    
-    res.json({ success: true, id: docRef.id, lead: { id: docRef.id, ...leadData } });
-  } catch (error) {
-    console.error('Error adding lead via MCP:', error);
-    res.status(500).json({ error: 'Failed to add lead' });
-  }
-});
+      // Upsert logic: Check if lead exists by website or company name
+      const leadsRef = collection(db, 'leads');
+      let existingDocId = null;
+
+      if (website) {
+        const qWeb = query(leadsRef, where('website', '==', website), limit(1));
+        const snapWeb = await getDocs(qWeb);
+        if (!snapWeb.empty) existingDocId = snapWeb.docs[0].id;
+      }
+      
+      if (!existingDocId && finalCompany) {
+        const qCompany = query(leadsRef, where('company', '==', finalCompany), limit(1));
+        const snapCompany = await getDocs(qCompany);
+        if (!snapCompany.empty) existingDocId = snapCompany.docs[0].id;
+      }
+      
+      if (!existingDocId && finalName) {
+        const qName = query(leadsRef, where('name', '==', finalName), limit(1));
+        const snapName = await getDocs(qName);
+        if (!snapName.empty) existingDocId = snapName.docs[0].id;
+      }
+
+      if (existingDocId) {
+        const docRef = doc(db, 'leads', existingDocId);
+        await updateDoc(docRef, leadData);
+        res.json({ success: true, message: "Lead updated successfully", id: existingDocId });
+      } else {
+        leadData.createdAt = new Date().toISOString();
+        const docRef = await addDoc(leadsRef, leadData);
+        res.json({ success: true, message: "Lead added successfully", id: docRef.id });
+      }
+    } catch (error) {
+      console.error('Error adding/updating lead via MCP:', error);
+      res.status(500).json({ error: 'Failed to add/update lead' });
+    }
+  });
 
 // 4. PATCH /api/mcp/leads/:id
 app.patch("/api/mcp/leads/:id", async (req, res) => {
-  try {
-    const leadId = req.params.id;
-    const updates = req.body;
-    
-    const leadRef = doc(db, 'leads', leadId);
-    await updateDoc(leadRef, updates);
-    
-    res.json({ success: true, id: leadId, message: 'Lead updated successfully' });
-  } catch (error) {
-    console.error('Error updating lead via MCP:', error);
-    res.status(500).json({ error: 'Failed to update lead' });
-  }
-});
+    try {
+      const leadId = req.params.id;
+      const updates = req.body;
+      
+      // Also map industry to niche for patch if provided
+      if (updates.industry && !updates.niche) {
+        updates.niche = updates.industry;
+      }
+      if (updates.reviewCount && !updates.reviews) {
+        updates.reviews = updates.reviewCount;
+      }
+      
+      // Explicitly preserve rich data mining fields
+      if (updates.rating !== undefined) updates.rating = parseFloat(updates.rating) || 0;
+      if (updates.reviews !== undefined) updates.reviews = parseInt(updates.reviews) || 0;
+      if (updates.socials !== undefined && !Array.isArray(updates.socials)) {
+        updates.socials = typeof updates.socials === 'string' ? [updates.socials] : [];
+      }
+      
+      updates.updatedAt = new Date().toISOString();
+      
+      const leadRef = doc(db, 'leads', leadId);
+      await updateDoc(leadRef, updates);
+      
+      res.json({ success: true, message: "Lead updated" });
+    } catch (error) {
+      console.error('Error updating lead via MCP:', error);
+      res.status(500).json({ error: 'Failed to update lead' });
+    }
+  });
 
 // 5. POST /api/mcp/publish-prototype
 app.post("/api/mcp/publish-prototype", async (req, res) => {
   try {
-    const { content, htmlContent, title, leadId, canvasMode = 'WEB', status = 'published', customSlug } = req.body;
+    const { content, htmlContent, title, leadId, canvasMode = 'WEB', status = 'published', customSlug, userId } = req.body;
     const contentToUse = content || htmlContent;
     
     if (!contentToUse) {
@@ -674,7 +764,8 @@ app.post("/api/mcp/publish-prototype", async (req, res) => {
       status: status,
       isAiGenerated: true,
       leadId: leadId || null,
-      createdAt: Date.now()
+      userId: userId || leadData?.userId || null,
+        createdAt: Date.now()
     };
 
     await setDoc(doc(db, 'messages', docId), messageData);
@@ -701,7 +792,7 @@ app.post("/api/mcp/publish-prototype", async (req, res) => {
 // 5b. POST /api/mcp/generate-preview
 app.post("/api/mcp/generate-preview", async (req, res) => {
   try {
-    const { leadId, prototypeType, description, businessContext, customSlug } = req.body;
+    const { leadId, prototypeType, description, businessContext, customSlug, userId } = req.body;
     
     if (!leadId) {
       return res.status(400).json({ error: 'Missing required field: leadId' });
@@ -827,7 +918,7 @@ app.post("/api/mcp/generate-preview", async (req, res) => {
       isAiGenerated: true,
       leadId: leadId,
       sessionId: sessionId,
-      userId: leadData.userId || 'automated-agent',
+      userId: userId || leadData?.userId || 'automated-agent',
       createdAt: Date.now()
     };
     

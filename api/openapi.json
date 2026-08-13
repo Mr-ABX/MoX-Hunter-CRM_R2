@@ -31,6 +31,15 @@
               "type": "integer"
             },
             "description": "Filter by minimum lead score"
+          },
+          {
+            "name": "hasWebsite",
+            "in": "query",
+            "description": "Filter leads by website presence (true or false)",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
           }
         ],
         "responses": {
@@ -83,6 +92,25 @@
                   "userId": {
                     "type": "string",
                     "description": "Optional user ID associated with this lead"
+                  },
+                  "rating": {
+                    "type": "number",
+                    "description": "Google or Yelp rating"
+                  },
+                  "reviewCount": {
+                    "type": "integer",
+                    "description": "Total number of reviews"
+                  },
+                  "socials": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "List of social media URLs"
+                  },
+                  "niche": {
+                    "type": "string",
+                    "description": "Specific niche (same as industry)"
                   }
                 }
               }

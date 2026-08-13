@@ -25,7 +25,7 @@ export function LeadCRM({ leads, onGeneratePrototype, onNavigate, onUpdateLead, 
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [detailsLead, setDetailsLead] = useState<Lead | null>(null);
+  const [detailsLead, setFilesLead] = useState<Lead | null>(null);
   const [viewMode, setViewMode] = useState<'list' | 'board'>('list');
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
   const [editLead, setEditLead] = useState<Lead | null>(null);
@@ -371,10 +371,10 @@ export function LeadCRM({ leads, onGeneratePrototype, onNavigate, onUpdateLead, 
                             </span>
                           )}
                           <button 
-                            onClick={() => setDetailsLead(lead)}
+                            onClick={() => onSelectLead(lead.id)}
                             className="text-xs text-zinc-400 hover:text-zinc-100 bg-zinc-800/50 hover:bg-zinc-700 px-2 py-0.5 rounded-full border border-zinc-700 transition-colors"
                           >
-                            View Details
+                            Files & Assets
                           </button>
                         </div>
                       </td>
@@ -554,10 +554,10 @@ export function LeadCRM({ leads, onGeneratePrototype, onNavigate, onUpdateLead, 
                           </span>
                         )}
                         <button 
-                          onClick={() => setDetailsLead(lead)}
+                          onClick={() => onSelectLead(lead.id)}
                           className="text-[10px] font-medium text-zinc-400 hover:text-zinc-100 bg-zinc-800/50 hover:bg-zinc-700 px-2 py-0.5 rounded-full border border-zinc-700 transition-colors"
                         >
-                          Details
+                          Files
                         </button>
                       </div>
                       
@@ -909,7 +909,7 @@ export function LeadCRM({ leads, onGeneratePrototype, onNavigate, onUpdateLead, 
           </div>
         )}
       </AnimatePresence>
-      {/* Lead Details Modal */}
+      {/* Lead Files Modal */}
       <AnimatePresence>
         {detailsLead && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -918,7 +918,7 @@ export function LeadCRM({ leads, onGeneratePrototype, onNavigate, onUpdateLead, 
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-              onClick={() => setDetailsLead(null)}
+              onClick={() => setFilesLead(null)}
             />
             <motion.div 
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -931,7 +931,7 @@ export function LeadCRM({ leads, onGeneratePrototype, onNavigate, onUpdateLead, 
                   <h2 className="text-2xl font-display font-semibold text-zinc-100">{detailsLead.name}</h2>
                   <p className="text-sm text-zinc-400 mt-1">{detailsLead.niche} in {detailsLead.city}</p>
                 </div>
-                <button onClick={() => setDetailsLead(null)} className="p-2 text-zinc-500 hover:text-zinc-300 rounded-lg bg-zinc-800/50 hover:bg-zinc-800 transition-colors">
+                <button onClick={() => setFilesLead(null)} className="p-2 text-zinc-500 hover:text-zinc-300 rounded-lg bg-zinc-800/50 hover:bg-zinc-800 transition-colors">
                   <X className="w-5 h-5" />
                 </button>
               </div>

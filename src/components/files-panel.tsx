@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { FileText, Image as ImageIcon, LayoutTemplate, PenTool, AlignLeft, Search, Filter, ChevronLeft, Folder, MoreVertical, ExternalLink, Trash2, X } from 'lucide-react';
+import { FileText, Image as ImageIcon, LayoutTemplate, PenTool, AlignLeft, Search, Filter, ChevronLeft, Folder, MoreVertical, ExternalLink, Trash2, X , List, Grid } from 'lucide-react';
 import { Message, Lead } from '@/App';
 import { ConfirmModal } from './confirm-modal';
 
@@ -15,6 +15,7 @@ interface FilesPanelProps {
 export function FilesPanel({ messages, leads, initialLeadId, isCompact = false, onDeleteAsset }: FilesPanelProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterMode, setFilterMode] = useState<string>('all');
+  const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
   const [selectedLeadId, setSelectedLeadId] = useState<string | null>(initialLeadId || null);
   const [deleteConfirm, setDeleteConfirm] = useState<{ isOpen: boolean; assetId: string }>({ isOpen: false, assetId: '' });
 

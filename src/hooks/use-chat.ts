@@ -51,9 +51,10 @@ export function useChat(
     }, (error) => console.error('Error fetching sessions:', error));
 
     // 2. Assets (Messages with canvasMode - needed for FilesPanel)
-    const qAssets = query(collection(db, 'messages'), where('userId', '==', userId));
-    const unsubAssets = onSnapshot(qAssets, (snapshot) => {
-      setAssets(snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id } as Message)).filter(m => m.canvasMode != null));
+    const unsubAssets = onSnapshot(collection(db, 'messages'), (snapshot) => {
+      const allAssets = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id } as Message)).filter(m => m.canvasMode != null);
+      const filteredAssets = allAssets.filter(m => !m.userId || m.userId === userId);
+      setAssets(filteredAssets);
     }, (error) => console.error('Error fetching assets:', error));
 
     // 3. Agent Sessions
