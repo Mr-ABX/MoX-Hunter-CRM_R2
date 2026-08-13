@@ -99,6 +99,7 @@ export interface Note {
 
 export interface Lead {
   id: string;
+  userId?: string;
   name: string;
   niche: string;
   city: string;

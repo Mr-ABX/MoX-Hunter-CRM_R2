@@ -20,10 +20,15 @@ export function useLeads(userId: string | undefined) {
       return;
     }
 
-    const q = query(collection(db, 'leads'), where('userId', '==', userId));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      setLeads(snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id } as Lead)));
-    }, (error) => console.error('Error fetching leads:', error));
+    const unsubscribe = onSnapshot(
+      collection(db, 'leads'),
+      (snapshot) => {
+        const allLeads = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id } as Lead));
+        const filteredLeads = allLeads.filter(lead => !lead.userId || lead.userId === userId);
+        setLeads(filteredLeads);
+      },
+      (error) => console.error('Error fetching leads:', error)
+    );
 
     return () => unsubscribe();
   }, [userId]);

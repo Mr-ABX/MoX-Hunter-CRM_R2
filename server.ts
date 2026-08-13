@@ -4,7 +4,7 @@ import cors from "cors";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI } from "@google/genai";
 import { db } from "./src/lib/firebase";
-import { collection, query, where, limit, getDocs, doc, getDoc, addDoc, updateDoc, deleteDoc, arrayUnion } from 'firebase/firestore';
+import { collection, query, where, limit, getDocs, doc, getDoc, addDoc, updateDoc, deleteDoc, arrayUnion, setDoc } from 'firebase/firestore';
 
 async function startServer() {
   const app = express();
@@ -12,6 +12,31 @@ async function startServer() {
 
   app.use(cors());
   app.use(express.json());
+
+  
+async function createUniqueSlug(baseText: string, customSlug?: string): Promise<string> {
+  let base = (customSlug || baseText || 'prototype')
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+  
+  if (!base) base = 'prototype';
+  base = base.replace(/-\d+$/, '');
+
+  let version = 1;
+  while (version < 100) {
+    const versionStr = version < 10 ? `0${version}` : `${version}`;
+    const candidateSlug = `${base}-${versionStr}`;
+    const docRef = doc(db, 'messages', candidateSlug);
+    const docSnap = await getDoc(docRef);
+    if (!docSnap.exists()) {
+      return candidateSlug;
+    }
+    version++;
+  }
+  return `${base}-${Date.now()}`;
+}
 
   const getAI = () => new GoogleGenAI({
     apiKey: process.env.GEMINI_API_KEY || "",
@@ -57,224 +82,445 @@ async function startServer() {
   // --- MCP OpenAPI Spec ---
   app.get("/api/openapi.json", (req, res) => {
     const serverUrl = `${req.protocol}://${req.get('host')}`;
-    res.json({
-      openapi: "3.1.0",
-      info: {
-        title: "MoX Hunter AI Agent API",
-        version: "1.0.0",
-        description: "API for external AI agents to fetch leads and draft outreach."
-      },
-      servers: [{ url: serverUrl }],
-      paths: {
-        "/api/mcp/leads/{id}/activity": {
-          post: {
-            operationId: "addLeadActivity",
-            summary: "Log an activity for a lead",
-            parameters: [
-              { name: "id", in: "path", required: true, schema: { type: "string" }, description: "The ID of the lead" }
-            ],
-            requestBody: {
-              required: true,
-              content: {
-                "application/json": {
-                  schema: {
-                    type: "object",
-                    properties: {
-                      type: { type: "string" },
-                      subject: { type: "string" },
-                      body: { type: "string" },
-                      sentAt: { type: "string" },
-                      status: { type: "string" }
-                    }
-                  }
-                }
-              }
+    const spec = {
+  "openapi": "3.1.0",
+  "info": {
+    "title": "MoX Hunter AI Agent API",
+    "version": "1.0.0",
+    "description": "API for external AI agents to fetch leads, generate prototypes, and manage CRM outreach."
+  },
+  "servers": [
+    {
+      "url": "https://mox.infni-t.online"
+    }
+  ],
+  "paths": {
+    "/api/mcp/leads": {
+      "get": {
+        "operationId": "getLeads",
+        "summary": "Fetch a list of leads",
+        "parameters": [
+          {
+            "name": "industry",
+            "in": "query",
+            "schema": {
+              "type": "string"
             },
-            responses: {
-              "200": {
-                description: "Activity logged successfully",
-                content: { "application/json": { schema: { type: "object" } } }
-              }
-            }
-          }
-        },
-        "/api/mcp/stats": {
-          get: {
-            operationId: "getStats",
-            summary: "Get CRM pipeline stats",
-            responses: {
-              "200": {
-                description: "Pipeline stats",
-                content: { "application/json": { schema: { type: "object" } } }
-              }
-            }
-          }
-        },
-
-        "/api/mcp/leads": {
-          get: {
-            operationId: "getLeads",
-            summary: "Fetch a list of leads",
-            parameters: [
-              { name: "industry", in: "query", schema: { type: "string" }, description: "Filter by industry" },
-              { name: "minScore", in: "query", schema: { type: "integer" }, description: "Filter by minimum lead score" }
-            ],
-            responses: {
-              "200": {
-                description: "List of leads",
-                content: { "application/json": { schema: { type: "object" } } }
-              }
-            }
+            "description": "Filter by industry"
           },
-          post: {
-            operationId: "addLead",
-            summary: "Add a new lead to the CRM",
-            requestBody: {
-              required: true,
-              content: {
-                "application/json": {
-                  schema: {
-                    type: "object",
-                    required: ["company", "email", "industry", "score"],
-                    properties: {
-                      company: { type: "string" },
-                      website: { type: "string" },
-                      contactPerson: { type: "string" },
-                      email: { type: "string" },
-                      phone: { type: "string" },
-                      industry: { type: "string" },
-                      score: { type: "integer" },
-                      painPoints: { type: "array", items: { type: "string" } },
-                      techStack: { type: "array", items: { type: "string" } },
-                      notes: { type: "string" },
-                      status: { type: "string", description: "e.g. 'New', 'Contacted', 'Built', 'Lost'" }
-                    }
-                  }
-                }
-              }
+          {
+            "name": "minScore",
+            "in": "query",
+            "schema": {
+              "type": "integer"
             },
-            responses: {
-              "200": {
-                description: "Successfully added the lead",
-                content: { "application/json": { schema: { type: "object" } } }
-              }
-            }
+            "description": "Filter by minimum lead score"
           }
-        },
-        "/api/mcp/leads/{id}": {
-          get: {
-            operationId: "getLeadById",
-            summary: "Fetch a single lead by ID",
-            parameters: [
-              { name: "id", in: "path", required: true, schema: { type: "string" }, description: "The ID of the lead" }
-            ],
-            responses: {
-              "200": {
-                description: "Single lead details",
-                content: { "application/json": { schema: { type: "object" } } }
-              }
-            }
-          }
-        },
-        "/api/mcp/outreach": {
-          post: {
-            operationId: "draftOutreach",
-            summary: "Draft an outreach email for a lead",
-            requestBody: {
-              required: true,
-              content: {
-                "application/json": {
-                  schema: {
-                    type: "object",
-                    required: ["leadId", "angle"],
-                    properties: {
-                      leadId: { type: "string", description: "The ID of the lead to draft an email for" },
-                      angle: { type: "string", description: "The angle or strategy to use in the email (e.g. 'direct pitch', 'soft value-add')" }
-                    }
-                  }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of leads",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
                 }
-              }
-            },
-            responses: {
-              "200": {
-                description: "Generated draft",
-                content: { "application/json": { schema: { type: "object" } } }
-              }
-            }
-          }
-        },
-
-        "/api/mcp/prototypes": {
-          post: {
-            operationId: "uploadPrototype",
-            summary: "Upload raw HTML/CSS prototype generated by the agent and return a live public preview link",
-            requestBody: {
-              required: true,
-              content: {
-                "application/json": {
-                  schema: {
-                    type: "object",
-                    required: ["htmlCode"],
-                    properties: {
-                      leadId: { type: "string", description: "Optional ID of the lead to associate the prototype with" },
-                      clientName: { type: "string", description: "Name of the client/prospect" },
-                      htmlCode: { type: "string", description: "Raw HTML code for the prototype" },
-                      cssCode: { type: "string", description: "Optional raw CSS code" },
-                      metadata: { type: "object", description: "Optional metadata (e.g., industry, theme colors)" }
-                    }
-                  }
-                }
-              }
-            },
-            responses: {
-              "200": {
-                description: "Successfully uploaded prototype and generated live link",
-                content: { "application/json": { schema: { type: "object" } } }
-              }
-            }
-          }
-        },
-        "/api/mcp/generate-preview": {
-          post: {
-            operationId: "generatePreview",
-            summary: "Generate a custom prototype (web, graphic, or content) and return a live preview link",
-            requestBody: {
-              required: true,
-              content: {
-                "application/json": {
-                  schema: {
-                    type: "object",
-                    required: ["leadId"],
-                    properties: {
-                      leadId: { type: "string", description: "The ID of the lead to associate the prototype with" },
-                      prototypeType: { type: "string", description: "The type of prototype to generate: 'WEB', 'GRAPHIC', 'SVG', or 'CONTENT' (defaults to 'WEB')" },
-                      description: { type: "string", description: "A description of what the prototype should contain (e.g., custom sections, specific themes)" },
-                      businessContext: { type: "string", description: "Optional override/enrichment about the lead's business context to customize the pitch" }
-                    }
-                  }
-                }
-              }
-            },
-            responses: {
-              "200": {
-                "description": "Generated live preview link and content",
-                "content": { "application/json": { schema: { type: "object" } } }
               }
             }
           }
         }
       },
-      components: {
-        securitySchemes: {
-          ApiKeyAuth: {
-            type: "apiKey",
-            in: "header",
-            name: "mo-x-api-key"
+      "post": {
+        "operationId": "addLead",
+        "summary": "Add a new lead to the CRM",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "company": {
+                    "type": "string"
+                  },
+                  "industry": {
+                    "type": "string"
+                  },
+                  "city": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "phone": {
+                    "type": "string"
+                  },
+                  "website": {
+                    "type": "string"
+                  },
+                  "score": {
+                    "type": "integer"
+                  },
+                  "userId": {
+                    "type": "string",
+                    "description": "Optional user ID associated with this lead"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully added the lead",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/mcp/leads/{id}": {
+      "get": {
+        "operationId": "getLeadById",
+        "summary": "Fetch a single lead by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the lead"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Single lead details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
           }
         }
       },
-      security: [{ ApiKeyAuth: [] }]
-    });
+      "patch": {
+        "operationId": "updateLead",
+        "summary": "Update lead properties",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the lead"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lead updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteLead",
+        "summary": "Delete a lead from the CRM",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the lead"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lead deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/mcp/leads/{id}/activity": {
+      "post": {
+        "operationId": "addLeadActivity",
+        "summary": "Log an activity for a lead and update status to Outreach Sent",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the lead"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "default": "email_sent"
+                  },
+                  "subject": {
+                    "type": "string"
+                  },
+                  "body": {
+                    "type": "string"
+                  },
+                  "sentAt": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Activity logged successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/mcp/stats": {
+      "get": {
+        "operationId": "getStats",
+        "summary": "Get pipeline statistics",
+        "responses": {
+          "200": {
+            "description": "Pipeline statistics",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/mcp/publish-prototype": {
+      "post": {
+        "operationId": "publishPrototype",
+        "summary": "Publish a prototype with clean slug and versioning",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "content"
+                ],
+                "properties": {
+                  "content": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "leadId": {
+                    "type": "string"
+                  },
+                  "canvasMode": {
+                    "type": "string",
+                    "enum": [
+                      "WEB",
+                      "GRAPHIC",
+                      "SVG",
+                      "CONTENT"
+                    ],
+                    "default": "WEB"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "draft",
+                      "published"
+                    ],
+                    "default": "published"
+                  },
+                  "customSlug": {
+                    "type": "string",
+                    "description": "Optional custom slug prefix (e.g. arrington-roofing)"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Prototype published successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/mcp/generate-preview": {
+      "post": {
+        "operationId": "generatePreview",
+        "summary": "Generate AI prototype using Gemini and publish with clean slug",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "leadId"
+                ],
+                "properties": {
+                  "leadId": {
+                    "type": "string"
+                  },
+                  "prototypeType": {
+                    "type": "string",
+                    "enum": [
+                      "WEB",
+                      "GRAPHIC",
+                      "SVG",
+                      "CONTENT"
+                    ],
+                    "default": "WEB"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "businessContext": {
+                    "type": "string"
+                  },
+                  "customSlug": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Prototype generated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/mcp/outreach": {
+      "post": {
+        "operationId": "draftOutreach",
+        "summary": "Draft a personalized outreach email for a lead",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "leadId"
+                ],
+                "properties": {
+                  "leadId": {
+                    "type": "string"
+                  },
+                  "angle": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Outreach drafted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "mo-x-api-key"
+      }
+    }
+  },
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ]
+};
+    spec.servers = [{ url: serverUrl }, { url: "https://mox.infni-t.online" }];
+    res.json(spec);
   });
 
   // --- MCP API Routes ---
@@ -422,34 +668,45 @@ async function startServer() {
   // API Endpoint to publish prototype directly to messages collection
   app.post("/api/mcp/publish-prototype", mcpAuth, async (req, res) => {
     try {
-      const { content, title, leadId, canvasMode = 'WEB', status = 'published' } = req.body;
-      const contentToUse = content || req.body.htmlContent; // fallback for backwards compatibility
+      const { content, htmlContent, title, leadId, canvasMode = 'WEB', status = 'published', customSlug } = req.body;
+      const contentToUse = content || htmlContent;
       
       if (!contentToUse) {
         return res.status(400).json({ error: 'Missing required field: content' });
       }
 
-      // Clean markdown code blocks from content
       const cleanedContent = contentToUse.replace(/^```[a-z]*\n/i, '').replace(/\n```$/i, '').trim();
-
       const finalCanvasMode = canvasMode.toUpperCase();
+
+      let leadData: any = null;
+      if (leadId) {
+        try {
+          const leadSnap = await getDoc(doc(db, 'leads', leadId));
+          if (leadSnap.exists()) {
+            leadData = leadSnap.data();
+          }
+        } catch (e) {
+          console.error(`Failed to fetch lead ${leadId}:`, e);
+        }
+      }
+
+      const baseTitle = customSlug || title || leadData?.company || leadData?.name || 'Live Prototype';
+      const docId = await createUniqueSlug(baseTitle, customSlug);
 
       const messageData = {
         canvasContent: cleanedContent,
         canvasMode: finalCanvasMode,
-        title: title || 'Live Prototype',
+        title: title || leadData?.company || leadData?.name || 'Live Prototype',
         status: status,
         isAiGenerated: true,
         leadId: leadId || null,
         createdAt: Date.now()
       };
 
-      const docRef = await addDoc(collection(db, 'messages'), messageData);
-      const docId = docRef.id;
-      const host = req.headers.host || 'mox.infni-t.online';
-      const protocol = req.headers['x-forwarded-proto'] || 'https';
-      const baseUrl = process.env.APP_URL || `${protocol}://${host}`;
-      const previewUrl = `${baseUrl}/preview/${docId}`;
+      await setDoc(doc(db, 'messages', docId), messageData);
+
+      const PRIMARY_DOMAIN = process.env.APP_URL || 'https://mox.infni-t.online';
+      const previewUrl = `${PRIMARY_DOMAIN}/preview/${docId}`;
 
       if (leadId) {
         try {
@@ -565,16 +822,14 @@ async function startServer() {
   // 4. Generate Prototype Preview
   app.post("/api/mcp/generate-preview", mcpAuth, async (req, res) => {
     try {
-      const { leadId, prototypeType, description, businessContext } = req.body;
+      const { leadId, prototypeType, description, businessContext, customSlug } = req.body;
       
       if (!leadId) {
         return res.status(400).json({ error: 'Missing required field: leadId' });
       }
 
-      // Default prototypeType to 'WEB' if not specified
       const finalPrototypeType = prototypeType || 'WEB';
 
-      // Fetch the lead context
       const leadRef = doc(db, 'leads', leadId);
       const snapshot = await getDoc(leadRef);
       let leadContext = "";
@@ -587,14 +842,12 @@ async function startServer() {
         return res.status(404).json({ error: 'Lead not found' });
       }
 
-      // Combine database lead data with optional direct business context
       let combinedBusinessContext = leadContext;
       if (businessContext) {
         combinedBusinessContext += `\nAdditional/Override Business Context: ${businessContext}`;
       }
 
-      // Use description or default to standard instructions
-      const finalDescription = description || `A high-converting personalized pitch/prototype tailored for ${leadData.company || 'the business'} in the ${leadData.industry || 'general'} industry.`;
+      const finalDescription = description || `A high-converting personalized pitch/prototype tailored for ${leadData.company || leadData.name || 'the business'} in the ${leadData.industry || 'general'} industry.`;
 
       if (!process.env.GEMINI_API_KEY) {
          return res.status(500).json({ error: 'GEMINI_API_KEY is not configured' });
@@ -620,7 +873,6 @@ async function startServer() {
 
       const content = response.text || '';
 
-      // Parse the generated response to extract canvasContent and canvasMode
       let text = content;
       let canvasContent = null;
       let canvasMode = finalPrototypeType;
@@ -653,19 +905,16 @@ async function startServer() {
         text = text.replace(contentMatch[0], '').trim();
       }
 
-      // If no tag is matched, clean up any markdown block formatting and treat it as the pure canvas content
       if (!canvasContent) {
         canvasContent = content.replace(/^```[a-z]*/i, '').replace(/```$/i, '').trim();
       }
 
-      // Find or create an active chat session for this lead so it shows up in the UI
       let sessionId = 'automated-outreach-session';
       try {
         const sessionsRef = collection(db, 'sessions');
         const sessionQuery = query(
           sessionsRef,
           where('leadId', '==', leadId),
-          where('userId', '==', leadData.userId || ''),
           limit(10)
         );
         const sessionSnap = await getDocs(sessionQuery);
@@ -686,35 +935,39 @@ async function startServer() {
         console.error('Error finding or creating session for preview:', sessionErr);
       }
 
-      // Save the generated prototype to the messages collection so the PitchView and Canvas components render it instantly
+      const baseTitle = customSlug || leadData.company || leadData.name || 'Prototype';
+      const docId = await createUniqueSlug(baseTitle, customSlug);
+
       const messageDoc = {
         role: 'model',
         text: text || `Generated custom ${canvasMode.toLowerCase()} prototype.`,
         canvasContent: canvasContent,
         canvasMode: canvasMode,
+        title: `${leadData.company || leadData.name || 'Lead'} Prototype`,
+        status: 'published',
+        isAiGenerated: true,
         leadId: leadId,
         sessionId: sessionId,
         userId: leadData.userId || 'automated-agent',
         createdAt: Date.now()
       };
       
-      const docRef = await addDoc(collection(db, 'messages'), messageDoc);
+      await setDoc(doc(db, 'messages', docId), messageDoc);
 
-      // Update the lead to show prototype was built and associate it with the created message ID
+      const PRIMARY_DOMAIN = process.env.APP_URL || 'https://mox.infni-t.online';
+      const previewLink = `${PRIMARY_DOMAIN}/preview/${docId}`;
+
       await updateDoc(leadRef, {
         status: 'Built',
-        prototypeId: docRef.id,
+        prototypeId: docId,
+        previewUrl: previewLink,
         updatedAt: new Date().toISOString()
       });
-
-      // Generate the premium, live preview link referencing the newly saved document ID
-      const hostUrl = `${req.protocol}://${req.get('host')}`;
-      const previewLink = `${hostUrl}/preview/${docRef.id}`;
 
       res.json({ 
         success: true, 
         message: 'Prototype generated and saved successfully',
-        previewId: docRef.id,
+        previewId: docId,
         previewLink,
         content: canvasContent,
         prototypeType: canvasMode,
