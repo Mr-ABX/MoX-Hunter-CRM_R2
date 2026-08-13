@@ -286,7 +286,10 @@ app.post("/api/mcp/publish-prototype", async (req, res) => {
 
     const docRef = await addDoc(collection(db, 'messages'), messageData);
     const docId = docRef.id;
-    const previewUrl = `https://mox.infni-t.online/preview/${docId}`;
+    const host = req.headers.host || 'mox.infni-t.online';
+      const protocol = req.headers['x-forwarded-proto'] || 'https';
+      const baseUrl = process.env.APP_URL || `${protocol}://${host}`;
+      const previewUrl = `${baseUrl}/preview/${docId}`;
 
     if (leadId) {
       try {
