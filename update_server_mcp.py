@@ -1,0 +1,148 @@
+import re
+
+with open('server.ts', 'r') as f:
+    content = f.read()
+
+# 1. Update imports
+# server.ts imports firebase as:
+# import { db } from "./src/lib/firebase";
+# import { collection, query, where, limit, getDocs, doc, getDoc, addDoc, updateDoc } from 'firebase/firestore';
+content = content.replace(
+    "import { collection, query, where, limit, getDocs, doc, getDoc, addDoc, updateDoc } from 'firebase/firestore';",
+    "import { collection, query, where, limit, getDocs, doc, getDoc, addDoc, updateDoc, deleteDoc, arrayUnion } from 'firebase/firestore';"
+)
+
+# 2. Add endpoints before `  app.listen(PORT`
+new_endpoints = """
+  // 6. DELETE /api/mcp/leads/:id
+  app.delete("/api/mcp/leads/:id", mcpAuth, async (req, res) => {
+    try {
+      const leadRef = doc(db, 'leads', req.params.id);
+      await deleteDoc(leadRef);
+      res.json({ success: true, message: "Lead deleted" });
+    } catch (error) {
+      console.error('Error deleting lead via MCP:', error);
+      res.status(500).json({ error: 'Failed to delete lead' });
+    }
+  });
+
+  // 7. POST /api/mcp/leads/:id/activity
+  app.post("/api/mcp/leads/:id/activity", mcpAuth, async (req, res) => {
+    try {
+      const { type, subject, body, sentAt, status } = req.body;
+      const leadRef = doc(db, 'leads', req.params.id);
+      
+      await updateDoc(leadRef, {
+        activities: arrayUnion({
+          type: type || "email_sent",
+          subject: subject || "",
+          body: body || "",
+          sentAt: sentAt || new Date().toISOString(),
+          status: status || "sent"
+        }),
+        status: "Outreach Sent"
+      });
+      
+      res.json({ success: true, message: "Activity logged and status updated" });
+    } catch (error) {
+      console.error('Error logging activity via MCP:', error);
+      res.status(500).json({ error: 'Failed to log activity' });
+    }
+  });
+
+  // 8. GET /api/mcp/stats
+  app.get("/api/mcp/stats", mcpAuth, async (req, res) => {
+    try {
+      const leadsQuery = collection(db, 'leads');
+      const snapshot = await getDocs(leadsQuery);
+      
+      let totalLeads = 0;
+      let totalScore = 0;
+      const statusBreakdown: Record<string, number> = {};
+      
+      snapshot.docs.forEach(doc => {
+        const data = doc.data();
+        totalLeads++;
+        totalScore += (data.score || 0);
+        
+        const status = data.status || 'New';
+        statusBreakdown[status] = (statusBreakdown[status] || 0) + 1;
+      });
+      
+      const avgScore = totalLeads > 0 ? Math.round(totalScore / totalLeads) : 0;
+      
+      res.json({ success: true, stats: { totalLeads, statusBreakdown, avgScore } });
+    } catch (error) {
+      console.error('Error fetching stats via MCP:', error);
+      res.status(500).json({ error: 'Failed to fetch stats' });
+    }
+  });
+
+  app.listen(PORT"""
+content = content.replace("  app.listen(PORT", new_endpoints)
+
+# 3. Update publish-prototype endpoint
+old_publish_match = re.search(r'app\.post\("/api/mcp/publish-prototype", mcpAuth, async \(req, res\) => \{.*?\n  \}\);', content, re.DOTALL)
+
+if old_publish_match:
+    new_publish = """app.post("/api/mcp/publish-prototype", mcpAuth, async (req, res) => {
+    try {
+      const { content, title, leadId, canvasMode = 'WEB', status = 'published' } = req.body;
+      const contentToUse = content || req.body.htmlContent; // fallback for backwards compatibility
+      
+      if (!contentToUse) {
+        return res.status(400).json({ error: 'Missing required field: content' });
+      }
+
+      // Clean markdown code blocks from content
+      const cleanedContent = contentToUse.replace(/^```[a-z]*\\n/i, '').replace(/\\n```$/i, '').trim();
+
+      const finalCanvasMode = canvasMode.toUpperCase();
+
+      const messageData = {
+        canvasContent: cleanedContent,
+        canvasMode: finalCanvasMode,
+        title: title || 'Live Prototype',
+        status: status,
+        isAiGenerated: true,
+        leadId: leadId || null,
+        createdAt: Date.now()
+      };
+
+      const docRef = await addDoc(collection(db, 'messages'), messageData);
+      const docId = docRef.id;
+      const host = req.headers.host || 'mox.infni-t.online';
+      const protocol = req.headers['x-forwarded-proto'] || 'https';
+      const baseUrl = process.env.APP_URL || `${protocol}://${host}`;
+      const previewUrl = `${baseUrl}/preview/${docId}`;
+
+      if (leadId) {
+        try {
+          const leadRef = doc(db, 'leads', leadId);
+          await updateDoc(leadRef, { prototypeId: docId, previewUrl });
+        } catch (e) {
+          console.error(`Failed to update lead ${leadId} with prototypeId:`, e);
+        }
+      }
+
+      res.json({ success: true, previewUrl, id: docId, title: messageData.title, canvasMode: finalCanvasMode, status });
+    } catch (error) {
+      console.error('Error publishing prototype via MCP:', error);
+      res.status(500).json({ error: 'Failed to publish prototype' });
+    }
+  });"""
+    content = content.replace(old_publish_match.group(0), new_publish)
+else:
+    print("Could not find publish-prototype in server.ts")
+
+# 4. Update OpenAPI block
+openapi_str_match = re.search(r'res\.json\(\{\n\s*openapi: "3\.1\.0".*?\}\);\n\s*\}\);', content, re.DOTALL)
+if openapi_str_match:
+    # use the same as above but indent by 4 spaces
+    # Wait, the structure in server.ts has some other endpoints like generate-preview and outreach
+    # So I can't just blind replace it because the server.ts one has more routes.
+    # Let's extract and parse it, then add our new paths.
+    pass
+
+with open('server.ts', 'w') as f:
+    f.write(content)

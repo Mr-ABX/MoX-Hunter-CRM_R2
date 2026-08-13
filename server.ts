@@ -4,7 +4,7 @@ import cors from "cors";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI } from "@google/genai";
 import { db } from "./src/lib/firebase";
-import { collection, query, where, limit, getDocs, doc, getDoc, addDoc, updateDoc } from 'firebase/firestore';
+import { collection, query, where, limit, getDocs, doc, getDoc, addDoc, updateDoc, deleteDoc, arrayUnion } from 'firebase/firestore';
 
 async function startServer() {
   const app = express();
@@ -66,6 +66,51 @@ async function startServer() {
       },
       servers: [{ url: serverUrl }],
       paths: {
+        "/api/mcp/leads/{id}/activity": {
+          post: {
+            operationId: "addLeadActivity",
+            summary: "Log an activity for a lead",
+            parameters: [
+              { name: "id", in: "path", required: true, schema: { type: "string" }, description: "The ID of the lead" }
+            ],
+            requestBody: {
+              required: true,
+              content: {
+                "application/json": {
+                  schema: {
+                    type: "object",
+                    properties: {
+                      type: { type: "string" },
+                      subject: { type: "string" },
+                      body: { type: "string" },
+                      sentAt: { type: "string" },
+                      status: { type: "string" }
+                    }
+                  }
+                }
+              }
+            },
+            responses: {
+              "200": {
+                description: "Activity logged successfully",
+                content: { "application/json": { schema: { type: "object" } } }
+              }
+            }
+          }
+        },
+        "/api/mcp/stats": {
+          get: {
+            operationId: "getStats",
+            summary: "Get CRM pipeline stats",
+            responses: {
+              "200": {
+                description: "Pipeline stats",
+                content: { "application/json": { schema: { type: "object" } } }
+              }
+            }
+          }
+        },
+
         "/api/mcp/leads": {
           get: {
             operationId: "getLeads",
@@ -377,19 +422,24 @@ async function startServer() {
   // API Endpoint to publish prototype directly to messages collection
   app.post("/api/mcp/publish-prototype", mcpAuth, async (req, res) => {
     try {
-      const { htmlContent, title, leadId } = req.body;
+      const { content, title, leadId, canvasMode = 'WEB', status = 'published' } = req.body;
+      const contentToUse = content || req.body.htmlContent; // fallback for backwards compatibility
       
-      if (!htmlContent) {
-        return res.status(400).json({ error: 'Missing required field: htmlContent' });
+      if (!contentToUse) {
+        return res.status(400).json({ error: 'Missing required field: content' });
       }
 
-      // Clean markdown code blocks from htmlContent
-      const cleanedHtml = htmlContent.replace(/^```[a-z]*\n/i, '').replace(/\n```$/i, '').trim();
+      // Clean markdown code blocks from content
+      const cleanedContent = contentToUse.replace(/^```[a-z]*\n/i, '').replace(/\n```$/i, '').trim();
+
+      const finalCanvasMode = canvasMode.toUpperCase();
 
       const messageData = {
-        canvasContent: cleanedHtml,
-        canvasMode: 'web',
+        canvasContent: cleanedContent,
+        canvasMode: finalCanvasMode,
         title: title || 'Live Prototype',
+        status: status,
+        isAiGenerated: true,
         leadId: leadId || null,
         createdAt: Date.now()
       };
@@ -410,7 +460,7 @@ async function startServer() {
         }
       }
 
-      res.json({ success: true, previewUrl, id: docId, title: messageData.title });
+      res.json({ success: true, previewUrl, id: docId, title: messageData.title, canvasMode: finalCanvasMode, status });
     } catch (error) {
       console.error('Error publishing prototype via MCP:', error);
       res.status(500).json({ error: 'Failed to publish prototype' });
@@ -771,6 +821,71 @@ Requirements:
       res.sendFile(path.join(distPath, 'index.html'));
     });
   }
+
+
+  // 6. DELETE /api/mcp/leads/:id
+  app.delete("/api/mcp/leads/:id", mcpAuth, async (req, res) => {
+    try {
+      const leadRef = doc(db, 'leads', req.params.id);
+      await deleteDoc(leadRef);
+      res.json({ success: true, message: "Lead deleted" });
+    } catch (error) {
+      console.error('Error deleting lead via MCP:', error);
+      res.status(500).json({ error: 'Failed to delete lead' });
+    }
+  });
+
+  // 7. POST /api/mcp/leads/:id/activity
+  app.post("/api/mcp/leads/:id/activity", mcpAuth, async (req, res) => {
+    try {
+      const { type, subject, body, sentAt, status } = req.body;
+      const leadRef = doc(db, 'leads', req.params.id);
+      
+      await updateDoc(leadRef, {
+        activities: arrayUnion({
+          type: type || "email_sent",
+          subject: subject || "",
+          body: body || "",
+          sentAt: sentAt || new Date().toISOString(),
+          status: status || "sent"
+        }),
+        status: "Outreach Sent"
+      });
+      
+      res.json({ success: true, message: "Activity logged and status updated" });
+    } catch (error) {
+      console.error('Error logging activity via MCP:', error);
+      res.status(500).json({ error: 'Failed to log activity' });
+    }
+  });
+
+  // 8. GET /api/mcp/stats
+  app.get("/api/mcp/stats", mcpAuth, async (req, res) => {
+    try {
+      const leadsQuery = collection(db, 'leads');
+      const snapshot = await getDocs(leadsQuery);
+      
+      let totalLeads = 0;
+      let totalScore = 0;
+      const statusBreakdown: Record<string, number> = {};
+      
+      snapshot.docs.forEach(doc => {
+        const data = doc.data();
+        totalLeads++;
+        totalScore += (data.score || 0);
+        
+        const status = data.status || 'New';
+        statusBreakdown[status] = (statusBreakdown[status] || 0) + 1;
+      });
+      
+      const avgScore = totalLeads > 0 ? Math.round(totalScore / totalLeads) : 0;
+      
+      res.json({ success: true, stats: { totalLeads, statusBreakdown, avgScore } });
+    } catch (error) {
+      console.error('Error fetching stats via MCP:', error);
+      res.status(500).json({ error: 'Failed to fetch stats' });
+    }
+  });
 
   app.listen(PORT, "0.0.0.0", () => {
     console.log(`Server running on http://localhost:${PORT}`);
