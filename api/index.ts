@@ -1,6 +1,5 @@
 import express from "express";
 import cors from "cors";
-import { GoogleGenAI } from "@google/genai";
 import { db } from "../src/lib/firebase";
 import { collection, query, where, limit, getDocs, doc, getDoc, addDoc, updateDoc } from 'firebase/firestore';
 
@@ -8,22 +7,6 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
-
-// Safely lazy-initialize GoogleGenAI so it never throws on cold start if GEMINI_API_KEY is missing
-let aiInstance: GoogleGenAI | null = null;
-function getAI(): GoogleGenAI {
-  if (!aiInstance) {
-    aiInstance = new GoogleGenAI({
-      apiKey: process.env.GEMINI_API_KEY || "",
-      httpOptions: {
-        headers: {
-          'User-Agent': 'aistudio-build',
-        },
-      },
-    });
-  }
-  return aiInstance;
-}
 
 // --- Public OpenAPI Specification Endpoint ---
 app.get("/api/openapi.json", (req, res) => {
