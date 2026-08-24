@@ -27,6 +27,7 @@ import { ContractsPanel } from '@/components/contracts-panel';
 import { Sidebar } from '@/components/sidebar';
 import { AlphasPanel } from '@/components/alphas-panel';
 import { PowerWidget } from '@/components/power-widget';
+import { OutreachLogsPanel } from '@/components/outreach-logs-panel';
 
 import { ALPHAS, SKILLS } from '@/lib/alphas';
 
@@ -103,18 +104,30 @@ export interface Lead {
   id: string;
   userId?: string;
   name: string;
+  company?: string;
   niche: string;
+  industry?: string;
   city: string;
   status: 'Qualified' | 'Built' | 'Contacted' | 'Negotiating' | 'Closed';
   insights?: string;
   prototypeId?: string;
+  previewUrl?: string;
   phone?: string;
   website?: string;
   rating?: number;
   reviews?: number;
   address?: string;
   email?: string;
-  socials?: string[];
+  socials?: string[] | { [key: string]: any };
+  colors?: string[];
+  activities?: Array<{
+    type?: string;
+    subject?: string;
+    body?: string;
+    recipient?: string;
+    sentAt?: string | number;
+    status?: string;
+  }>;
   score?: number;
   metric?: string;
   contractStatus?: 'Active' | 'Pending' | 'Canceled';
@@ -127,7 +140,7 @@ export interface Lead {
   dealValue?: number;
 }
 
-type ViewMode = 'dashboard' | 'discovery' | 'crm' | 'canvas' | 'competitor' | 'outreach' | 'agent' | 'files' | 'settings' | 'tasks' | 'analytics' | 'contracts' | 'alphas';
+type ViewMode = 'dashboard' | 'discovery' | 'crm' | 'canvas' | 'competitor' | 'outreach' | 'outreach_logs' | 'agent' | 'files' | 'settings' | 'tasks' | 'analytics' | 'contracts' | 'alphas';
 
 export default function Home() {
   const { user, authLoading, handleSignIn, handleSignOut } = useAuth();
@@ -707,6 +720,16 @@ export default function Home() {
           {currentView === 'outreach' && (
             <motion.div key="outreach" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.2 }} className="absolute inset-0 flex h-full">
               <OutreachPanel leads={leads} onUpdateLead={handleLeadUpdate} />
+            </motion.div>
+          )}
+
+          {currentView === 'outreach_logs' && (
+            <motion.div key="outreach_logs" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.2 }} className="absolute inset-0 flex h-full">
+              <OutreachLogsPanel 
+                leads={leads} 
+                onNavigate={(v) => setCurrentView(v as ViewMode)} 
+                onSelectLead={(id) => { setSelectedLeadId(id); setCurrentView('files'); }} 
+              />
             </motion.div>
           )}
 

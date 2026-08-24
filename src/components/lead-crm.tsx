@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Search, Filter, MoreVertical, LayoutTemplate, PenTool, ArrowRight, Loader2, CheckCircle2, Clock, Zap, MapPin, Globe, Phone, Mail, Star, Lightbulb, X, LayoutGrid, List, Send, RefreshCw, FolderOpen, Target } from 'lucide-react';
+import { Search, Filter, MoreVertical, LayoutTemplate, PenTool, ArrowRight, Loader2, CheckCircle2, Clock, Zap, MapPin, Globe, Phone, Mail, Star, Lightbulb, X, LayoutGrid, List, Send, RefreshCw, FolderOpen, Target, Eye } from 'lucide-react';
 import { Lead } from '@/App';
 import { Logo, LogoFull } from './logo';
 import { ConfirmModal } from './confirm-modal';
+import { LeadDetailsDrawer } from './leads-panel';
 import { useAuth } from '@/hooks/use-auth';
 import { useMetrics } from '@/hooks/use-metrics';
 
@@ -23,6 +24,8 @@ export function LeadCRM({ leads, onGeneratePrototype, onNavigate, onUpdateLead, 
   
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
+  const [drawerLead, setDrawerLead] = useState<Lead | null>(null);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [detailsLead, setFilesLead] = useState<Lead | null>(null);
@@ -350,10 +353,14 @@ export function LeadCRM({ leads, onGeneratePrototype, onNavigate, onUpdateLead, 
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: i * 0.05 }}
                       key={lead.id} 
-                      className="hover:bg-zinc-800/20 transition-colors group"
+                      onClick={() => { setDrawerLead(lead); setIsDrawerOpen(true); }}
+                      className="hover:bg-zinc-800/30 transition-colors group cursor-pointer"
                     >
                       <td className="py-4 px-6">
-                        <div className="font-medium text-zinc-100">{lead.name}</div>
+                        <div className="font-medium text-zinc-100 group-hover:text-indigo-300 transition-colors flex items-center gap-2">
+                          <span>{lead.name}</span>
+                          <Eye className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 text-indigo-400 transition-opacity" />
+                        </div>
                         <div className="flex items-center gap-2 mt-2">
                           {lead.rating && (
                             <span className="flex items-center gap-1 text-xs text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">
@@ -371,7 +378,7 @@ export function LeadCRM({ leads, onGeneratePrototype, onNavigate, onUpdateLead, 
                             </span>
                           )}
                           <button 
-                            onClick={() => onSelectLead(lead.id)}
+                            onClick={(e) => { e.stopPropagation(); onSelectLead(lead.id); }}
                             className="text-xs text-zinc-400 hover:text-zinc-100 bg-zinc-800/50 hover:bg-zinc-700 px-2 py-0.5 rounded-full border border-zinc-700 transition-colors"
                           >
                             Files & Assets
@@ -383,7 +390,7 @@ export function LeadCRM({ leads, onGeneratePrototype, onNavigate, onUpdateLead, 
                         <div className="text-xs text-zinc-500">{lead.city}</div>
                       </td>
                       <td className="py-4 px-6">
-                        <div className="relative inline-block">
+                        <div className="relative inline-block" onClick={(e) => e.stopPropagation()}>
                           <select
                             value={lead.status}
                             onChange={(e) => handleStatusChange(lead.id, e.target.value as Lead['status'])}
@@ -401,21 +408,21 @@ export function LeadCRM({ leads, onGeneratePrototype, onNavigate, onUpdateLead, 
                       <td className="py-4 px-6 text-right">
                         <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                           <button 
-                            onClick={() => onSelectLead(lead.id)}
+                            onClick={(e) => { e.stopPropagation(); onSelectLead(lead.id); }}
                             className="p-2 text-zinc-400 hover:text-indigo-400 rounded-lg hover:bg-zinc-800 transition-colors"
                             title="View Files"
                           >
                             <FolderOpen className="w-4 h-4" />
                           </button>
                           <button 
-                            onClick={() => handleGenerateClick(lead)}
+                            onClick={(e) => { e.stopPropagation(); handleGenerateClick(lead); }}
                             className="text-sm font-medium text-indigo-400 hover:text-indigo-300 flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-indigo-500/10 transition-colors"
                           >
                             <Zap className="w-4 h-4" /> 
                             {lead.prototypeId ? 'Rebuild' : 'Generate'}
                           </button>
                           
-                          <div className="relative">
+                          <div className="relative" onClick={(e) => e.stopPropagation()}>
                             <button 
                               onClick={() => setActiveMenuId(activeMenuId === lead.id ? null : lead.id)}
                               className="p-2 text-zinc-500 hover:text-zinc-200 rounded-lg hover:bg-zinc-800 transition-colors"
@@ -487,20 +494,24 @@ export function LeadCRM({ leads, onGeneratePrototype, onNavigate, onUpdateLead, 
                     <motion.div 
                       layoutId={`card-${lead.id}`}
                       key={lead.id}
-                      className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 hover:border-zinc-700 transition-colors group"
+                      onClick={() => { setDrawerLead(lead); setIsDrawerOpen(true); }}
+                      className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 hover:border-indigo-500/50 hover:bg-zinc-900/90 transition-all group cursor-pointer shadow-sm hover:shadow-indigo-500/5"
                     >
                       <div className="flex items-start justify-between mb-2">
-                        <h4 className="font-medium text-zinc-100">{lead.name}</h4>
-                        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <h4 className="font-medium text-zinc-100 group-hover:text-indigo-300 transition-colors flex items-center gap-1.5">
+                          <span>{lead.name}</span>
+                          <Eye className="w-3 h-3 text-indigo-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        </h4>
+                        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity" onClick={(e) => e.stopPropagation()}>
                           <button 
-                            onClick={() => onSelectLead(lead.id)}
+                            onClick={(e) => { e.stopPropagation(); onSelectLead(lead.id); }}
                             className="p-1 text-zinc-500 hover:text-indigo-400 rounded-md hover:bg-zinc-800 transition-colors"
                           >
                             <FolderOpen className="w-3.5 h-3.5" />
                           </button>
                           <div className="relative">
                             <button 
-                              onClick={() => setActiveMenuId(activeMenuId === lead.id ? null : lead.id)}
+                              onClick={(e) => { e.stopPropagation(); setActiveMenuId(activeMenuId === lead.id ? null : lead.id); }}
                               className="p-1 text-zinc-500 hover:text-zinc-200 rounded-md hover:bg-zinc-800 transition-colors"
                             >
                               <MoreVertical className="w-3.5 h-3.5" />
@@ -554,14 +565,14 @@ export function LeadCRM({ leads, onGeneratePrototype, onNavigate, onUpdateLead, 
                           </span>
                         )}
                         <button 
-                          onClick={() => onSelectLead(lead.id)}
+                          onClick={(e) => { e.stopPropagation(); onSelectLead(lead.id); }}
                           className="text-[10px] font-medium text-zinc-400 hover:text-zinc-100 bg-zinc-800/50 hover:bg-zinc-700 px-2 py-0.5 rounded-full border border-zinc-700 transition-colors"
                         >
                           Files
                         </button>
                       </div>
                       
-                      <div className="pt-3 border-t border-zinc-800/50 flex items-center justify-between">
+                      <div className="pt-3 border-t border-zinc-800/50 flex items-center justify-between" onClick={(e) => e.stopPropagation()}>
                         <select
                           value={lead.status}
                           onChange={(e) => handleStatusChange(lead.id, e.target.value as Lead['status'])}
@@ -575,7 +586,7 @@ export function LeadCRM({ leads, onGeneratePrototype, onNavigate, onUpdateLead, 
                         </select>
                         
                         <button 
-                          onClick={() => handleGenerateClick(lead)}
+                          onClick={(e) => { e.stopPropagation(); handleGenerateClick(lead); }}
                           className="text-xs font-medium text-indigo-400 hover:text-indigo-300 flex items-center gap-1"
                         >
                           <Zap className="w-3 h-3" /> {lead.prototypeId ? 'Rebuild' : 'Build'}
@@ -1015,6 +1026,18 @@ export function LeadCRM({ leads, onGeneratePrototype, onNavigate, onUpdateLead, 
           }
         }}
         onCancel={() => setDeleteConfirm({ isOpen: false, leadId: '' })}
+      />
+
+      {/* Interactive Enriched Lead Details Drawer */}
+      <LeadDetailsDrawer
+        lead={drawerLead}
+        isOpen={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
+        onUpdateStatus={handleStatusChange}
+        onGeneratePrototype={(l) => handleGenerateClick(l)}
+        onOpenOutreach={() => onNavigate('outreach')}
+        onEditLead={(l) => setEditLead(l)}
+        onOpenFiles={(id) => onSelectLead(id)}
       />
     </div>
   );

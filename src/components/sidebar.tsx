@@ -8,6 +8,7 @@ import {
   FileSignature, 
   PenTool, 
   Mail, 
+  Inbox,
   CheckSquare, 
   BarChart3, 
   FolderOpen, 
@@ -141,6 +142,14 @@ export function Sidebar({ currentView, setCurrentView, leadsCount, messagesCount
           isActive={currentView === 'outreach'} 
           onClick={() => setCurrentView('outreach')} 
           onMouseEnter={(e) => handleMouseEnter("Outreach & Pitch", e)}
+          onMouseLeave={handleMouseLeave}
+        />
+        <SidebarTab 
+          icon={<Inbox className="w-4 h-4" />} 
+          label="Outreach Logs" 
+          isActive={currentView === 'outreach_logs'} 
+          onClick={() => setCurrentView('outreach_logs')} 
+          onMouseEnter={(e) => handleMouseEnter("Outreach Logs", e)}
           onMouseLeave={handleMouseLeave}
         />
         <SidebarTab 

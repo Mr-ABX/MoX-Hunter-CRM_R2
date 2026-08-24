@@ -180,6 +180,22 @@ Make the copywriting sound authentic, professional, deeply personalized, and hig
     const encodedBody = encodeURIComponent(bodyText);
     const mailtoUrl = `mailto:${targetEmail}?subject=${encodedSubject}&body=${encodedBody}`;
     
+    // Log outreach to backend
+    fetch('/api/outreach/log', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        leadId: selectedLead.id,
+        businessName: selectedLead.name,
+        recipient: targetEmail,
+        subject: subject || `Outreach for ${selectedLead.name}`,
+        body: bodyText,
+        channel: 'email_client',
+        status: 'Sent',
+        previewUrl: selectedLead.prototypeId ? `/preview/${selectedLead.prototypeId}` : ''
+      })
+    }).catch(e => console.error('Outreach logging error:', e));
+
     // Open email client
     window.location.href = mailtoUrl;
 
@@ -215,9 +231,41 @@ Make the copywriting sound authentic, professional, deeply personalized, and hig
 
       const data = await response.json();
       if (!response.ok) {
+        // Log failure
+        fetch('/api/outreach/log', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            leadId: selectedLead.id,
+            businessName: selectedLead.name,
+            recipient: targetEmail,
+            subject: subject || `Outreach for ${selectedLead.name}`,
+            body: bodyText,
+            channel: 'brevo_api',
+            status: 'Failed',
+            error: data.error || 'Failed to send'
+          })
+        }).catch(console.error);
+
         throw new Error(data.error || 'Failed to send email');
       }
       
+      // Log success
+      fetch('/api/outreach/log', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          leadId: selectedLead.id,
+          businessName: selectedLead.name,
+          recipient: targetEmail,
+          subject: subject || `Outreach for ${selectedLead.name}`,
+          body: bodyText,
+          channel: 'brevo_api',
+          status: 'Sent',
+          previewUrl: selectedLead.prototypeId ? `/preview/${selectedLead.prototypeId}` : ''
+        })
+      }).catch(console.error);
+
       onUpdateLead(selectedLead.id, { 
         status: 'Contacted', 
         lastActionDate: Date.now(),

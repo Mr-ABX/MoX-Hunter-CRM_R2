@@ -754,6 +754,112 @@ async function createUniqueSlug(baseText: string, customSlug?: string): Promise<
     }
   });
 
+  // 3b. Log Outreach Activity
+  const handleLogOutreach = async (req: express.Request, res: express.Response) => {
+    try {
+      const { 
+        leadId, 
+        businessName, 
+        recipient, 
+        recipientEmail, 
+        subject, 
+        body, 
+        bodyPreview,
+        status = 'Sent', 
+        channel = 'email', 
+        previewUrl, 
+        prototypeId, 
+        timestamp, 
+        userId,
+        error: logError
+      } = req.body;
+
+      let resolvedBusinessName = businessName;
+      let resolvedRecipient = recipient || recipientEmail || '';
+      let resolvedPreviewUrl = previewUrl || '';
+
+      // If leadId is provided, enrich with lead details if missing
+      if (leadId) {
+        try {
+          const leadRef = doc(db, 'leads', leadId);
+          const leadSnap = await getDoc(leadRef);
+          if (leadSnap.exists()) {
+            const lData = leadSnap.data();
+            if (!resolvedBusinessName) resolvedBusinessName = lData.company || lData.name;
+            if (!resolvedRecipient) resolvedRecipient = lData.email || lData.phone || '';
+            if (!resolvedPreviewUrl && lData.prototypeId) {
+              resolvedPreviewUrl = `/preview/${lData.prototypeId}`;
+            }
+
+            // Append to lead activities in Firestore
+            const activityItem = {
+              type: channel || 'email',
+              subject: subject || 'Outreach Communication',
+              body: body || bodyPreview || '',
+              recipient: resolvedRecipient,
+              sentAt: timestamp || Date.now(),
+              status: status || 'Sent'
+            };
+
+            await updateDoc(leadRef, {
+              activities: arrayUnion(activityItem),
+              lastActionDate: Date.now(),
+              status: lData.status === 'Qualified' || lData.status === 'Built' ? 'Contacted' : lData.status
+            });
+          }
+        } catch (enrichErr) {
+          console.error('Could not enrich or append to lead activity:', enrichErr);
+        }
+      }
+
+      const logEntry: any = {
+        leadId: leadId || null,
+        businessName: resolvedBusinessName || 'Direct Outreach',
+        recipient: resolvedRecipient,
+        subject: subject || 'Cold Outreach Pitch',
+        body: body || bodyPreview || '',
+        status: status || 'Sent',
+        channel: channel || 'email',
+        previewUrl: resolvedPreviewUrl,
+        prototypeId: prototypeId || null,
+        timestamp: timestamp || Date.now(),
+        createdAt: new Date().toISOString()
+      };
+
+      if (userId) logEntry.userId = userId;
+      if (logError) logEntry.error = logError;
+
+      const logDocRef = await addDoc(collection(db, 'outreach_logs'), logEntry);
+
+      res.json({
+        success: true,
+        message: 'Outreach activity logged successfully',
+        id: logDocRef.id,
+        log: { id: logDocRef.id, ...logEntry }
+      });
+    } catch (error) {
+      console.error('Error logging outreach:', error);
+      res.status(500).json({ error: 'Failed to log outreach activity' });
+    }
+  };
+
+  app.post("/api/mcp/outreach/log", mcpAuth, handleLogOutreach);
+  app.post("/api/outreach/log", handleLogOutreach);
+
+  // 3c. Get Outreach Logs
+  app.get("/api/mcp/outreach/logs", mcpAuth, async (req, res) => {
+    try {
+      const logsRef = collection(db, 'outreach_logs');
+      const q = query(logsRef, limit(100));
+      const snap = await getDocs(q);
+      const logs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      res.json({ success: true, count: logs.length, logs });
+    } catch (error) {
+      console.error('Error fetching outreach logs:', error);
+      res.status(500).json({ error: 'Failed to fetch outreach logs' });
+    }
+  });
+
 
   // --- Phase 1 & 2: Public Prototypes ---
   // API Endpoint to publish prototype directly to messages collection
@@ -1207,22 +1313,6 @@ Requirements:
     }
   });
 
-  // Vite middleware for development
-  if (process.env.NODE_ENV !== "production") {
-    const vite = await createViteServer({
-      server: { middlewareMode: true },
-      appType: "spa",
-    });
-    app.use(vite.middlewares);
-  } else {
-    const distPath = path.join(process.cwd(), 'dist');
-    app.use(express.static(distPath));
-    app.get('*', (req, res) => {
-      res.sendFile(path.join(distPath, 'index.html'));
-    });
-  }
-
-
   // 6. DELETE /api/mcp/leads/:id
   app.delete("/api/mcp/leads/:id", mcpAuth, async (req, res) => {
     try {
@@ -1286,6 +1376,21 @@ Requirements:
       res.status(500).json({ error: 'Failed to fetch stats' });
     }
   });
+
+  // Vite middleware for development (must be AFTER all API routes)
+  if (process.env.NODE_ENV !== "production") {
+    const vite = await createViteServer({
+      server: { middlewareMode: true },
+      appType: "spa",
+    });
+    app.use(vite.middlewares);
+  } else {
+    const distPath = path.join(process.cwd(), 'dist');
+    app.use(express.static(distPath));
+    app.get('*', (req, res) => {
+      res.sendFile(path.join(distPath, 'index.html'));
+    });
+  }
 
   app.listen(PORT, "0.0.0.0", () => {
     console.log(`Server running on http://localhost:${PORT}`);
