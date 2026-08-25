@@ -20,9 +20,11 @@ export function useLeads(userId: string | undefined) {
       return;
     }
 
-    const q = query(collection(db, 'leads'), where('userId', '==', userId));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      setLeads(snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id } as Lead)));
+    // Listen to leads collection and include leads that match user ID or are unassigned MCP leads
+    const unsubscribe = onSnapshot(collection(db, 'leads'), (snapshot) => {
+      const allLeads = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id } as Lead));
+      const userLeads = allLeads.filter(lead => !lead.userId || lead.userId === userId);
+      setLeads(userLeads);
     }, (error) => console.error('Error fetching leads:', error));
 
     return () => unsubscribe();

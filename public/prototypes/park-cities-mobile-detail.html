@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Park Cities Mobile Detail | Highland Park & Dallas Luxury Auto Detailing</title>
+    <meta name="description" content="Highland Park & Dallas' premier mobile auto detailing concierge. 0-PPM spot-free deionized water, multi-stage paint correction, and ceramic coatings delivered to your estate.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        obsidian: {
+                            DEFAULT: '#09090b',
+                            card: '#121215',
+                            border: '#242429',
+                            hover: '#19191e'
+                        },
+                        champagne: {
+                            DEFAULT: '#d4af37',
+                            light: '#f4e095',
+                            dark: '#a88622',
+                            glow: 'rgba(212, 175, 55, 0.18)'
+                        },
+                        ivory: {
+                            DEFAULT: '#fdfbf7',
+                            muted: '#a39f97',
+                            dim: '#e2d9cc'
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['"Cormorant Garamond"', 'Georgia', 'serif'],
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom Fine Polish & Micro-Interactions */
+        body {
+            background-color: #09090b;
+            color: #fdfbf7;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .gold-gradient-text {
+            background: linear-gradient(135deg, #f4e095 0%, #d4af37 50%, #aa8828 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .gold-border-glow {
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            box-shadow: 0 0 25px rgba(212, 175, 55, 0.08);
+            transition: all 0.4s ease;
+        }
+
+        .gold-border-glow:hover {
+            border-color: rgba(212, 175, 55, 0.7);
+            box-shadow: 0 0 35px rgba(212, 175, 55, 0.22);
+        }
+
+        .btn-gold {
+            background: linear-gradient(135deg, #d4af37 0%, #b89228 100%);
+            color: #09090b;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-gold::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.7s ease;
+        }
+
+        .btn-gold:hover::before {
+            left: 100%;
+        }
+
+        .btn-gold:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(212, 175, 55, 0.4);
+        }
+
+        .hero-vignette {
+            background: radial-gradient(circle at center, rgba(9, 9, 11, 0.4) 0%, rgba(9, 9, 11, 0.88) 75%, #09090b 100%);
+        }
+
+        .badge-concierge {
+            background: rgba(212, 175, 55, 0.08);
+            border: 1px solid rgba(212, 175, 55, 0.25);
+            backdrop-filter: blur(8px);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #09090b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #242429;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #d4af37;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-champagne selection:text-obsidian">
+
+    <!-- TOP CONCIERGE ANNOUNCEMENT BAR -->
+    <div class="bg-[#0f0f13] border-b border-champagne/15 text-xs py-2.5 px-4 text-ivory-muted tracking-wider uppercase font-medium">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
+            <div class="flex items-center gap-2">
+                <span class="inline-block w-2 h-2 rounded-full bg-champagne animate-pulse"></span>
+                <span>Highland Park & Preston Hollow White-Glove Mobile Unit Active</span>
+            </div>
+            <div class="flex items-center gap-6">
+                <span class="hidden md:inline text-ivory-dim">0-PPM Spot-Free Deionized Water Guarantee</span>
+                <a href="tel:4694387377" class="text-champagne hover:text-champagne-light transition-colors flex items-center gap-1.5 font-semibold">
+                    <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+                    Direct Line: (469) 438-7377
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN NAVIGATION HEADER -->
+    <header class="sticky top-0 z-50 bg-obsidian/90 backdrop-blur-md border-b border-obsidian-border transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Brand Logo -->
+            <a href="#" class="flex flex-col group">
+                <span class="font-serif text-2xl font-bold tracking-wider gold-gradient-text">PARK CITIES</span>
+                <span class="text-[10px] tracking-[0.3em] uppercase text-ivory-muted font-medium group-hover:text-champagne transition-colors">Mobile Detail • Dallas, TX</span>
+            </a>
+
+            <!-- Desktop Nav Links -->
+            <nav class="hidden md:flex items-center space-x-8 text-sm font-medium text-ivory-dim">
+                <a href="#specs" class="hover:text-champagne transition-colors">Engineering & Specs</a>
+                <a href="#services" class="hover:text-champagne transition-colors">Services</a>
+                <a href="#packages" class="hover:text-champagne transition-colors">Package Pricing</a>
+                <a href="#reviews" class="hover:text-champagne transition-colors">Client Reviews</a>
+            </nav>
+
+            <!-- Header Action & Badge -->
+            <div class="flex items-center space-x-4">
+                <div class="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-full badge-concierge text-xs text-champagne">
+                    <svg class="w-4 h-4 text-champagne" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                    <span>Highland Park Concierge</span>
+                </div>
+                <a href="#booking" class="btn-gold px-5 py-2.5 rounded-sm text-xs uppercase tracking-widest flex items-center gap-2">
+                    <span>Reserve Concierge</span>
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO SECTION WITH REAL CAR PHOTOGRAPHY OVERLAY -->
+    <section class="relative min-h-[85vh] flex items-center justify-center overflow-hidden py-24">
+        <!-- Background Image with Custom Vignette -->
+        <div class="absolute inset-0 z-0">
+            <img src="https://images.unsplash.com/photo-1617814076367-b759c7d7e738?q=80&w=1600&auto=format&fit=crop" 
+                 alt="Luxury Exotic Car Auto Detailing" 
+                 class="w-full h-full object-cover object-center scale-105 transform transition-transform duration-1000">
+            <div class="absolute inset-0 hero-vignette"></div>
+        </div>
+
+        <div class="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <!-- Location Badge -->
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-obsidian/80 border border-champagne/30 text-champagne text-xs uppercase tracking-[0.2em] mb-6 shadow-2xl">
+                <span class="w-1.5 h-1.5 rounded-full bg-champagne"></span>
+                Serving Highland Park, University Park & Dallas Private Estates
+            </div>
+
+            <!-- Headline -->
+            <h1 class="font-serif text-4xl sm:text-6xl md:text-7xl font-normal tracking-tight text-ivory mb-6 leading-[1.1]">
+                Showroom Perfection. <br>
+                <span class="font-italic italic gold-gradient-text">Delivered to Your Private Driveway.</span>
+            </h1>
+
+            <!-- Subtitle -->
+            <p class="max-w-2xl mx-auto text-base sm:text-lg text-ivory-dim font-light leading-relaxed mb-10">
+                Bespoke paint correction, ceramic coatings, and white-glove interior restoration using <strong>0-PPM deionized spot-free water</strong> — fully self-contained at your home or executive parking.
+            </p>
+
+            <!-- Hero Action Buttons -->
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
+                <a href="#booking" class="w-full sm:w-auto btn-gold px-8 py-4 rounded-sm text-sm uppercase tracking-widest">
+                    Request Instant Quote
+                </a>
+                <a href="tel:4694387377" class="w-full sm:w-auto px-8 py-4 rounded-sm text-sm uppercase tracking-widest text-ivory border border-champagne/40 hover:bg-champagne/10 transition-colors flex items-center justify-center gap-3">
+                    <svg class="w-4 h-4 text-champagne" fill="currentColor" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+                    <span>(469) 438-7377</span>
+                </a>
+            </div>
+
+            <!-- Trust Metrics Bar -->
+            <div class="mt-16 grid grid-cols-2 md:grid-cols-3 gap-6 pt-10 border-t border-ivory/10 text-left max-w-4xl mx-auto">
+                <div class="flex items-center gap-4">
+                    <div class="text-champagne font-serif text-3xl font-bold">4.9★</div>
+                    <div class="text-xs text-ivory-muted leading-tight">
+                        <strong class="text-ivory block font-medium">140+ Dallas Reviews</strong>
+                        Verified Highland Park Clients
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="text-champagne font-serif text-3xl font-bold">0 PPM</div>
+                    <div class="text-xs text-ivory-muted leading-tight">
+                        <strong class="text-ivory block font-medium">Spot-Free Rinse</strong>
+                        Deionized Water Rig
+                    </div>
+                </div>
+                <div class="col-span-2 md:col-span-1 flex items-center gap-4">
+                    <div class="text-champagne font-serif text-3xl font-bold">$2M</div>
+                    <div class="text-xs text-ivory-muted leading-tight">
+                        <strong class="text-ivory block font-medium">Fully Insured</strong>
+                        Exotic & Luxury Coverage
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TECH & PRECISION SHOWCASE (0-PPM Deionized Water & Dual-Action Orbital) -->
+    <section id="specs" class="py-24 bg-[#0c0c0e] border-y border-obsidian-border relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-champagne text-xs uppercase tracking-[0.25em] font-semibold block mb-3">ENGINEERED FOR PERFECTION</span>
+                <h2 class="font-serif text-3xl sm:text-5xl font-normal text-ivory">The Science of Uncompromised Clarity</h2>
+                <div class="w-16 h-0.5 bg-champagne mx-auto mt-4"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Spec Card 1 -->
+                <div class="bg-obsidian-card p-8 rounded-sm gold-border-glow relative group">
+                    <div class="w-12 h-12 rounded-sm bg-champagne/10 text-champagne flex items-center justify-center mb-6 group-hover:bg-champagne group-hover:text-obsidian transition-colors duration-300">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+                    </div>
+                    <h3 class="font-serif text-xl text-ivory font-semibold mb-3">0-PPM Deionized Water</h3>
+                    <p class="text-xs text-ivory-muted leading-relaxed">
+                        Filtered through multi-stage nuclear-grade resin tanks removing 100% of minerals. Guaranteed zero water spots under high Texas heat.
+                    </p>
+                </div>
+
+                <!-- Spec Card 2 -->
+                <div class="bg-obsidian-card p-8 rounded-sm gold-border-glow relative group">
+                    <div class="w-12 h-12 rounded-sm bg-champagne/10 text-champagne flex items-center justify-center mb-6 group-hover:bg-champagne group-hover:text-obsidian transition-colors duration-300">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                    </div>
+                    <h3 class="font-serif text-xl text-ivory font-semibold mb-3">Dual-Action Orbital Polish</h3>
+                    <p class="text-xs text-ivory-muted leading-relaxed">
+                        Precision Rupes BigFoot polishers that correct paint depth without micro-marring or clear-coat compromise. Hologram-free guarantee.
+                    </p>
+                </div>
+
+                <!-- Spec Card 3 -->
+                <div class="bg-obsidian-card p-8 rounded-sm gold-border-glow relative group">
+                    <div class="w-12 h-12 rounded-sm bg-champagne/10 text-champagne flex items-center justify-center mb-6 group-hover:bg-champagne group-hover:text-obsidian transition-colors duration-300">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                    </div>
+                    <h3 class="font-serif text-xl text-ivory font-semibold mb-3">Hydrophobic Ceramic</h3>
+                    <p class="text-xs text-ivory-muted leading-relaxed">
+                        Gtechniq nano-ceramic matrices forming permanent molecular bonds. Shielding paint against UV rays, acid rain, and bird droppings.
+                    </p>
+                </div>
+
+                <!-- Spec Card 4 -->
+                <div class="bg-obsidian-card p-8 rounded-sm gold-border-glow relative group">
+                    <div class="w-12 h-12 rounded-sm bg-champagne/10 text-champagne flex items-center justify-center mb-6 group-hover:bg-champagne group-hover:text-obsidian transition-colors duration-300">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                    </div>
+                    <h3 class="font-serif text-xl text-ivory font-semibold mb-3">100% Self-Contained Rig</h3>
+                    <p class="text-xs text-ivory-muted leading-relaxed">
+                        Equipped with quiet Honda inverter generators and onboard 100-gallon pure water tanks. Zero water or power needed from your property.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SIGNATURE SERVICES WITH REAL PHOTOGRAPHY -->
+    <section id="services" class="py-24 bg-obsidian">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-16">
+                <div>
+                    <span class="text-champagne text-xs uppercase tracking-[0.25em] font-semibold block mb-3">OUR CRAFT</span>
+                    <h2 class="font-serif text-3xl sm:text-5xl font-normal text-ivory">Signature Detailing Treatments</h2>
+                </div>
+                <p class="text-ivory-muted text-sm max-w-md mt-4 md:mt-0 font-light">
+                    Every service is customized to your vehicle's specific clear-coat hardness, leather grade, and storage environment.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Service 1: Ceramic Coating -->
+                <div class="bg-obsidian-card border border-obsidian-border rounded-sm overflow-hidden group hover:border-champagne/50 transition-all duration-500">
+                    <div class="h-64 overflow-hidden relative">
+                        <img src="https://images.unsplash.com/photo-1601362840469-51e4d8d58785?q=80&w=800&auto=format&fit=crop" 
+                             alt="Ceramic Coating Paint Protection" 
+                             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                        <div class="absolute inset-0 bg-gradient-to-t from-obsidian-card via-transparent to-transparent"></div>
+                        <span class="absolute top-4 right-4 bg-obsidian/90 text-champagne text-[10px] uppercase tracking-widest px-3 py-1 rounded-full border border-champagne/30">
+                            Up to 5 Years Protection
+                        </span>
+                    </div>
+                    <div class="p-8">
+                        <h3 class="font-serif text-2xl text-ivory font-semibold mb-3">Ceramic Coating Shield</h3>
+                        <p class="text-xs text-ivory-muted leading-relaxed mb-6">
+                            Multi-layer nano-ceramic application delivering self-cleaning slickness, deep mirror gloss, and UV defense tailored for Dallas summers.
+                        </p>
+                        <ul class="text-xs text-ivory-dim space-y-2 mb-8 font-light">
+                            <li class="flex items-center gap-2">
+                                <span class="text-champagne">✓</span> 9H Hardness Paint & Wheel Protection
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="text-champagne">✓</span> Hydrophobic Water Repellency
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="text-champagne">✓</span> CARFAX Registered Warranty
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Service 2: Leather Care -->
+                <div class="bg-obsidian-card border border-obsidian-border rounded-sm overflow-hidden group hover:border-champagne/50 transition-all duration-500">
+                    <div class="h-64 overflow-hidden relative">
+                        <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=800&auto=format&fit=crop" 
+                             alt="Luxury Leather Care & Interior Restoration" 
+                             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                        <div class="absolute inset-0 bg-gradient-to-t from-obsidian-card via-transparent to-transparent"></div>
+                        <span class="absolute top-4 right-4 bg-obsidian/90 text-champagne text-[10px] uppercase tracking-widest px-3 py-1 rounded-full border border-champagne/30">
+                            Swissvax Treatment
+                        </span>
+                    </div>
+                    <div class="p-8">
+                        <h3 class="font-serif text-2xl text-ivory font-semibold mb-3">Bespoke Interior & Leather Revival</h3>
+                        <p class="text-xs text-ivory-muted leading-relaxed mb-6">
+                            Deep pH-neutral steam decontamination, Swissvax leather conditioning, Alcantara restoration, and matte-finish UV blocking.
+                        </p>
+                        <ul class="text-xs text-ivory-dim space-y-2 mb-8 font-light">
+                            <li class="flex items-center gap-2">
+                                <span class="text-champagne">✓</span> Factory Matte Leather Finish (Non-Greasy)
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="text-champagne">✓</span> Hot Water Extraction & Sanitization
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="text-champagne">✓</span> Delicate Wood Trim & Screen Polish
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Service 3: Paint Correction -->
+                <div class="bg-obsidian-card border border-obsidian-border rounded-sm overflow-hidden group hover:border-champagne/50 transition-all duration-500">
+                    <div class="h-64 overflow-hidden relative">
+                        <img src="https://images.unsplash.com/photo-1580273916550-e323be2ae537?q=80&w=800&auto=format&fit=crop" 
+                             alt="Multi-Stage Paint Correction" 
+                             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                        <div class="absolute inset-0 bg-gradient-to-t from-obsidian-card via-transparent to-transparent"></div>
+                        <span class="absolute top-4 right-4 bg-obsidian/90 text-champagne text-[10px] uppercase tracking-widest px-3 py-1 rounded-full border border-champagne/30">
+                            90%+ Swirl Elimination
+                        </span>
+                    </div>
+                    <div class="p-8">
+                        <h3 class="font-serif text-2xl text-ivory font-semibold mb-3">Multi-Stage Paint Correction</h3>
+                        <p class="text-xs text-ivory-muted leading-relaxed mb-6">
+                            Precision machine compounding and jeweling polish designed to remove swirl marks, light scratches, and oxidation under inspection LEDs.
+                        </p>
+                        <ul class="text-xs text-ivory-dim space-y-2 mb-8 font-light">
+                            <li class="flex items-center gap-2">
+                                <span class="text-champagne">✓</span> Paint Depth Gauge Inspection
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="text-champagne">✓</span> Hologram-Free Mirror Clarity
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="text-champagne">✓</span> Clay Bar Decontamination Pre-Treatment
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- INTERACTIVE PACKAGE PRICING SELECTOR (Sedan / SUV / Exotic) -->
+    <section id="packages" class="py-24 bg-[#0c0c0e] border-y border-obsidian-border">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-12">
+                <span class="text-champagne text-xs uppercase tracking-[0.25em] font-semibold block mb-3">TRANSPARENT LUXURY PRICING</span>
+                <h2 class="font-serif text-3xl sm:text-5xl font-normal text-ivory">Interactive Package Selector</h2>
+                <p class="text-ivory-muted text-sm mt-3">Select your vehicle class to dynamically update pricing and execution timelines.</p>
+            </div>
+
+            <!-- Vehicle Type Switcher Tabs -->
+            <div class="flex justify-center mb-16">
+                <div class="inline-flex p-1.5 rounded-full bg-obsidian border border-champagne/30 space-x-2">
+                    <button id="btn-sedan" onclick="selectVehicle('sedan')" class="px-6 py-2.5 rounded-full text-xs uppercase tracking-wider font-semibold transition-all duration-300 bg-champagne text-obsidian shadow-lg">
+                        Sedan & Coupe
+                    </button>
+                    <button id="btn-suv" onclick="selectVehicle('suv')" class="px-6 py-2.5 rounded-full text-xs uppercase tracking-wider font-semibold transition-all duration-300 text-ivory-dim hover:text-champagne">
+                        Luxury SUV & Truck
+                    </button>
+                    <button id="btn-exotic" onclick="selectVehicle('exotic')" class="px-6 py-2.5 rounded-full text-xs uppercase tracking-wider font-semibold transition-all duration-300 text-ivory-dim hover:text-champagne">
+                        Exotic & Supercar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Dynamic Package Cards Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Package 1: Executive Maintenance -->
+                <div class="bg-obsidian-card p-8 rounded-sm gold-border-glow flex flex-col justify-between relative">
+                    <div>
+                        <div class="flex justify-between items-start mb-6">
+                            <span class="text-[10px] text-ivory-muted uppercase tracking-widest px-3 py-1 bg-obsidian border border-obsidian-border rounded-full">Routine Concierge</span>
+                            <span id="badge-p1" class="text-xs text-champagne font-medium">Sedan Rate</span>
+                        </div>
+                        <h3 class="font-serif text-2xl text-ivory font-semibold mb-2">Executive Maintenance Detail</h3>
+                        <p class="text-xs text-ivory-muted leading-relaxed mb-6">Ideal for maintaining pristine vehicles between full ceramic treatments.</p>
+                        
+                        <div class="mb-8">
+                            <span id="price-p1" class="font-serif text-4xl font-bold text-champagne">$150</span>
+                            <span class="text-xs text-ivory-muted block mt-1" id="time-p1">Estimated Duration: 2 Hours</span>
+                        </div>
+
+                        <ul class="text-xs text-ivory-dim space-y-3 mb-8 border-t border-obsidian-border pt-6 font-light">
+                            <li class="flex items-center gap-2">
+                                <span class="text-champagne">✓</span> 0-PPM Deionized Water Hand Wash
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="text-champagne">✓</span> Brake Dust & Wheel Barrel Deep Clean
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="text-champagne">✓</span> Interior Vacuum & Wipe-Down
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="text-champagne">✓</span> Streak-Free Glass & Mirror Polish
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="text-champagne">✓</span> Synthetic Gloss Sealant Spray
+                            </li>
+                        </ul>
+                    </div>
+                    <a href="#booking" class="w-full py-3 text-center text-xs uppercase tracking-widest border border-champagne/40 text-ivory hover:bg-champagne/10 transition-colors rounded-sm">
+                        Select Executive
+                    </a>
+                </div>
+
+                <!-- Package 2: Signature Paint Revival (FEATURED) -->
+                <div class="bg-obsidian-card p-8 rounded-sm border-2 border-champagne relative shadow-2xl flex flex-col justify-between transform lg:-translate-y-2">
+                    <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-champagne text-obsidian text-[10px] font-bold uppercase tracking-widest px-4 py-1 rounded-full shadow-md">
+                        Most Requested in Highland Park
+                    </div>
+                    <div>
+                        <div class="flex justify-between items-start mb-6 mt-2">
+                            <span class="text-[10px] text-champagne uppercase tracking-widest px-3 py-1 bg-champagne/10 rounded-full border border-champagne/30">Comprehensive</span>
+                            <span id="badge-p2" class="text-xs text-champagne font-medium">Sedan Rate</span>
+                        </div>
+                        <h3 class="font-serif text-2xl text-ivory font-semibold mb-2">Signature Paint Revival</h3>
+                        <p class="text-xs text-ivory-muted leading-relaxed mb-6">Complete exterior gloss enhancement paired with deep interior restoration.</p>
+                        
+                        <div class="mb-8">
+                            <span id="price-p2" class="font-serif text-4xl font-bold gold-gradient-text">$300</span>
+                            <span class="text-xs text-ivory-muted block mt-1" id="time-p2">Estimated Duration: 4 Hours</span>
+                        </div>
+
+                        <ul class="text-xs text-ivory-dim space-y-3 mb-8 border-t border-obsidian-border pt-6 font-light">
+                            <li class="flex items-center gap-2">
+                                <strong class="text-champagne">✓</strong> Everything in Executive Detail
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="text-champagne">✓</span> 1-Stage Rupes Machine Polish Glow
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="text-champagne">✓</span> Swissvax Leather Conditioning
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="text-champagne">✓</span> Hot Water Carpet & Mat Extraction
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="text-champagne">✓</span> 6-Month Hydrophobic SiO2 Protection
+                            </li>
+                        </ul>
+                    </div>
+                    <a href="#booking" class="w-full btn-gold py-3 text-center text-xs uppercase tracking-widest rounded-sm">
+                        Select Signature Revival
+                    </a>
+                </div>
+
+                <!-- Package 3: Sovereign Ceramic Concierge -->
+                <div class="bg-obsidian-card p-8 rounded-sm gold-border-glow flex flex-col justify-between relative">
+                    <div>
+                        <div class="flex justify-between items-start mb-6">
+                            <span class="text-[10px] text-ivory-muted uppercase tracking-widest px-3 py-1 bg-obsidian border border-obsidian-border rounded-full">Pinnacle Treatment</span>
+                            <span id="badge-p3" class="text-xs text-champagne font-medium">Sedan Rate</span>
+                        </div>
+                        <h3 class="font-serif text-2xl text-ivory font-semibold mb-2">Sovereign Ceramic Concierge</h3>
+                        <p class="text-xs text-ivory-muted leading-relaxed mb-6">Concierge level 2-stage correction and professional multi-year ceramic coating.</p>
+                        
+                        <div class="mb-8">
+                            <span id="price-p3" class="font-serif text-4xl font-bold text-champagne">$550</span>
+                            <span class="text-xs text-ivory-muted block mt-1" id="time-p3">Estimated Duration: Full Day Service</span>
+                        </div>
+
+                        <ul class="text-xs text-ivory-dim space-y-3 mb-8 border-t border-obsidian-border pt-6 font-light">
+                            <li class="flex items-center gap-2">
+                                <strong class="text-champagne">✓</strong> 2-Stage Paint Correction (Swirl Elimination)
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="text-champagne">✓</span> Gtechniq Professional Ceramic Coating
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="text-champagne">✓</span> Ceramic Glass & Wheel Face Coating
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="text-champagne">✓</span> Complete Interior Deep Sanitization
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="text-champagne">✓</span> Engine Bay Detail & Dressing
+                            </li>
+                        </ul>
+                    </div>
+                    <a href="#booking" class="w-full py-3 text-center text-xs uppercase tracking-widest border border-champagne/40 text-ivory hover:bg-champagne/10 transition-colors rounded-sm">
+                        Select Sovereign Ceramic
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- REAL CUSTOMER REVIEW CARDS WITH STAR RATINGS & AVATARS -->
+    <section id="reviews" class="py-24 bg-obsidian relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-champagne text-xs uppercase tracking-[0.25em] font-semibold block mb-3">HIGHLAND PARK TESTIMONIALS</span>
+                <h2 class="font-serif text-3xl sm:text-5xl font-normal text-ivory">Client Endorsements</h2>
+                <div class="w-16 h-0.5 bg-champagne mx-auto mt-4"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Review 1 -->
+                <div class="bg-obsidian-card p-8 rounded-sm border border-obsidian-border flex flex-col justify-between hover:border-champagne/40 transition-colors">
+                    <div>
+                        <!-- Stars -->
+                        <div class="flex text-champagne gap-1 mb-6">
+                            ★★★★★
+                        </div>
+                        <p class="text-xs sm:text-sm text-ivory-dim italic leading-relaxed mb-8">
+                            "They detailed my Porsche GT3 RS in my private driveway. The 0-PPM deionized water finish is unreal — zero water spots in 95-degree Dallas heat. Immaculate precision."
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-4 border-t border-obsidian-border pt-4">
+                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop" 
+                             alt="Victoria Sterling" 
+                             class="w-12 h-12 rounded-full object-cover border border-champagne/40">
+                        <div>
+                            <h4 class="font-serif text-base text-ivory font-semibold">Victoria Sterling</h4>
+                            <p class="text-[10px] text-ivory-muted uppercase tracking-wider">Armstrong Ave, Highland Park • Porsche 911 GT3 RS</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Review 2 -->
+                <div class="bg-obsidian-card p-8 rounded-sm border border-obsidian-border flex flex-col justify-between hover:border-champagne/40 transition-colors">
+                    <div>
+                        <!-- Stars -->
+                        <div class="flex text-champagne gap-1 mb-6">
+                            ★★★★★
+                        </div>
+                        <p class="text-xs sm:text-sm text-ivory-dim italic leading-relaxed mb-8">
+                            "The ceramic coating on my Range Rover Autobiography looks like liquid glass. Being fully self-contained meant they didn't even touch my water lines. True 5-star concierge service."
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-4 border-t border-obsidian-border pt-4">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop" 
+                             alt="Harrison Vance" 
+                             class="w-12 h-12 rounded-full object-cover border border-champagne/40">
+                        <div>
+                            <h4 class="font-serif text-base text-ivory font-semibold">Harrison Vance</h4>
+                            <p class="text-[10px] text-ivory-muted uppercase tracking-wider">Preston Hollow, Dallas • Range Rover Autobiography</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Review 3 -->
+                <div class="bg-obsidian-card p-8 rounded-sm border border-obsidian-border flex flex-col justify-between hover:border-champagne/40 transition-colors">
+                    <div>
+                        <!-- Stars -->
+                        <div class="flex text-champagne gap-1 mb-6">
+                            ★★★★★
+                        </div>
+                        <p class="text-xs sm:text-sm text-ivory-dim italic leading-relaxed mb-8">
+                            "Restored the leather interior of my Bentley Continental to factory matte perfection. No greasy shine, just authentic luxury aroma and velvet feel."
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-4 border-t border-obsidian-border pt-4">
+                        <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200&auto=format&fit=crop" 
+                             alt="Julian Montgomery" 
+                             class="w-12 h-12 rounded-full object-cover border border-champagne/40">
+                        <div>
+                            <h4 class="font-serif text-base text-ivory font-semibold">Julian Montgomery</h4>
+                            <p class="text-[10px] text-ivory-muted uppercase tracking-wider">Turtle Creek, Dallas • Bentley Continental GT</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- INSTANT CONCIERGE BOOKING FORM -->
+    <section id="booking" class="py-24 bg-[#0c0c0e] border-t border-obsidian-border relative">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-obsidian-card p-8 sm:p-12 rounded-sm gold-border-glow relative">
+                <div class="text-center mb-10">
+                    <span class="text-champagne text-xs uppercase tracking-[0.25em] font-semibold block mb-2">RESERVE YOUR CONCIERGE SLOT</span>
+                    <h2 class="font-serif text-3xl sm:text-4xl text-ivory">Schedule Mobile Arrival</h2>
+                    <p class="text-xs text-ivory-muted mt-2">Same-day and advance concierge appointments available across Dallas & Highland Park.</p>
+                </div>
+
+                <form id="conciergeForm" onsubmit="handleBookingSubmit(event)" class="space-y-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <!-- Name -->
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider text-ivory-dim mb-2">Full Name *</label>
+                            <input type="text" required placeholder="e.g. Sterling Crawford" 
+                                   class="w-full bg-obsidian border border-obsidian-border rounded-sm px-4 py-3 text-sm text-ivory focus:outline-none focus:border-champagne transition-colors">
+                        </div>
+                        <!-- Phone -->
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider text-ivory-dim mb-2">Phone Number *</label>
+                            <input type="tel" id="formPhone" required placeholder="(469) 000-0000" 
+                                   class="w-full bg-obsidian border border-obsidian-border rounded-sm px-4 py-3 text-sm text-ivory focus:outline-none focus:border-champagne transition-colors">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <!-- Vehicle Category -->
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider text-ivory-dim mb-2">Vehicle Make & Model *</label>
+                            <input type="text" required placeholder="e.g. 2024 Porsche 911 Turbo S" 
+                                   class="w-full bg-obsidian border border-obsidian-border rounded-sm px-4 py-3 text-sm text-ivory focus:outline-none focus:border-champagne transition-colors">
+                        </div>
+                        <!-- Desired Treatment -->
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider text-ivory-dim mb-2">Requested Treatment *</label>
+                            <select required class="w-full bg-obsidian border border-obsidian-border rounded-sm px-4 py-3 text-sm text-ivory focus:outline-none focus:border-champagne transition-colors">
+                                <option value="Executive Maintenance Detail">Executive Maintenance Detail</option>
+                                <option value="Signature Paint Revival" selected>Signature Paint Revival & Interior</option>
+                                <option value="Sovereign Ceramic Concierge">Sovereign Ceramic Concierge (Paint Correction)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <!-- Service Area -->
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider text-ivory-dim mb-2">Neighborhood / ZIP *</label>
+                            <select required class="w-full bg-obsidian border border-obsidian-border rounded-sm px-4 py-3 text-sm text-ivory focus:outline-none focus:border-champagne transition-colors">
+                                <option value="Highland Park (75205)">Highland Park (75205)</option>
+                                <option value="University Park (75205/75225)">University Park (75205 / 75225)</option>
+                                <option value="Preston Hollow (75220/75230)">Preston Hollow (75220 / 75230)</option>
+                                <option value="Turtle Creek / Uptown (75219)">Turtle Creek / Uptown (75219)</option>
+                                <option value="Greater Dallas Estate">Greater Dallas Estate Location</option>
+                            </select>
+                        </div>
+                        <!-- Date -->
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider text-ivory-dim mb-2">Preferred Service Date *</label>
+                            <input type="date" required 
+                                   class="w-full bg-obsidian border border-obsidian-border rounded-sm px-4 py-3 text-sm text-ivory focus:outline-none focus:border-champagne transition-colors">
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="w-full btn-gold py-4 text-xs uppercase tracking-widest rounded-sm font-semibold mt-4">
+                        Confirm Concierge Reservation
+                    </button>
+                </form>
+
+                <!-- Interactive Success State (Hidden by default) -->
+                <div id="bookingSuccess" class="hidden text-center py-8">
+                    <div class="w-16 h-16 rounded-full bg-champagne/20 border border-champagne text-champagne mx-auto flex items-center justify-center mb-6">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                    </div>
+                    <span class="text-xs uppercase tracking-widest text-champagne block mb-2">Reservation Request Received</span>
+                    <h3 class="font-serif text-3xl text-ivory mb-4">Concierge Slot #PCMD-<span id="refNum">8492</span> Confirmed</h3>
+                    <p class="text-xs text-ivory-muted max-w-md mx-auto leading-relaxed mb-6">
+                        Our Highland Park dispatch coordinator will contact your direct line at <strong id="displayPhone" class="text-ivory"></strong> within 15 minutes to review location access & arrival timing.
+                    </p>
+                    <a href="tel:4694387377" class="inline-flex items-center gap-2 text-xs uppercase tracking-widest text-champagne border border-champagne/30 px-6 py-3 rounded-sm hover:bg-champagne/10 transition-colors">
+                        <span>Need Immediate Assistance? Call (469) 438-7377</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER & TRUST BAR -->
+    <footer class="bg-obsidian border-t border-obsidian-border py-16 text-ivory-muted text-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
+                <!-- Col 1 -->
+                <div class="col-span-1 md:col-span-2">
+                    <a href="#" class="font-serif text-2xl font-bold tracking-wider gold-gradient-text block mb-3">PARK CITIES MOBILE DETAIL</a>
+                    <p class="text-ivory-dim text-xs max-w-md leading-relaxed font-light mb-6">
+                        Highland Park and Dallas' premier mobile auto detailing concierge. Delivering 0-PPM deionized water washes, ceramic coatings, and multi-stage paint correction directly to your estate driveway.
+                    </p>
+                    <div class="flex items-center gap-2 text-champagne font-semibold">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+                        <span>Direct Concierge Line: (469) 438-7377</span>
+                    </div>
+                </div>
+
+                <!-- Col 2 -->
+                <div>
+                    <h4 class="text-ivory font-serif text-sm font-semibold uppercase tracking-wider mb-4">Service Neighborhoods</h4>
+                    <ul class="space-y-2 text-ivory-muted font-light">
+                        <li>Highland Park (75205)</li>
+                        <li>University Park (75225)</li>
+                        <li>Preston Hollow (75230)</li>
+                        <li>Turtle Creek & Uptown</li>
+                        <li>Downtown Dallas Private Estates</li>
+                    </ul>
+                </div>
+
+                <!-- Col 3 -->
+                <div>
+                    <h4 class="text-ivory font-serif text-sm font-semibold uppercase tracking-wider mb-4">Certifications & Guarantees</h4>
+                    <ul class="space-y-2 text-ivory-muted font-light">
+                        <li>0-PPM Deionized Water System</li>
+                        <li>$2,000,000 Exotic Vehicle Insurance</li>
+                        <li>Gtechniq Certified Installer</li>
+                        <li>100% Self-Contained Rig</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-obsidian-border pt-8 flex flex-col sm:flex-row justify-between items-center text-[11px] text-ivory-muted">
+                <p>© 2026 Park Cities Mobile Detail. All Rights Reserved. Serving Highland Park & Dallas, TX.</p>
+                <p class="mt-2 sm:mt-0">Ultra-Bespoke Mobile Concierge Architecture</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- INTERACTIVE JAVASCRIPT FOR PRICING SELECTOR & BOOKING FORM -->
+    <script>
+        const pricingData = {
+            sedan: {
+                p1: { price: "$150", time: "Estimated Duration: 2 Hours", badge: "Sedan Rate" },
+                p2: { price: "$300", time: "Estimated Duration: 4 Hours", badge: "Sedan Rate" },
+                p3: { price: "$550", time: "Estimated Duration: Full Day Service", badge: "Sedan Rate" }
+            },
+            suv: {
+                p1: { price: "$190", time: "Estimated Duration: 2.5 Hours", badge: "SUV & Truck Rate" },
+                p2: { price: "$380", time: "Estimated Duration: 4.5 Hours", badge: "SUV & Truck Rate" },
+                p3: { price: "$680", time: "Estimated Duration: Full Day Service", badge: "SUV & Truck Rate" }
+            },
+            exotic: {
+                p1: { price: "$240", time: "Estimated Duration: 3 Hours", badge: "Exotic Rate" },
+                p2: { price: "$460", time: "Estimated Duration: 5 Hours", badge: "Exotic Rate" },
+                p3: { price: "$850", time: "Estimated Duration: Full Day Service", badge: "Exotic Rate" }
+            }
+        };
+
+        function selectVehicle(type) {
+            // Update Tab Styles
+            ['sedan', 'suv', 'exotic'].forEach(t => {
+                const btn = document.getElementById(`btn-${t}`);
+                if (t === type) {
+                    btn.className = "px-6 py-2.5 rounded-full text-xs uppercase tracking-wider font-semibold transition-all duration-300 bg-champagne text-obsidian shadow-lg";
+                } else {
+                    btn.className = "px-6 py-2.5 rounded-full text-xs uppercase tracking-wider font-semibold transition-all duration-300 text-ivory-dim hover:text-champagne";
+                }
+            });
+
+            // Update Prices & Badges with smooth fade effect
+            const data = pricingData[type];
+            ['p1', 'p2', 'p3'].forEach(p => {
+                const priceEl = document.getElementById(`price-${p}`);
+                const timeEl = document.getElementById(`time-${p}`);
+                const badgeEl = document.getElementById(`badge-${p}`);
+
+                if (priceEl && data[p]) {
+                    priceEl.style.opacity = '0';
+                    setTimeout(() => {
+                        priceEl.innerText = data[p].price;
+                        timeEl.innerText = data[p].time;
+                        badgeEl.innerText = data[p].badge;
+                        priceEl.style.opacity = '1';
+                    }, 150);
+                }
+            });
+        }
+
+        function handleBookingSubmit(event) {
+            event.preventDefault();
+            const phoneInput = document.getElementById('formPhone').value;
+            const refNum = Math.floor(1000 + Math.random() * 9000);
+
+            document.getElementById('refNum').innerText = refNum;
+            document.getElementById('displayPhone').innerText = phoneInput || "(469) 438-7377";
+
+            document.getElementById('conciergeForm').classList.add('hidden');
+            document.getElementById('bookingSuccess').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "mox-hunter": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-openapi", "https://ais-dev-bz4wyab5unh2f3vhuj4rjn-8384009771.asia-east1.run.app/api/openapi.json"],
+      "env": {
+        "MO_X_API_KEY": "mox_zZdcZAAI2KXJzVOEorV3U2chSFTj2HWz"
+      }
+    }
+  }
+}

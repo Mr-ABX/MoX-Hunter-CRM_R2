@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arrington Roofing | Dallas Roofing Contractor Since 1983</title>
+    <!-- Google Fonts: Space Grotesk & Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        industrial: {
+                            950: '#090d16',
+                            900: '#0f172a',
+                            800: '#1e293b',
+                            700: '#334155',
+                            600: '#475569',
+                        },
+                        amber: {
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                            700: '#b45309',
+                        }
+                    },
+                    fontFamily: {
+                        heading: ['Space Grotesk', 'sans-serif'],
+                        body: ['Outfit', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 24px;
+            width: 24px;
+            border-radius: 50%;
+            background: #f59e0b;
+            cursor: pointer;
+            border: 3px solid #0f172a;
+            box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+        }
+        .industrial-grid {
+            background-image: radial-gradient(rgba(245, 158, 11, 0.15) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+        .badge-stripe {
+            background: repeating-linear-gradient(
+                -45deg,
+                #f59e0b,
+                #f59e0b 10px,
+                #d97706 10px,
+                #d97706 20px
+            );
+        }
+    </style>
+</head>
+<body class="font-body bg-industrial-950 text-slate-100 antialiased selection:bg-amber-500 selection:text-industrial-950">
+
+    <!-- 1. DFW STORM ALERT TOPBAR -->
+    <div class="bg-amber-500 text-industrial-950 px-4 py-2 text-xs md:text-sm font-semibold tracking-wide flex items-center justify-between border-b border-amber-600">
+        <div class="max-w-7xl mx-auto w-full flex flex-col md:flex-row items-center justify-between gap-2">
+            <div class="flex items-center gap-2">
+                <span class="flex h-2.5 w-2.5 relative">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-industrial-950 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-industrial-950"></span>
+                </span>
+                <span class="font-heading uppercase tracking-wider text-xs md:text-sm font-bold">DFW Storm Alert:</span>
+                <span>Hail & Wind Inspection Teams Active in Dallas, Collin & Tarrant Counties</span>
+            </div>
+            <div class="flex items-center gap-4">
+                <span class="hidden lg:inline text-industrial-900/80 font-mono">EST. DALLAS 1983</span>
+                <a href="tel:2146988443" class="bg-industrial-950 text-amber-400 hover:bg-industrial-900 px-3 py-1 rounded font-mono font-bold text-xs flex items-center gap-1.5 transition-colors">
+                    <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/></svg>
+                    24/7 HOTLINE: (214) 698-8443
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. NAVIGATION HEADER -->
+    <header class="sticky top-0 z-50 bg-industrial-900/95 backdrop-blur-md border-b border-industrial-800 shadow-2xl">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Logo -->
+            <a href="#" class="flex items-center gap-3 group">
+                <div class="w-10 h-10 bg-amber-500 rounded flex items-center justify-center font-heading font-black text-industrial-950 text-xl shadow-lg shadow-amber-500/20 group-hover:bg-amber-400 transition-colors">
+                    A
+                </div>
+                <div class="flex flex-col">
+                    <div class="font-heading text-xl md:text-2xl font-bold tracking-tight text-white leading-none">
+                        ARRINGTON <span class="text-amber-500">ROOFING</span>
+                    </div>
+                    <span class="text-[10px] font-mono tracking-widest text-slate-400 uppercase mt-0.5">Dallas Premier Roofers • Since 1983</span>
+                </div>
+            </a>
+
+            <!-- Desktop Nav Links -->
+            <nav class="hidden lg:flex items-center gap-8 text-sm font-medium text-slate-300">
+                <a href="#services" class="hover:text-amber-400 transition-colors">Services</a>
+                <a href="#legacy" class="hover:text-amber-400 transition-colors">42-Yr Legacy</a>
+                <a href="#estimator" class="hover:text-amber-400 transition-colors flex items-center gap-1">
+                    <span>Cost Estimator</span>
+                    <span class="bg-amber-500/20 text-amber-400 text-[10px] font-mono px-1.5 py-0.5 rounded border border-amber-500/30">Interactive</span>
+                </a>
+                <a href="#reviews" class="hover:text-amber-400 transition-colors">Testimonials</a>
+                <a href="#faq" class="hover:text-amber-400 transition-colors">FAQ</a>
+            </nav>
+
+            <!-- Nav Actions -->
+            <div class="flex items-center gap-4">
+                <a href="tel:2146988443" class="hidden sm:flex flex-col items-end text-right">
+                    <span class="text-[10px] font-mono text-slate-400 uppercase">Emergency Service</span>
+                    <span class="font-heading font-bold text-white text-base hover:text-amber-400 transition-colors">(214) 698-8443</span>
+                </a>
+                <a href="#inspection" class="bg-amber-500 hover:bg-amber-400 text-industrial-950 font-heading font-bold px-5 py-2.5 rounded shadow-lg shadow-amber-500/20 text-sm transition-all transform hover:-translate-y-0.5">
+                    Free 4K Drone Inspection
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 3. HERO SECTION WITH REAL CONSTRUCTION PHOTOGRAPHY -->
+    <section class="relative min-h-[85vh] flex items-center justify-center overflow-hidden border-b border-industrial-800">
+        <!-- Background Image with Heavy Overlay -->
+        <div class="absolute inset-0 z-0">
+            <img src="https://images.unsplash.com/photo-1632778149955-e80f8ceca2e8?q=80&w=1600&auto=format&fit=crop" alt="Arrington Roofing Construction Dallas" class="w-full h-full object-cover object-center filter brightness-90">
+            <div class="absolute inset-0 bg-gradient-to-r from-industrial-950 via-industrial-950/90 to-industrial-900/75"></div>
+            <div class="absolute inset-0 industrial-grid opacity-30"></div>
+        </div>
+
+        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28 w-full">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                <div class="lg:col-span-8 space-y-6">
+                    <!-- Trust Badge -->
+                    <div class="inline-flex items-center gap-2 bg-industrial-900/90 border border-amber-500/30 px-3.5 py-1.5 rounded-full text-xs font-mono text-amber-400">
+                        <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+                        GAF MASTER ELITE® CONTRACTOR • TOP 2% IN NORTH AMERICA
+                    </div>
+
+                    <!-- Main Headline -->
+                    <h1 class="font-heading text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-none">
+                        DFW’s Most Trusted Roofing Contractor <span class="text-amber-500 block mt-2">Operating Since 1983.</span>
+                    </h1>
+
+                    <!-- Subtitle -->
+                    <p class="text-lg sm:text-xl text-slate-300 max-w-2xl font-normal leading-relaxed">
+                        Over 42 years of unyielding Dallas craftsmanship. Zero deposit required on insurance storm restoration, 50-Year GAF System Warranties, and precision 4K drone roof assessments.
+                    </p>
+
+                    <!-- CTAs -->
+                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-4">
+                        <a href="#estimator" class="bg-amber-500 hover:bg-amber-400 text-industrial-950 font-heading font-bold text-base px-8 py-4 rounded shadow-xl shadow-amber-500/25 flex items-center justify-center gap-3 transition-all transform hover:-translate-y-0.5">
+                            <span>Calculate Roof Cost Live</span>
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                        </a>
+                        <a href="tel:2146988443" class="bg-industrial-800/80 hover:bg-industrial-800 text-white font-heading font-semibold text-base px-7 py-4 rounded border border-industrial-700 flex items-center justify-center gap-3 transition-colors">
+                            <svg class="w-5 h-5 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/></svg>
+                            <span>Call (214) 698-8443</span>
+                        </a>
+                    </div>
+
+                    <!-- Trust Bar Badges -->
+                    <div class="pt-8 border-t border-industrial-800/80 grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs text-slate-400 font-mono">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-5 h-5 text-amber-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                            <span>42 Years in Dallas</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <svg class="w-5 h-5 text-amber-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                            <span>BBB A+ Accredited</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <svg class="w-5 h-5 text-amber-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                            <span>15,000+ Completed</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <svg class="w-5 h-5 text-amber-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                            <span>4.9★ Google Rating</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hero Floating Quick Card -->
+                <div class="lg:col-span-4 bg-industrial-900 border-2 border-industrial-700 p-6 rounded-lg shadow-2xl relative">
+                    <div class="absolute -top-3 left-6 bg-amber-500 text-industrial-950 font-heading font-bold text-xs px-3 py-1 rounded">
+                        FAST DFW RESPONSE
+                    </div>
+                    <h3 class="font-heading font-bold text-white text-xl mb-1">Need Immediate Assistance?</h3>
+                    <p class="text-xs text-slate-400 mb-4">Book a technician or get an instant hail damage drone audit.</p>
+                    
+                    <form onsubmit="handleQuickFormSubmit(event)" class="space-y-3">
+                        <div>
+                            <label class="block text-xs font-mono text-slate-300 mb-1">PROPERTY ADDRESS</label>
+                            <input type="text" id="heroAddress" required placeholder="e.g. 4512 Preston Rd, Dallas" class="w-full bg-industrial-950 border border-industrial-700 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-mono text-slate-300 mb-1">PHONE NUMBER</label>
+                            <input type="tel" id="heroPhone" required placeholder="(214) 000-0000" class="w-full bg-industrial-950 border border-industrial-700 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-mono text-slate-300 mb-1">SERVICE NEEDED</label>
+                            <select id="heroService" class="w-full bg-industrial-950 border border-industrial-700 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
+                                <option value="Storm & Hail Damage">Storm & Hail Damage Claim</option>
+                                <option value="Roof Replacement">Full Roof Replacement</option>
+                                <option value="Commercial TPO">Commercial Flat / TPO Roof</option>
+                                <option value="Minor Leak Repair">Minor Leak & Flashing Repair</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="w-full bg-amber-500 hover:bg-amber-400 text-industrial-950 font-heading font-bold text-sm py-3 rounded transition-colors shadow-lg">
+                            Request Inspection Call Now
+                        </button>
+                        <p class="text-[10px] text-center text-slate-500">🔒 100% Free. No pressure or obligation.</p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. 42-YEAR LEGACY & GAF MASTER ELITE TRUST METRICS BAR -->
+    <section id="legacy" class="py-16 bg-industrial-900 border-b border-industrial-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-12">
+                <span class="font-mono text-xs text-amber-400 tracking-widest uppercase">ESTABLISHED DALLAS 1983</span>
+                <h2 class="font-heading text-3xl sm:text-4xl font-bold text-white mt-1">42 Years of Built-To-Last Integrity</h2>
+                <p class="text-slate-400 text-sm md:text-base mt-2">While fly-by-night storm chasers disappear after North Texas hail storms, Arrington Roofing has stood firm in Dallas for over four decades.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Card 1 -->
+                <div class="bg-industrial-950 p-6 rounded border border-industrial-800 hover:border-amber-500/50 transition-colors">
+                    <div class="text-amber-500 font-heading text-4xl font-extrabold mb-1">1983</div>
+                    <div class="font-heading font-bold text-white text-base mb-2">Dallas Founded</div>
+                    <p class="text-xs text-slate-400 leading-relaxed">Family-owned and locally operated in Dallas County for over 42 consecutive years with deep North Texas roots.</p>
+                </div>
+                <!-- Card 2 -->
+                <div class="bg-industrial-950 p-6 rounded border border-industrial-800 hover:border-amber-500/50 transition-colors">
+                    <div class="text-amber-500 font-heading text-4xl font-extrabold mb-1">TOP 2%</div>
+                    <div class="font-heading font-bold text-white text-base mb-2">GAF Master Elite®</div>
+                    <p class="text-xs text-slate-400 leading-relaxed">Factory certified master installers granting exclusive access to GAF 50-Year Golden Pledge System Warranties.</p>
+                </div>
+                <!-- Card 3 -->
+                <div class="bg-industrial-950 p-6 rounded border border-industrial-800 hover:border-amber-500/50 transition-colors">
+                    <div class="text-amber-500 font-heading text-4xl font-extrabold mb-1">15k+</div>
+                    <div class="font-heading font-bold text-white text-base mb-2">DFW Roofs Installed</div>
+                    <p class="text-xs text-slate-400 leading-relaxed">Thousands of residential homes & commercial buildings protected against extreme Texas heat, hail, and gale winds.</p>
+                </div>
+                <!-- Card 4 -->
+                <div class="bg-industrial-950 p-6 rounded border border-industrial-800 hover:border-amber-500/50 transition-colors">
+                    <div class="text-amber-500 font-heading text-4xl font-extrabold mb-1">$0</div>
+                    <div class="font-heading font-bold text-white text-base mb-2">Upfront Claim Money</div>
+                    <p class="text-xs text-slate-400 leading-relaxed">We require zero deposit until materials land on your driveway for insurance storm restoration jobs.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. INTERACTIVE 3-STEP ROOF COST ESTIMATOR -->
+    <section id="estimator" class="py-20 bg-industrial-950 border-b border-industrial-800 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-14">
+                <span class="font-mono text-xs text-amber-400 tracking-widest uppercase">INSTANT CALCULATOR</span>
+                <h2 class="font-heading text-3xl sm:text-5xl font-bold text-white mt-1">Interactive DFW Roof Cost Estimator</h2>
+                <p class="text-slate-400 text-sm sm:text-base mt-3">Select your property metrics below to calculate an instant estimated project range based on current 2026 Dallas material rates.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                <!-- Estimator Inputs (7 Columns) -->
+                <div class="lg:col-span-7 bg-industrial-900 border-2 border-industrial-800 p-6 sm:p-8 rounded-lg space-y-8">
+                    <!-- Step 1: Property Type -->
+                    <div>
+                        <label class="block font-heading font-bold text-white text-sm sm:text-base mb-3 flex items-center justify-between">
+                            <span>STEP 1: PROPERTY CLASSIFICATION</span>
+                            <span class="text-xs font-mono text-amber-400">SELECT ONE</span>
+                        </label>
+                        <div class="grid grid-cols-2 gap-4">
+                            <button type="button" onclick="setPropType('residential')" id="btn-prop-res" class="p-4 rounded border-2 border-amber-500 bg-amber-500/10 text-white font-heading font-bold text-sm text-center flex flex-col items-center gap-2 transition-all">
+                                <svg class="w-6 h-6 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 00-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 00-1 1m-6 0h6"/></svg>
+                                <span>Residential Home</span>
+                            </button>
+                            <button type="button" onclick="setPropType('commercial')" id="btn-prop-com" class="p-4 rounded border-2 border-industrial-700 bg-industrial-950 text-slate-400 font-heading font-bold text-sm text-center flex flex-col items-center gap-2 transition-all hover:border-industrial-600">
+                                <svg class="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5m3 0h1m-1-4h.01M9 16h.01M9 12h.01M9 8h.01M15 16h.01M15 12h.01M15 8h.01"/></svg>
+                                <span>Commercial Building</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Material Selection -->
+                    <div>
+                        <label class="block font-heading font-bold text-white text-sm sm:text-base mb-3 flex items-center justify-between">
+                            <span>STEP 2: ROOFING MATERIAL TYPE</span>
+                            <span class="text-xs font-mono text-amber-400">SELECT SYSTEM</span>
+                        </label>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="material-grid">
+                            <!-- Populated via JS -->
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Square Footage Slider -->
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <label class="font-heading font-bold text-white text-sm sm:text-base">STEP 3: ESTIMATED ROOF SIZE</label>
+                            <span class="font-mono text-amber-400 font-bold text-lg" id="sqft-val">2,500 SQ FT</span>
+                        </div>
+                        <input type="range" id="sqft-slider" min="1000" max="6000" step="100" value="2500" oninput="updateEstimator()" class="w-full h-3 bg-industrial-950 rounded-lg appearance-none cursor-pointer border border-industrial-700">
+                        <div class="flex justify-between text-[11px] font-mono text-slate-400 mt-1">
+                            <span>1,000 Sq Ft (Small)</span>
+                            <span>3,500 Sq Ft (Avg Dallas Home)</span>
+                            <span>6,000 Sq Ft (Large/Estate)</span>
+                        </div>
+                    </div>
+
+                    <!-- Step 4: Storm Damage Status -->
+                    <div>
+                        <label class="block font-heading font-bold text-white text-sm sm:text-base mb-3">STEP 4: RECENT HAIL / WIND STORM DAMAGE?</label>
+                        <div class="grid grid-cols-2 gap-4">
+                            <button type="button" onclick="setStormStatus(true)" id="btn-storm-yes" class="p-3 rounded border-2 border-amber-500 bg-amber-500/10 text-white font-bold text-sm flex items-center justify-center gap-2">
+                                <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                                Yes (Filing Insurance Claim)
+                            </button>
+                            <button type="button" onclick="setStormStatus(false)" id="btn-storm-no" class="p-3 rounded border-2 border-industrial-700 bg-industrial-950 text-slate-400 font-bold text-sm flex items-center justify-center gap-2">
+                                No (Retail Cash Purchase)
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Estimator Live Output Card (5 Columns) -->
+                <div class="lg:col-span-5 bg-gradient-to-br from-industrial-900 to-industrial-950 border-2 border-amber-500/50 p-6 sm:p-8 rounded-lg shadow-2xl relative overflow-hidden">
+                    <div class="absolute top-0 right-0 badge-stripe w-24 h-6 text-[9px] font-mono font-bold text-industrial-950 flex items-center justify-center rotate-12 translate-x-6 translate-y-3">
+                        2026 RATES
+                    </div>
+
+                    <h3 class="font-heading font-bold text-white text-xl mb-1">Estimated Investment Summary</h3>
+                    <p class="text-xs text-slate-400 mb-6">Based on DFW labor costs & GAF Master Elite installation standards.</p>
+
+                    <!-- Estimated Price Box -->
+                    <div class="bg-industrial-950 border border-amber-500/30 p-5 rounded-lg mb-6">
+                        <span class="text-xs font-mono text-slate-400 uppercase tracking-wider block mb-1">ESTIMATED COST RANGE</span>
+                        <div class="font-heading text-3xl sm:text-4xl font-extrabold text-amber-400" id="est-price-display">
+                            $11,250 – $14,800
+                        </div>
+                        <div class="text-[11px] text-amber-500/90 font-mono mt-2 flex items-center gap-1" id="insurance-note">
+                            <span>⚡ Insurance Storm Claim Option: Likely $0 Out-of-Pocket Beyond Deductible</span>
+                        </div>
+                    </div>
+
+                    <!-- Breakdown Metrics -->
+                    <div class="space-y-3 text-xs border-t border-b border-industrial-800 py-4 mb-6">
+                        <div class="flex justify-between text-slate-300">
+                            <span class="text-slate-400">Selected System:</span>
+                            <span class="font-bold text-white" id="est-mat-display">Architectural Shingles</span>
+                        </div>
+                        <div class="flex justify-between text-slate-300">
+                            <span class="text-slate-400">Factory Warranty:</span>
+                            <span class="font-bold text-amber-400">50-Year Golden Pledge®</span>
+                        </div>
+                        <div class="flex justify-between text-slate-300">
+                            <span class="text-slate-400">Labor Guarantee:</span>
+                            <span class="font-bold text-white">25-Year Workmanship</span>
+                        </div>
+                        <div class="flex justify-between text-slate-300">
+                            <span class="text-slate-400">Estimated Duration:</span>
+                            <span class="font-bold text-white">1 – 2 Days Complete</span>
+                        </div>
+                    </div>
+
+                    <!-- Claim CTA -->
+                    <button onclick="openBookingModal('Calculator Estimate Claim')" class="w-full bg-amber-500 hover:bg-amber-400 text-industrial-950 font-heading font-bold text-base py-4 rounded shadow-lg transition-transform transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
+                        <span>Lock In Estimate & Schedule Inspection</span>
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    </button>
+                    <p class="text-[10px] text-center text-slate-400 mt-3">Includes free 4K high-resolution drone roof analysis & written estimate.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. REAL ROOFING SERVICE CARDS WITH PHOTOGRAPHY THUMBNAILS -->
+    <section id="services" class="py-20 bg-industrial-900 border-b border-industrial-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-14">
+                <span class="font-mono text-xs text-amber-400 tracking-widest uppercase">OUR SPECIALTIES</span>
+                <h2 class="font-heading text-3xl sm:text-5xl font-bold text-white mt-1">Dallas Roofing Services</h2>
+                <p class="text-slate-400 text-sm sm:text-base mt-3">From estate roof replacements in Highland Park to heavy commercial TPO flat roofs in Irving.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Service Card 1 -->
+                <div class="bg-industrial-950 border border-industrial-800 rounded-lg overflow-hidden group hover:border-amber-500/50 transition-all flex flex-col">
+                    <div class="h-56 relative overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=800&auto=format&fit=crop" alt="Architectural Shingles Replacement" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-industrial-950 via-transparent to-transparent"></div>
+                        <span class="absolute top-4 left-4 bg-industrial-900/90 text-amber-400 font-mono text-xs px-3 py-1 rounded border border-amber-500/30">RESIDENTIAL</span>
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col justify-between">
+                        <div>
+                            <h3 class="font-heading font-bold text-white text-xl mb-2">Residential Architectural Roof Replacement</h3>
+                            <p class="text-xs sm:text-sm text-slate-400 leading-relaxed mb-4">
+                                Premium GAF Timberline HDZ® architectural shingle systems engineered for North Texas heat cycles. Featuring LayerLock® technology, StainGuard Plus™ algae protection, and Class 4 impact resistance for max insurance discounts.
+                            </p>
+                        </div>
+                        <div class="pt-4 border-t border-industrial-800/80 flex items-center justify-between">
+                            <span class="text-xs font-mono text-slate-400">50-Yr System Warranty</span>
+                            <a href="#inspection" class="text-xs font-heading font-bold text-amber-400 hover:text-amber-300 flex items-center gap-1">
+                                Book Assessment &rarr;
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Service Card 2 -->
+                <div class="bg-industrial-950 border border-industrial-800 rounded-lg overflow-hidden group hover:border-amber-500/50 transition-all flex flex-col">
+                    <div class="h-56 relative overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1570129477492-45c003edd2be?q=80&w=800&auto=format&fit=crop" alt="Emergency Storm & Hail Restoration" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-industrial-950 via-transparent to-transparent"></div>
+                        <span class="absolute top-4 left-4 bg-amber-500 text-industrial-950 font-mono font-bold text-xs px-3 py-1 rounded">24/7 EMERGENCY</span>
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col justify-between">
+                        <div>
+                            <h3 class="font-heading font-bold text-white text-xl mb-2">Emergency Storm & Hail Damage Restoration</h3>
+                            <p class="text-xs sm:text-sm text-slate-400 leading-relaxed mb-4">
+                                Rapid 24-hour emergency tarping and complete insurance claim navigation. Our team of certified hail specialists meets directly with your insurance adjuster to ensure 100% of storm scope items are covered without missing detail.
+                            </p>
+                        </div>
+                        <div class="pt-4 border-t border-industrial-800/80 flex items-center justify-between">
+                            <span class="text-xs font-mono text-slate-400">$0 Out-Of-Pocket Option</span>
+                            <a href="#inspection" class="text-xs font-heading font-bold text-amber-400 hover:text-amber-300 flex items-center gap-1">
+                                Claim Storm Audit &rarr;
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Service Card 3 -->
+                <div class="bg-industrial-950 border border-industrial-800 rounded-lg overflow-hidden group hover:border-amber-500/50 transition-all flex flex-col">
+                    <div class="h-56 relative overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1541888946425-d0fbb186a5b3?q=80&w=800&auto=format&fit=crop" alt="Commercial TPO Flat Roof" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-industrial-950 via-transparent to-transparent"></div>
+                        <span class="absolute top-4 left-4 bg-industrial-900/90 text-amber-400 font-mono text-xs px-3 py-1 rounded border border-amber-500/30">COMMERCIAL</span>
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col justify-between">
+                        <div>
+                            <h3 class="font-heading font-bold text-white text-xl mb-2">Commercial TPO & Industrial Flat Roofing</h3>
+                            <p class="text-xs sm:text-sm text-slate-400 leading-relaxed mb-4">
+                                High-reflectivity 60-mil TPO, EPDM, and Modified Bitumen membrane systems designed for Dallas commercial properties. Lowers building HVAC cooling costs by up to 30% while guaranteeing leak-proof performance.
+                            </p>
+                        </div>
+                        <div class="pt-4 border-t border-industrial-800/80 flex items-center justify-between">
+                            <span class="text-xs font-mono text-slate-400">Energy Star Certified</span>
+                            <a href="#inspection" class="text-xs font-heading font-bold text-amber-400 hover:text-amber-300 flex items-center gap-1">
+                                Commercial Scope &rarr;
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Service Card 4 -->
+                <div class="bg-industrial-950 border border-industrial-800 rounded-lg overflow-hidden group hover:border-amber-500/50 transition-all flex flex-col">
+                    <div class="h-56 relative overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1618090584126-129cd1f3fbae?q=80&w=800&auto=format&fit=crop" alt="Roofers at Work Repairing Flashing" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-industrial-950 via-transparent to-transparent"></div>
+                        <span class="absolute top-4 left-4 bg-industrial-900/90 text-amber-400 font-mono text-xs px-3 py-1 rounded border border-amber-500/30">MAINTENANCE</span>
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col justify-between">
+                        <div>
+                            <h3 class="font-heading font-bold text-white text-xl mb-2">Craftsman Roof Repairs & Leak Sealing</h3>
+                            <p class="text-xs sm:text-sm text-slate-400 leading-relaxed mb-4">
+                                Surgical leak detection, chimney counter-flashing rebuilds, pipe boot collar replacements, and ventilation upgrades. We stop leaks where other Dallas roofers fail.
+                            </p>
+                        </div>
+                        <div class="pt-4 border-t border-industrial-800/80 flex items-center justify-between">
+                            <span class="text-xs font-mono text-slate-400">Same-Day Dispatch Available</span>
+                            <a href="#inspection" class="text-xs font-heading font-bold text-amber-400 hover:text-amber-300 flex items-center gap-1">
+                                Schedule Repair &rarr;
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7. WHY DALLAS CHOOSES ARRINGTON COMPARISON TABLE -->
+    <section class="py-20 bg-industrial-950 border-b border-industrial-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                <div class="lg:col-span-5 space-y-6">
+                    <span class="font-mono text-xs text-amber-400 tracking-widest uppercase">THE DALLAS DIFFERENCE</span>
+                    <h2 class="font-heading text-3xl sm:text-4xl font-bold text-white leading-tight">
+                        Why Arrington Roofing Stands Above Storm Chasers
+                    </h2>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        After major North Texas hail events, magnetic-sign out-of-state contractors flood DFW. Here is how Arrington Roofing protects your home and financial investment.
+                    </p>
+                    <div class="space-y-3 font-mono text-xs text-slate-300">
+                        <div class="flex items-center gap-3">
+                            <div class="w-6 h-6 rounded bg-amber-500/10 text-amber-400 flex items-center justify-center font-bold">✓</div>
+                            <span>Local Dallas Physical Office Since 1983</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-6 h-6 rounded bg-amber-500/10 text-amber-400 flex items-center justify-center font-bold">✓</div>
+                            <span>$2,000,000 General Liability & Workman’s Comp</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-6 h-6 rounded bg-amber-500/10 text-amber-400 flex items-center justify-center font-bold">✓</div>
+                            <span>GAF Golden Pledge® 50-Year Non-Prorated Warranty</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-7 bg-industrial-900 border border-industrial-800 rounded-lg p-6 overflow-x-auto">
+                    <table class="w-full text-left text-xs sm:text-sm">
+                        <thead>
+                            <tr class="border-b border-industrial-800 font-heading">
+                                <th class="py-3 px-4 text-slate-400 font-bold">Feature Metric</th>
+                                <th class="py-3 px-4 text-amber-400 font-bold bg-amber-500/10 rounded-t">Arrington Roofing</th>
+                                <th class="py-3 px-4 text-slate-500 font-bold">Out-Of-State Storm Chasers</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-industrial-800/60 text-slate-300">
+                            <tr>
+                                <td class="py-3.5 px-4 font-semibold text-white">Local History</td>
+                                <td class="py-3.5 px-4 text-amber-400 font-bold bg-amber-500/10">42 Consecutive Years</td>
+                                <td class="py-3.5 px-4 text-slate-500">Less than 6 Months</td>
+                            </tr>
+                            <tr>
+                                <td class="py-3.5 px-4 font-semibold text-white">Certification</td>
+                                <td class="py-3.5 px-4 text-amber-400 font-bold bg-amber-500/10">GAF Master Elite® (Top 2%)</td>
+                                <td class="py-3.5 px-4 text-slate-500">Uncertified / Basic License</td>
+                            </tr>
+                            <tr>
+                                <td class="py-3.5 px-4 font-semibold text-white">Deposit Terms</td>
+                                <td class="py-3.5 px-4 text-amber-400 font-bold bg-amber-500/10">$0 Until Materials Land</td>
+                                <td class="py-3.5 px-4 text-slate-500">Demand 50% Upfront Cash</td>
+                            </tr>
+                            <tr>
+                                <td class="py-3.5 px-4 font-semibold text-white">Warranty Backing</td>
+                                <td class="py-3.5 px-4 text-amber-400 font-bold bg-amber-500/10">50-Yr Factory Backed</td>
+                                <td class="py-3.5 px-4 text-slate-500">1-Yr Tailgate Warranty</td>
+                            </tr>
+                            <tr>
+                                <td class="py-3.5 px-4 font-semibold text-white">Inspection Tech</td>
+                                <td class="py-3.5 px-4 text-amber-400 font-bold bg-amber-500/10">High-Res 4K Drone 3D Scan</td>
+                                <td class="py-3.5 px-4 text-slate-500">Visual Chalk Walk</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 8. VERIFIED CUSTOMER TESTIMONIALS -->
+    <section id="reviews" class="py-20 bg-industrial-900 border-b border-industrial-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-14">
+                <span class="font-mono text-xs text-amber-400 tracking-widest uppercase">REAL DALLAS REVIEWS</span>
+                <h2 class="font-heading text-3xl sm:text-5xl font-bold text-white mt-1">Homeowner Testimonials</h2>
+                <p class="text-slate-400 text-sm sm:text-base mt-2">Rated 4.9 out of 5 stars across 500+ Google Reviews from North Texas neighbors.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Testimonial 1 -->
+                <div class="bg-industrial-950 border border-industrial-800 p-8 rounded-lg relative hover:border-amber-500/50 transition-colors">
+                    <div class="flex items-center gap-1 text-amber-400 mb-4">
+                        ★★★★★ <span class="text-xs font-mono text-slate-400 ml-2">5.0 Star Google Verified</span>
+                    </div>
+                    <p class="text-sm sm:text-base text-slate-300 italic mb-6 leading-relaxed">
+                        "After the devastating May hail storm shattered roofs in Highland Park, Arrington Roofing had a 4K drone over my roof within 3 hours. They met directly with my State Farm adjuster, ensured every item was included, and completed the full replacement in a single day. Flawless cleanup!"
+                    </p>
+                    <div class="flex items-center gap-4 pt-4 border-t border-industrial-800">
+                        <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=200&auto=format&fit=crop" alt="Marcus Vance" class="w-12 h-12 rounded-full object-cover border-2 border-amber-500">
+                        <div>
+                            <div class="font-heading font-bold text-white text-base">Marcus Vance</div>
+                            <div class="text-xs text-slate-400 font-mono">Highland Park, Dallas • Storm Replacement</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial 2 -->
+                <div class="bg-industrial-950 border border-industrial-800 p-8 rounded-lg relative hover:border-amber-500/50 transition-colors">
+                    <div class="flex items-center gap-1 text-amber-400 mb-4">
+                        ★★★★★ <span class="text-xs font-mono text-slate-400 ml-2">5.0 Star Google Verified</span>
+                    </div>
+                    <p class="text-sm sm:text-base text-slate-300 italic mb-6 leading-relaxed">
+                        "Arrington Roofing installed my parents' roof back in 1996, so when our Frisco home needed a complete replacement, they were the only call I made. Their GAF Master Elite status and 50-year warranty gave us complete peace of mind. True professionals!"
+                    </p>
+                    <div class="flex items-center gap-4 pt-4 border-t border-industrial-800">
+                        <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=200&auto=format&fit=crop" alt="Elena Rostova" class="w-12 h-12 rounded-full object-cover border-2 border-amber-500">
+                        <div>
+                            <div class="font-heading font-bold text-white text-base">Elena Rostova</div>
+                            <div class="text-xs text-slate-400 font-mono">Frisco, TX • GAF Timberline HDZ Roof</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 9. FREE 4K DRONE INSPECTION BOOKING SECTION -->
+    <section id="inspection" class="py-20 bg-industrial-950 border-b border-industrial-800 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-gradient-to-r from-industrial-900 via-industrial-900 to-industrial-800 border-2 border-amber-500/40 rounded-2xl p-8 sm:p-12 shadow-2xl relative overflow-hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+                    <div class="lg:col-span-6 space-y-6">
+                        <span class="inline-block bg-amber-500/20 text-amber-400 text-xs font-mono px-3 py-1 rounded border border-amber-500/40">FREE NO-OBLIGATION SERVICE</span>
+                        <h2 class="font-heading text-3xl sm:text-5xl font-bold text-white leading-tight">
+                            Schedule Your Free 4K Drone Roof Inspection
+                        </h2>
+                        <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+                            Don't risk climbing a ladder after a storm. Our certified flight operators deploy high-resolution 4K thermal cameras to detect micro-cracks, hail bruising, and hidden leaks.
+                        </p>
+
+                        <div class="space-y-4 pt-2">
+                            <div class="flex items-start gap-3">
+                                <div class="w-6 h-6 rounded bg-amber-500 text-industrial-950 font-bold flex items-center justify-center flex-shrink-0 mt-0.5 text-xs">1</div>
+                                <div>
+                                    <div class="font-heading font-bold text-white text-sm">3D High-Res Thermal Mapping</div>
+                                    <div class="text-xs text-slate-400">Detailed photographic evidence for your insurance adjuster.</div>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <div class="w-6 h-6 rounded bg-amber-500 text-industrial-950 font-bold flex items-center justify-center flex-shrink-0 mt-0.5 text-xs">2</div>
+                                <div>
+                                    <div class="font-heading font-bold text-white text-sm">Itemized 2026 Written Report</div>
+                                    <div class="text-xs text-slate-400">Complete material cost breakdown delivered within 2 hours.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Inspection Form -->
+                    <div class="lg:col-span-6 bg-industrial-950 p-6 sm:p-8 rounded-xl border border-industrial-700 shadow-xl">
+                        <h3 class="font-heading font-bold text-white text-xl mb-4">Book Preferred Inspection Slot</h3>
+                        <form onsubmit="handleMainFormSubmit(event)" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-mono text-slate-300 mb-1">FULL NAME *</label>
+                                <input type="text" required placeholder="John Doe" class="w-full bg-industrial-900 border border-industrial-700 rounded px-4 py-3 text-sm text-white focus:outline-none focus:border-amber-500">
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-mono text-slate-300 mb-1">PHONE NUMBER *</label>
+                                    <input type="tel" required placeholder="(214) 555-0199" class="w-full bg-industrial-900 border border-industrial-700 rounded px-4 py-3 text-sm text-white focus:outline-none focus:border-amber-500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-mono text-slate-300 mb-1">CITY / NEIGHBORHOOD *</label>
+                                    <input type="text" required placeholder="e.g. Dallas, Frisco, Plano" class="w-full bg-industrial-900 border border-industrial-700 rounded px-4 py-3 text-sm text-white focus:outline-none focus:border-amber-500">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-mono text-slate-300 mb-1">STREET ADDRESS *</label>
+                                <input type="text" required placeholder="123 Main Street" class="w-full bg-industrial-900 border border-industrial-700 rounded px-4 py-3 text-sm text-white focus:outline-none focus:border-amber-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-mono text-slate-300 mb-1">PREFERRED INSPECTION DATE</label>
+                                <input type="date" required class="w-full bg-industrial-900 border border-industrial-700 rounded px-4 py-3 text-sm text-white focus:outline-none focus:border-amber-500">
+                            </div>
+                            <button type="submit" class="w-full bg-amber-500 hover:bg-amber-400 text-industrial-950 font-heading font-bold text-base py-4 rounded shadow-xl transition-all transform hover:-translate-y-0.5">
+                                Confirm Drone Inspection Booking
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 10. FREQUENTLY ASKED QUESTIONS (ACCORDION) -->
+    <section id="faq" class="py-20 bg-industrial-900 border-b border-industrial-800">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-14">
+                <span class="font-mono text-xs text-amber-400 tracking-widest uppercase">EXPERT ANSWERS</span>
+                <h2 class="font-heading text-3xl sm:text-4xl font-bold text-white mt-1">Frequently Asked Questions</h2>
+            </div>
+
+            <div class="space-y-4">
+                <!-- FAQ Item 1 -->
+                <div class="bg-industrial-950 border border-industrial-800 rounded-lg overflow-hidden">
+                    <button onclick="toggleFaq(1)" class="w-full px-6 py-5 text-left font-heading font-bold text-white text-base sm:text-lg flex justify-between items-center hover:text-amber-400 transition-colors">
+                        <span>How does Arrington Roofing assist with DFW hail storm insurance claims?</span>
+                        <span id="faq-icon-1" class="text-amber-400 font-mono text-xl">+</span>
+                    </button>
+                    <div id="faq-content-1" class="hidden px-6 pb-6 text-xs sm:text-sm text-slate-400 leading-relaxed border-t border-industrial-900 pt-4">
+                        We deploy certified roof inspectors to document hail impact marks and wind shear damage with high-resolution photography and 4K drone mapping. We meet directly on your roof with your insurance adjuster to advocate for full replacement scope, ensuring zero out-of-pocket expenses beyond your policy deductible.
+                    </div>
+                </div>
+
+                <!-- FAQ Item 2 -->
+                <div class="bg-industrial-950 border border-industrial-800 rounded-lg overflow-hidden">
+                    <button onclick="toggleFaq(2)" class="w-full px-6 py-5 text-left font-heading font-bold text-white text-base sm:text-lg flex justify-between items-center hover:text-amber-400 transition-colors">
+                        <span>What is the significance of GAF Master Elite® Certification?</span>
+                        <span id="faq-icon-2" class="text-amber-400 font-mono text-xl">+</span>
+                    </button>
+                    <div id="faq-content-2" class="hidden px-6 pb-6 text-xs sm:text-sm text-slate-400 leading-relaxed border-t border-industrial-900 pt-4">
+                        Only 2% of all roofing contractors in North America meet GAF's rigorous standards for licensing, insurance, financial stability, and ongoing installation training. As a Master Elite® contractor, Arrington Roofing can provide the exclusive GAF Golden Pledge® 50-Year Non-Prorated Warranty backed directly by North America's largest roofing manufacturer.
+                    </div>
+                </div>
+
+                <!-- FAQ Item 3 -->
+                <div class="bg-industrial-950 border border-industrial-800 rounded-lg overflow-hidden">
+                    <button onclick="toggleFaq(3)" class="w-full px-6 py-5 text-left font-heading font-bold text-white text-base sm:text-lg flex justify-between items-center hover:text-amber-400 transition-colors">
+                        <span>How long does a typical residential roof replacement take?</span>
+                        <span id="faq-icon-3" class="text-amber-400 font-mono text-xl">+</span>
+                    </button>
+                    <div id="faq-content-3" class="hidden px-6 pb-6 text-xs sm:text-sm text-slate-400 leading-relaxed border-t border-industrial-900 pt-4">
+                        Over 90% of our residential architectural shingle replacements in the Dallas Metroplex are stripped, re-decked, shingled, and meticulously cleaned in a single day. Our crews use magnetic rollers to clear all nails from your driveway and lawn before departure.
+                    </div>
+                </div>
+
+                <!-- FAQ Item 4 -->
+                <div class="bg-industrial-950 border border-industrial-800 rounded-lg overflow-hidden">
+                    <button onclick="toggleFaq(4)" class="w-full px-6 py-5 text-left font-heading font-bold text-white text-base sm:text-lg flex justify-between items-center hover:text-amber-400 transition-colors">
+                        <span>Do you require upfront deposit payments?</span>
+                        <span id="faq-icon-4" class="text-amber-400 font-mono text-xl">+</span>
+                    </button>
+                    <div id="faq-content-4" class="hidden px-6 pb-6 text-xs sm:text-sm text-slate-400 leading-relaxed border-t border-industrial-900 pt-4">
+                        No. For insurance restoration projects, we require zero money down until materials are physically delivered to your property driveway. We believe in earning your trust through performance and integrity.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 11. FOOTER & LOCAL CONTACT SPECS -->
+    <footer class="bg-industrial-950 text-slate-400 text-xs sm:text-sm border-t border-industrial-800 pt-16 pb-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
+                <!-- Col 1 -->
+                <div class="space-y-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 bg-amber-500 rounded flex items-center justify-center font-heading font-black text-industrial-950 text-base">A</div>
+                        <span class="font-heading font-bold text-white text-lg">ARRINGTON ROOFING</span>
+                    </div>
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        Dallas' premier residential and commercial roofing contractor. Serving Highland Park, University Park, Frisco, Plano, Lakewood, and Greater DFW since 1983.
+                    </p>
+                    <div class="font-mono text-xs text-amber-400">GAF MASTER ELITE® LICENSED & INSURED</div>
+                </div>
+
+                <!-- Col 2 -->
+                <div>
+                    <h4 class="font-heading font-bold text-white text-sm uppercase tracking-wider mb-4">Dallas HQ Contact</h4>
+                    <ul class="space-y-2.5 font-mono text-xs">
+                        <li class="flex items-start gap-2">
+                            <span class="text-amber-500">📍</span>
+                            <span>Dallas, Texas Metroplex</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-amber-500">📞</span>
+                            <a href="tel:2146988443" class="text-white hover:text-amber-400 font-bold">(214) 698-8443</a>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-amber-500">✉️</span>
+                            <span>claims@arringtonroofing.com</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-amber-500">🕒</span>
+                            <span>Mon-Sat: 7:00 AM – 7:00 PM (24/7 Storm Response)</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Col 3 -->
+                <div>
+                    <h4 class="font-heading font-bold text-white text-sm uppercase tracking-wider mb-4">DFW Service Areas</h4>
+                    <div class="grid grid-cols-2 gap-2 text-xs">
+                        <span>• Highland Park</span>
+                        <span>• Frisco</span>
+                        <span>• University Park</span>
+                        <span>• Plano</span>
+                        <span>• Lakewood</span>
+                        <span>• McKinney</span>
+                        <span>• Preston Hollow</span>
+                        <span>• Allen</span>
+                        <span>• Fort Worth</span>
+                        <span>• Arlington</span>
+                    </div>
+                </div>
+
+                <!-- Col 4 -->
+                <div>
+                    <h4 class="font-heading font-bold text-white text-sm uppercase tracking-wider mb-4">24/7 Emergency Dispatch</h4>
+                    <p class="text-xs text-slate-400 mb-4">Facing active roof leaks or severe storm damage? Call our hotline for immediate tarping dispatch.</p>
+                    <a href="tel:2146988443" class="block text-center bg-amber-500 hover:bg-amber-400 text-industrial-950 font-heading font-bold py-3 rounded text-xs transition-colors">
+                        Call (214) 698-8443 Now
+                    </a>
+                </div>
+            </div>
+
+            <div class="border-t border-industrial-900 pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 font-mono gap-4">
+                <div>© 1983 – 2026 Arrington Roofing Co. All Rights Reserved. GAF Master Elite® License #TX-83921.</div>
+                <div class="flex gap-6">
+                    <a href="#" class="hover:text-slate-400">Privacy Policy</a>
+                    <a href="#" class="hover:text-slate-400">Terms of Service</a>
+                    <a href="#" class="hover:text-slate-400">GAF Warranty Portal</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- INTERACTIVE MODAL TOAST FOR FORM SUBMISSIONS & ESTIMATES -->
+    <div id="booking-modal" class="fixed inset-0 z-50 bg-industrial-950/90 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-industrial-900 border-2 border-amber-500 rounded-xl p-6 sm:p-8 max-w-md w-full shadow-2xl relative text-center">
+            <button onclick="closeBookingModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white font-mono text-xl">&times;</button>
+            <div class="w-16 h-16 bg-amber-500/20 text-amber-400 border border-amber-500/50 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
+                ✓
+            </div>
+            <h3 class="font-heading font-bold text-white text-2xl mb-2" id="modal-title">Inspection Request Locked In!</h3>
+            <p class="text-xs sm:text-sm text-slate-300 mb-6" id="modal-desc">
+                An Arrington Roofing DFW Master Inspector will contact you within 15 minutes to confirm your preferred address and 4K drone schedule.
+            </p>
+            <button onclick="closeBookingModal()" class="w-full bg-amber-500 hover:bg-amber-400 text-industrial-950 font-heading font-bold py-3 rounded transition-colors text-sm">
+                Done & Return To Page
+            </button>
+        </div>
+    </div>
+
+    <!-- VANILLA JAVASCRIPT FOR CALCULATOR & INTERACTION -->
+    <script>
+        // Estimator State
+        let estimatorState = {
+            propType: 'residential',
+            material: 'shingles',
+            sqft: 2500,
+            hasStorm: true
+        };
+
+        const materialsData = {
+            residential: [
+                { id: 'shingles', name: 'Architectural Shingles (GAF HDZ)', basePrice: 4.80, multiplier: 1.0 },
+                { id: 'metal', name: 'Standing Seam Steel Metal', basePrice: 9.50, multiplier: 1.65 },
+                { id: 'slate', name: 'Luxury Slate & Tile Roofing', basePrice: 14.20, multiplier: 2.10 }
+            ],
+            commercial: [
+                { id: 'tpo', name: '60-Mil Energy Star TPO Membrane', basePrice: 6.20, multiplier: 1.25 },
+                { id: 'epdm', name: 'Industrial EPDM Rubber Roofing', basePrice: 5.90, multiplier: 1.15 },
+                { id: 'modbit', name: 'Modified Bitumen Multi-Ply', basePrice: 7.10, multiplier: 1.40 }
+            ]
+        };
+
+        function renderMaterials() {
+            const container = document.getElementById('material-grid');
+            const list = materialsData[estimatorState.propType];
+            
+            if (!list.some(m => m.id === estimatorState.material)) {
+                estimatorState.material = list[0].id;
+            }
+
+            container.innerHTML = list.map(m => {
+                const isSelected = m.id === estimatorState.material;
+                return `
+                    <button type="button" onclick="setMaterial('${m.id}')" class="p-3 rounded border text-left flex flex-col justify-between transition-all ${
+                        isSelected 
+                            ? 'border-amber-500 bg-amber-500/10 text-white font-bold' 
+                            : 'border-industrial-800 bg-industrial-950 text-slate-400 hover:border-industrial-700'
+                    }">
+                        <span class="text-xs font-heading font-semibold">${m.name}</span>
+                        <span class="text-[10px] font-mono text-amber-500/90 mt-1">Starting ~$${m.basePrice.toFixed(2)}/sqft</span>
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function setPropType(type) {
+            estimatorState.propType = type;
+            const resBtn = document.getElementById('btn-prop-res');
+            const comBtn = document.getElementById('btn-prop-com');
+
+            if (type === 'residential') {
+                resBtn.className = 'p-4 rounded border-2 border-amber-500 bg-amber-500/10 text-white font-heading font-bold text-sm text-center flex flex-col items-center gap-2 transition-all';
+                comBtn.className = 'p-4 rounded border-2 border-industrial-700 bg-industrial-950 text-slate-400 font-heading font-bold text-sm text-center flex flex-col items-center gap-2 transition-all hover:border-industrial-600';
+            } else {
+                comBtn.className = 'p-4 rounded border-2 border-amber-500 bg-amber-500/10 text-white font-heading font-bold text-sm text-center flex flex-col items-center gap-2 transition-all';
+                resBtn.className = 'p-4 rounded border-2 border-industrial-700 bg-industrial-950 text-slate-400 font-heading font-bold text-sm text-center flex flex-col items-center gap-2 transition-all hover:border-industrial-600';
+            }
+            renderMaterials();
+            updateEstimator();
+        }
+
+        function setMaterial(matId) {
+            estimatorState.material = matId;
+            renderMaterials();
+            updateEstimator();
+        }
+
+        function setStormStatus(status) {
+            estimatorState.hasStorm = status;
+            const yesBtn = document.getElementById('btn-storm-yes');
+            const noBtn = document.getElementById('btn-storm-no');
+
+            if (status) {
+                yesBtn.className = 'p-3 rounded border-2 border-amber-500 bg-amber-500/10 text-white font-bold text-sm flex items-center justify-center gap-2';
+                noBtn.className = 'p-3 rounded border-2 border-industrial-700 bg-industrial-950 text-slate-400 font-bold text-sm flex items-center justify-center gap-2';
+            } else {
+                noBtn.className = 'p-3 rounded border-2 border-amber-500 bg-amber-500/10 text-white font-bold text-sm flex items-center justify-center gap-2';
+                yesBtn.className = 'p-3 rounded border-2 border-industrial-700 bg-industrial-950 text-slate-400 font-bold text-sm flex items-center justify-center gap-2';
+            }
+            updateEstimator();
+        }
+
+        function updateEstimator() {
+            const slider = document.getElementById('sqft-slider');
+            const sqftValDisplay = document.getElementById('sqft-val');
+            estimatorState.sqft = parseInt(slider.value, 10);
+            sqftValDisplay.innerText = estimatorState.sqft.toLocaleString() + ' SQ FT';
+
+            const list = materialsData[estimatorState.propType];
+            const matObj = list.find(m => m.id === estimatorState.material) || list[0];
+
+            const lowRate = matObj.basePrice * 0.90;
+            const highRate = matObj.basePrice * 1.15;
+
+            const lowTotal = Math.round(estimatorState.sqft * lowRate);
+            const highTotal = Math.round(estimatorState.sqft * highRate);
+
+            document.getElementById('est-price-display').innerText = 
+                '$' + lowTotal.toLocaleString() + ' – $' + highTotal.toLocaleString();
+
+            document.getElementById('est-mat-display').innerText = matObj.name;
+
+            const insuranceNote = document.getElementById('insurance-note');
+            if (estimatorState.hasStorm) {
+                insuranceNote.style.display = 'flex';
+                insuranceNote.innerHTML = `<span>⚡ Insurance Storm Claim Option: Likely $0 Out-of-Pocket Beyond Deductible</span>`;
+            } else {
+                insuranceNote.style.display = 'flex';
+                insuranceNote.innerHTML = `<span>💳 Flexible Financing Available: As low as $149/mo</span>`;
+            }
+        }
+
+        function toggleFaq(id) {
+            const content = document.getElementById(`faq-content-${id}`);
+            const icon = document.getElementById(`faq-icon-${id}`);
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                icon.innerText = '−';
+            } else {
+                content.classList.add('hidden');
+                icon.innerText = '+';
+            }
+        }
+
+        function openBookingModal(title = "Inspection Scheduled") {
+            const modal = document.getElementById('booking-modal');
+            document.getElementById('modal-title').innerText = title;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeBookingModal() {
+            const modal = document.getElementById('booking-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function handleQuickFormSubmit(e) {
+            e.preventDefault();
+            openBookingModal("Urgent Inspection Dispatch Locked!");
+        }
+
+        function handleMainFormSubmit(e) {
+            e.preventDefault();
+            openBookingModal("4K Drone Inspection Booking Confirmed!");
+        }
+
+        renderMaterials();
+        updateEstimator();
+    </script>
+</body>
+</html>
