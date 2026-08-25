@@ -606,7 +606,7 @@ async function createUniqueSlug(baseText: string, customSlug?: string): Promise<
   // 2b. Add a new Lead
   app.post("/api/mcp/leads", mcpAuth, async (req, res) => {
     try {
-      const { name, company, industry, niche, city, email, phone, website, score, insights, logo, tagline, colors, reviews, reviewCount, rating, socials, userId } = req.body;
+      const { name, company, industry, niche, city, email, phone, website, score, insights, logo, tagline, colors, reviews, reviewCount, rating, socials, whatsappDraft, emailDraft, calendlyUrl, userId } = req.body;
       
       const finalName = name || company || '';
       const finalCompany = company || name || '';
@@ -632,6 +632,10 @@ async function createUniqueSlug(baseText: string, customSlug?: string): Promise<
         status: 'Qualified',
         updatedAt: new Date().toISOString()
       };
+
+      if (whatsappDraft) leadData.whatsappDraft = whatsappDraft;
+      if (emailDraft) leadData.emailDraft = emailDraft;
+      if (calendlyUrl) leadData.calendlyUrl = calendlyUrl;
       
       if (userId) {
         leadData.userId = userId;
@@ -710,30 +714,56 @@ async function createUniqueSlug(baseText: string, customSlug?: string): Promise<
   // 3. Process Outreach
   app.post("/api/mcp/outreach", mcpAuth, async (req, res) => {
     try {
-      const { leadId, angle } = req.body;
+      const { leadId, angle, calendlyLink } = req.body;
       
-      if (!leadId || !angle) {
-        return res.status(400).json({ error: 'Missing leadId or angle in request body' });
+      if (!leadId) {
+        return res.status(400).json({ error: 'Missing leadId in request body' });
       }
 
       // Fetch the lead to give the AI context
       const leadRef = doc(db, 'leads', leadId);
       const snapshot = await getDoc(leadRef);
-      let leadContext = "";
+      let leadData: any = {};
       if (snapshot.exists()) {
-        leadContext = JSON.stringify(snapshot.data());
+        leadData = snapshot.data();
+      } else {
+        return res.status(404).json({ error: 'Lead not found' });
       }
       
       if (!process.env.GEMINI_API_KEY) {
          return res.status(500).json({ error: 'GEMINI_API_KEY is not configured' });
       }
 
-      // Draft the email based on the angle and lead data
-      const prompt = `Draft a cold outreach email for a lead. 
-      Lead Data: ${leadContext}
-      Outreach Angle/Strategy: ${angle}
-      
-      Make it professional, concise, and compelling. Return only the email subject and body.`;
+      const companyName = leadData.company || leadData.name || 'your business';
+      const ratingInfo = leadData.rating 
+        ? `${leadData.rating}★ rating (${leadData.reviews || leadData.reviewCount || 0}+ verified reviews)` 
+        : 'stellar customer reviews';
+      const PRIMARY_DOMAIN = process.env.APP_URL || 'https://mox.infni-t.online';
+      const previewUrl = leadData.previewUrl || (leadData.prototypeId ? `${PRIMARY_DOMAIN}/preview/${leadData.prototypeId}` : '');
+      const calendlyUrl = calendlyLink || leadData.calendlyUrl || 'https://calendly.com/mox-growth/15min';
+
+      const prompt = `You are an elite B2B sales outreach copywriter.
+Draft personalized, high-converting outreach for this business lead:
+Company Name: ${companyName}
+Industry / Niche: ${leadData.niche || leadData.industry || 'Local Business'}
+City / Location: ${leadData.city || 'Local'}
+Reputation / Rating: ${ratingInfo}
+Live Mobile Prototype URL: ${previewUrl || `${PRIMARY_DOMAIN}/preview/${leadData.prototypeId || 'demo'}`}
+Calendly Booking Link: ${calendlyUrl}
+Insights: ${typeof leadData.insights === 'string' ? leadData.insights : JSON.stringify(leadData.insights || '')}
+Outreach Angle: ${angle || 'Value-first gift & mobile prototype showcase'}
+
+You MUST generate two formats:
+1. "emailDraft": A professional, concise, and compelling cold outreach email with subject and body.
+2. "whatsappDraft": A friendly, conversational WhatsApp message with clean emojis (👋, 🚀, 📱, ✨, 📅), referencing their verified rating (${ratingInfo}), giving them direct access to their live mobile prototype preview (${previewUrl || 'live preview link'}), and inviting them for a quick 15-min chat with the Calendly link (${calendlyUrl}).
+
+Return your output strictly as a JSON object with this exact schema:
+{
+  "subject": "Email subject line",
+  "emailDraft": "Full email message body",
+  "whatsappDraft": "Friendly conversational WhatsApp message with clean emojis, rating mention, live prototype URL, and Calendly link"
+}
+Do not wrap with markdown backticks or explanations outside the JSON.`;
       
       const ai = getAI();
       const response = await ai.models.generateContent({
@@ -741,12 +771,41 @@ async function createUniqueSlug(baseText: string, customSlug?: string): Promise<
         contents: prompt,
       });
 
+      let rawText = response.text || '';
+      rawText = rawText.replace(/^```[a-z]*\n/i, '').replace(/\n```$/i, '').trim();
+
+      let parsed: any = {};
+      try {
+        parsed = JSON.parse(rawText);
+      } catch (parseErr) {
+        parsed = {
+          subject: `Quick idea for ${companyName} (+ custom prototype preview)`,
+          emailDraft: rawText,
+          whatsappDraft: `👋 Hi ${companyName} Team! Noticed your impressive ${ratingInfo} in ${leadData.city || 'town'}! ✨\n\nWe built a custom live mobile prototype specifically for your brand: ${previewUrl}\n\nWould love to get your feedback or connect for a quick 15-min chat: 📅 ${calendlyUrl}\n\nLet me know what you think! 🚀`
+        };
+      }
+
+      const whatsappDraft = parsed.whatsappDraft || `👋 Hi ${companyName} Team! Noticed your impressive ${ratingInfo}! ✨ We built a custom live mobile prototype for your brand: ${previewUrl} - Let me know what you think! 📅 ${calendlyUrl} 🚀`;
+      const emailDraft = parsed.emailDraft || rawText;
+      const subject = parsed.subject || `Custom Prototype for ${companyName}`;
+
+      // Save whatsappDraft and emailDraft in the Firestore lead document
+      await updateDoc(leadRef, {
+        whatsappDraft,
+        emailDraft,
+        outreachSubject: subject,
+        updatedAt: new Date().toISOString()
+      });
+
       res.json({ 
         success: true, 
         message: 'Outreach drafted successfully',
-        draft: response.text, 
+        emailDraft,
+        whatsappDraft,
+        subject,
+        draft: emailDraft,
         leadId, 
-        angle 
+        angle: angle || 'Value-first' 
       });
     } catch (error) {
       console.error('Error processing outreach via MCP:', error);

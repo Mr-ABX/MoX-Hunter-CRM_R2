@@ -4,7 +4,7 @@ import { Search, Filter, MoreVertical, LayoutTemplate, PenTool, ArrowRight, Load
 import { Lead } from '@/App';
 import { Logo, LogoFull } from './logo';
 import { ConfirmModal } from './confirm-modal';
-import { LeadDetailsDrawer } from './leads-panel';
+import { LeadDetailsDrawer, WhatsAppIcon } from './leads-panel';
 import { useAuth } from '@/hooks/use-auth';
 import { useMetrics } from '@/hooks/use-metrics';
 
@@ -156,6 +156,36 @@ export function LeadCRM({ leads, onGeneratePrototype, onNavigate, onUpdateLead, 
     }
 
     onUpdateLead(leadId, updates);
+  };
+
+  const handleQuickWhatsApp = (lead: Lead, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    const cleanPhone = (lead.phone || '').replace(/[^0-9]/g, '');
+    const previewLink = lead.previewUrl || (lead.prototypeId ? `https://mox.infni-t.online/preview/${lead.prototypeId}` : '');
+    const message = lead.whatsappDraft || `Hi ${lead.name} Team! We built a custom live mobile prototype for your brand: ${previewLink || 'https://mox.infni-t.online'} - Let me know what you think!`;
+    const waUrl = cleanPhone 
+      ? `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}` 
+      : `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
+    window.open(waUrl, '_blank');
+    
+    if (lead.status === 'Qualified' || lead.status === 'Built') {
+      handleStatusChange(lead.id, 'Contacted');
+    }
+
+    fetch('/api/outreach/log', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        leadId: lead.id,
+        businessName: lead.name,
+        recipient: cleanPhone || lead.phone || 'WhatsApp',
+        subject: `WhatsApp Outreach to ${lead.name}`,
+        body: message,
+        channel: 'whatsapp',
+        status: 'Sent',
+        previewUrl: previewLink
+      })
+    }).catch(console.error);
   };
 
   return (
@@ -408,6 +438,13 @@ export function LeadCRM({ leads, onGeneratePrototype, onNavigate, onUpdateLead, 
                       <td className="py-4 px-6 text-right">
                         <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                           <button 
+                            onClick={(e) => handleQuickWhatsApp(lead, e)}
+                            className="p-2 text-emerald-400 hover:text-emerald-300 rounded-lg hover:bg-emerald-500/10 transition-colors"
+                            title="1-Click WhatsApp Outreach"
+                          >
+                            <WhatsAppIcon className="w-4 h-4" />
+                          </button>
+                          <button 
                             onClick={(e) => { e.stopPropagation(); onSelectLead(lead.id); }}
                             className="p-2 text-zinc-400 hover:text-indigo-400 rounded-lg hover:bg-zinc-800 transition-colors"
                             title="View Files"
@@ -503,6 +540,13 @@ export function LeadCRM({ leads, onGeneratePrototype, onNavigate, onUpdateLead, 
                           <Eye className="w-3 h-3 text-indigo-400 opacity-0 group-hover:opacity-100 transition-opacity" />
                         </h4>
                         <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity" onClick={(e) => e.stopPropagation()}>
+                          <button 
+                            onClick={(e) => handleQuickWhatsApp(lead, e)}
+                            className="p-1 text-emerald-400 hover:text-emerald-300 rounded-md hover:bg-emerald-500/10 transition-colors"
+                            title="1-Click WhatsApp Outreach"
+                          >
+                            <WhatsAppIcon className="w-3.5 h-3.5" />
+                          </button>
                           <button 
                             onClick={(e) => { e.stopPropagation(); onSelectLead(lead.id); }}
                             className="p-1 text-zinc-500 hover:text-indigo-400 rounded-md hover:bg-zinc-800 transition-colors"
@@ -968,6 +1012,39 @@ export function LeadCRM({ leads, onGeneratePrototype, onNavigate, onUpdateLead, 
                     <Globe className="w-4 h-4 text-zinc-500" /> Website
                   </a>
                 )}
+              </div>
+
+              {/* WhatsApp 1-Click Outreach Block */}
+              <div className="mb-6 p-4 rounded-2xl bg-gradient-to-r from-emerald-950/40 via-zinc-950 to-zinc-950 border border-emerald-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+                    <WhatsAppIcon className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-semibold text-emerald-300">1-Click WhatsApp Pitch</h4>
+                    <p className="text-xs text-zinc-400">Launch conversation with pre-crafted prototype pitch</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => handleQuickWhatsApp(detailsLead)}
+                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold shadow-lg shadow-emerald-600/20 transition-all hover:scale-105"
+                  >
+                    <WhatsAppIcon className="w-4 h-4" /> Send on WhatsApp
+                  </button>
+                  <button
+                    onClick={() => {
+                      const cleanPhone = (detailsLead.phone || '').replace(/[^0-9]/g, '');
+                      const previewLink = detailsLead.previewUrl || (detailsLead.prototypeId ? `https://mox.infni-t.online/preview/${detailsLead.prototypeId}` : '');
+                      const message = detailsLead.whatsappDraft || `Hi ${detailsLead.name} Team! We built a custom live mobile prototype for your brand: ${previewLink || 'https://mox.infni-t.online'} - Let me know what you think!`;
+                      navigator.clipboard.writeText(message);
+                    }}
+                    className="inline-flex items-center gap-1 px-3 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-medium border border-zinc-700 transition-colors"
+                  >
+                    Copy Text
+                  </button>
+                </div>
               </div>
 
               {detailsLead.insights && (

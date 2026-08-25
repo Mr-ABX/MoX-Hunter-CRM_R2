@@ -112,6 +112,10 @@ export interface Lead {
   insights?: string;
   prototypeId?: string;
   previewUrl?: string;
+  whatsappDraft?: string;
+  emailDraft?: string;
+  outreachSubject?: string;
+  calendlyUrl?: string;
   phone?: string;
   website?: string;
   rating?: number;

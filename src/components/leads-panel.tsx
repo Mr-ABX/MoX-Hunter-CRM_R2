@@ -54,6 +54,15 @@ export interface OutreachLogItem {
   createdAt?: number | string;
 }
 
+// WhatsApp Icon component
+export function WhatsAppIcon({ className = "w-4 h-4" }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
+    </svg>
+  );
+}
+
 export function LeadDetailsDrawer({
   lead,
   isOpen,
@@ -68,6 +77,9 @@ export function LeadDetailsDrawer({
   const [showIframePreview, setShowIframePreview] = useState(false);
   const [outreachHistory, setOutreachHistory] = useState<OutreachLogItem[]>([]);
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
+  const [isEditingWaDraft, setIsEditingWaDraft] = useState(false);
+  const [customWaDraft, setCustomWaDraft] = useState('');
+  const [isDraftingAi, setIsDraftingAi] = useState(false);
 
   // Copy helper
   const handleCopy = (text: string, label: string) => {
@@ -253,6 +265,63 @@ export function LeadDetailsDrawer({
     }
   };
 
+  // WhatsApp Outreach Logic
+  const cleanPhone = (lead.phone || '').replace(/[^0-9]/g, '');
+  const previewLink = lead.previewUrl || (lead.prototypeId ? `https://mox.infni-t.online/preview/${lead.prototypeId}` : '');
+  const defaultWaMessage = `Hi ${lead.name} Team! We built a custom live mobile prototype for your brand: ${previewLink || 'https://mox.infni-t.online'} - Let me know what you think!`;
+  const activeWaMessage = customWaDraft || lead.whatsappDraft || defaultWaMessage;
+
+  const handleSendWhatsApp = (customText?: string) => {
+    const messageToSend = customText || activeWaMessage;
+    const waUrl = cleanPhone 
+      ? `https://wa.me/${cleanPhone}?text=${encodeURIComponent(messageToSend)}` 
+      : `https://api.whatsapp.com/send?text=${encodeURIComponent(messageToSend)}`;
+    window.open(waUrl, '_blank');
+
+    if (onUpdateStatus && (lead.status === 'Qualified' || lead.status === 'Built')) {
+      onUpdateStatus(lead.id, 'Contacted');
+    }
+
+    // Auto-log outreach activity in background
+    fetch('/api/outreach/log', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        leadId: lead.id,
+        businessName: lead.name,
+        recipient: cleanPhone || lead.phone || 'WhatsApp',
+        subject: `WhatsApp Outreach to ${lead.name}`,
+        body: messageToSend,
+        channel: 'whatsapp',
+        status: 'Sent',
+        previewUrl: previewLink
+      })
+    }).catch(console.error);
+  };
+
+  const handleGenerateAiWaDraft = async () => {
+    setIsDraftingAi(true);
+    try {
+      const res = await fetch('/api/mcp/outreach', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          leadId: lead.id,
+          angle: 'Value-first mobile prototype preview & verified rating review'
+        })
+      });
+      const data = await res.json();
+      if (data.whatsappDraft) {
+        setCustomWaDraft(data.whatsappDraft);
+        setIsEditingWaDraft(true);
+      }
+    } catch (err) {
+      console.error('Failed to generate AI WhatsApp draft:', err);
+    } finally {
+      setIsDraftingAi(false);
+    }
+  };
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -401,9 +470,99 @@ export function LeadDetailsDrawer({
 
               {/* 2. Direct Actions & Communication Channels */}
               <div className="space-y-3">
-                <h4 className="text-xs font-bold uppercase tracking-widest text-zinc-400 flex items-center gap-2">
-                  <Phone className="w-3.5 h-3.5 text-indigo-400" /> Contact & Location Channels
-                </h4>
+                <div className="flex items-center justify-between">
+                  <h4 className="text-xs font-bold uppercase tracking-widest text-zinc-400 flex items-center gap-2">
+                    <Phone className="w-3.5 h-3.5 text-emerald-400" /> 1-Click Outreach & Direct Channels
+                  </h4>
+                  {cleanPhone && (
+                    <span className="text-[11px] font-mono text-emerald-400/90 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                      WA Ready: +{cleanPhone}
+                    </span>
+                  )}
+                </div>
+
+                {/* 1-Click WhatsApp Outreach Command Card */}
+                <div className="p-4 rounded-2xl bg-gradient-to-br from-emerald-950/40 via-zinc-900/60 to-zinc-950 border border-emerald-500/30 shadow-lg shadow-emerald-950/20">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 shadow-inner">
+                        <WhatsAppIcon className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <span className="text-xs font-bold text-emerald-300 flex items-center gap-1.5">
+                          1-Click WhatsApp Outreach
+                          <span className="px-1.5 py-0.2 rounded text-[9px] font-semibold bg-emerald-500/20 text-emerald-400 uppercase">Instant</span>
+                        </span>
+                        <p className="text-[11px] text-zinc-400">
+                          {cleanPhone ? `Direct chat pre-configured for ${lead.name}` : 'Opens WhatsApp with customized message'}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 shrink-0">
+                      <button
+                        onClick={handleGenerateAiWaDraft}
+                        disabled={isDraftingAi}
+                        className="px-2.5 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-300 border border-zinc-700 text-[11px] font-medium flex items-center gap-1.5 transition-colors disabled:opacity-50"
+                        title="AI Tailor Message"
+                      >
+                        <Sparkles className={`w-3 h-3 text-indigo-400 ${isDraftingAi ? 'animate-spin' : ''}`} />
+                        {isDraftingAi ? 'Drafting...' : 'AI Pitch Draft'}
+                      </button>
+                      <button
+                        onClick={() => setIsEditingWaDraft(!isEditingWaDraft)}
+                        className="px-2.5 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-300 border border-zinc-700 text-[11px] font-medium transition-colors"
+                      >
+                        {isEditingWaDraft ? 'Preview' : 'Edit Text'}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Message Payload Preview or Editor */}
+                  {isEditingWaDraft ? (
+                    <div className="space-y-2 mb-3">
+                      <textarea
+                        value={activeWaMessage}
+                        onChange={(e) => setCustomWaDraft(e.target.value)}
+                        className="w-full bg-zinc-950 border border-zinc-700 rounded-xl p-3 text-xs text-zinc-200 font-sans focus:outline-none focus:ring-1 focus:ring-emerald-500/50 min-h-[90px]"
+                        placeholder="Type personalized WhatsApp pitch..."
+                      />
+                    </div>
+                  ) : (
+                    <div className="p-3 rounded-xl bg-zinc-950/80 border border-zinc-800/80 text-xs text-zinc-300 whitespace-pre-wrap leading-relaxed mb-3 font-sans relative group">
+                      <span className="text-[9px] uppercase font-bold text-zinc-500 block mb-1 tracking-wider">Message Payload</span>
+                      {activeWaMessage}
+                    </div>
+                  )}
+
+                  {/* WhatsApp Action Buttons */}
+                  <div className="flex flex-wrap items-center gap-2 pt-1">
+                    <button
+                      onClick={() => handleSendWhatsApp()}
+                      className="flex-1 min-w-[180px] inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold shadow-lg shadow-emerald-600/25 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                    >
+                      <WhatsAppIcon className="w-4 h-4" />
+                      <span>Send on WhatsApp</span>
+                    </button>
+
+                    <button
+                      onClick={() => handleCopy(activeWaMessage, 'WhatsApp Message')}
+                      className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-200 border border-zinc-700 text-xs font-medium transition-colors"
+                    >
+                      {copiedText === 'WhatsApp Message' ? (
+                        <>
+                          <Check className="w-3.5 h-3.5 text-emerald-400" />
+                          <span className="text-emerald-400 font-semibold">Copied!</span>
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-3.5 h-3.5 text-zinc-400" />
+                          <span>Copy WhatsApp Text</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {/* Phone Direct */}
@@ -430,21 +589,26 @@ export function LeadDetailsDrawer({
                     </div>
                   )}
 
-                  {/* WhatsApp Direct */}
+                  {/* WhatsApp Direct Link */}
                   {waLink ? (
                     <a
                       href={waLink}
                       target="_blank"
                       rel="noopener noreferrer"
+                      onClick={() => {
+                        if (onUpdateStatus && (lead.status === 'Qualified' || lead.status === 'Built')) {
+                          onUpdateStatus(lead.id, 'Contacted');
+                        }
+                      }}
                       className="flex items-center justify-between p-3.5 rounded-xl bg-emerald-950/20 border border-emerald-800/40 hover:border-emerald-500/50 hover:bg-emerald-500/10 transition-all group"
                     >
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-xs">
-                          WA
+                          <WhatsAppIcon className="w-4 h-4" />
                         </div>
                         <div>
-                          <span className="text-[10px] uppercase font-bold text-emerald-400/80">WhatsApp Chat</span>
-                          <p className="text-sm font-semibold text-emerald-300">Open WhatsApp</p>
+                          <span className="text-[10px] uppercase font-bold text-emerald-400/80">WhatsApp Direct</span>
+                          <p className="text-sm font-semibold text-emerald-300">Open Chat Link</p>
                         </div>
                       </div>
                       <ExternalLink className="w-4 h-4 text-emerald-500" />
@@ -804,7 +968,7 @@ export function LeadDetailsDrawer({
             </div>
 
             {/* Sticky Action Footer */}
-            <div className="p-4 px-6 border-t border-zinc-800/80 bg-zinc-950/90 flex items-center justify-between gap-3 shrink-0">
+            <div className="p-4 px-6 border-t border-zinc-800/80 bg-zinc-950/90 flex flex-wrap items-center justify-between gap-3 shrink-0">
               <div className="flex items-center gap-2">
                 {onOpenFiles && (
                   <button
@@ -817,12 +981,18 @@ export function LeadDetailsDrawer({
               </div>
 
               <div className="flex items-center gap-2">
+                <button
+                  onClick={() => handleSendWhatsApp()}
+                  className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold flex items-center gap-1.5 transition-all shadow-lg shadow-emerald-600/20"
+                >
+                  <WhatsAppIcon className="w-4 h-4" /> Send on WhatsApp
+                </button>
                 {onOpenOutreach && (
                   <button
                     onClick={() => { onClose(); onOpenOutreach(lead); }}
                     className="px-4 py-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-200 border border-zinc-800 text-xs font-semibold flex items-center gap-1.5 transition-colors"
                   >
-                    <Mail className="w-4 h-4 text-blue-400" /> Pitch Sequence
+                    <Mail className="w-4 h-4 text-blue-400" /> Email Pitch
                   </button>
                 )}
                 {onGeneratePrototype && (
