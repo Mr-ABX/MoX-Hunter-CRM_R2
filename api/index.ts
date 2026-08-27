@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import { GoogleGenAI } from "@google/genai";
 import { db } from "../src/lib/firebase";
-import { collection, query, where, limit, getDocs, doc, getDoc, addDoc, setDoc, updateDoc } from 'firebase/firestore';
+import { collection, query, where, limit, getDocs, doc, getDoc, addDoc, setDoc, updateDoc, deleteDoc } from 'firebase/firestore';
 
 const app = express();
 
@@ -219,6 +219,31 @@ app.patch("/api/mcp/leads/:id", mcpAuth, async (req, res) => {
   } catch (error) {
     console.error('Error updating lead via MCP:', error);
     res.status(500).json({ error: 'Failed to update lead' });
+  }
+});
+
+// 4b. Delete Single Lead
+app.delete("/api/mcp/leads/:id", mcpAuth, async (req, res) => {
+  try {
+    const leadRef = doc(db, 'leads', req.params.id);
+    await deleteDoc(leadRef);
+    res.json({ success: true, id: req.params.id, message: 'Lead deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting lead via MCP:', error);
+    res.status(500).json({ error: 'Failed to delete lead' });
+  }
+});
+
+// 4c. Clear All Leads (CRM Reset)
+app.delete("/api/mcp/leads", mcpAuth, async (req, res) => {
+  try {
+    const snapshot = await getDocs(collection(db, 'leads'));
+    const deletePromises = snapshot.docs.map(d => deleteDoc(doc(db, 'leads', d.id)));
+    await Promise.all(deletePromises);
+    res.json({ success: true, message: `Successfully deleted ${snapshot.docs.length} leads` });
+  } catch (error) {
+    console.error('Error clearing leads via MCP:', error);
+    res.status(500).json({ error: 'Failed to clear leads' });
   }
 });
 

@@ -1,6 +1,6 @@
 {
-  "system_version": "2.6.0-flow-orchestrator",
-  "last_updated": "2026-08-27T20:19:22+05:00",
+  "system_version": "2.7.0-date-aware-memory",
+  "last_updated": "2026-08-28T02:22:40+05:00",
   "verified_credentials": {
     "sender_email": "abdulrahmant.official@gmail.com",
     "composio_connection": "gmail_prod-nide",
@@ -19,23 +19,65 @@
     "gate_1": "Human Lead Review Gate: Scraped batch is halted and presented in a table for user approval and custom notes before any prototype is synthesized.",
     "gate_2": "Human Prototype & Pitch Review Gate: Live preview links, ultra-short DIC emails, and 1-Click WhatsApp links are presented for final user sign-off before controlled sending."
   },
-  "design_engine_standards": {
-    "section_count_rule": "Strictly variable (7 to 12+ sections) tailored directly to the business category. Never rigid or twin layouts.",
-    "animation_standard": "Awwwards / One Page Love standard: IntersectionObserver scroll entrance reveals, interactive Before/After comparison sliders, dynamic price calculators, floating status pills, and interactive FAQ accordions.",
-    "photography_rule": "100% rich Unsplash/Pexels stock imagery across EVERY single section and card. Zero empty text voids. Real customer portrait avatars.",
-    "typography_pairings": {
-      "luxury_architecture": "Italiana + Plus Jakarta Sans",
-      "clinical_medical_dental": "Cormorant Garamond + Plus Jakarta Sans",
-      "heavy_industrial_roofing": "Space Grotesk + Outfit",
-      "luxury_automotive_detailing": "Cormorant Garamond + Plus Jakarta Sans",
-      "corporate_legal_financial": "Syne + Inter"
+  "market_strategy_70_30": {
+    "local_engine_70_pct": {
+      "focus": "High-Affluence Local Corridor (Islamabad F-6/F-7/F-8 / Blue Area or DHA Lahore / Gulberg)",
+      "channels": "1-Click Direct WhatsApp Click-to-Chat (wa.me) + Clean Email",
+      "target_ticket": "$200 - $500 (PKR 60,000 - 150,000)",
+      "advantages": "90%+ WhatsApp open/read rates within 15 mins, zero friction, 24-48h close cycle, instant portfolio proof.",
+      "top_niches": [
+        "Cosmetic Dentistry & Orthodontics (Invisalign, Veneers)",
+        "Luxury Auto Detailing & PPF Studios",
+        "High-End Architecture & Interior Design"
+      ]
+    },
+    "international_engine_30_pct": {
+      "focus": "Tier-1 International Corridor (Dallas TX, Miami FL, London UK)",
+      "channels": "Clean Composio Cold Email + Calendly strategy link",
+      "target_ticket": "$1,000 - $2,500+",
+      "advantages": "High-ticket USD invoices, automated scheduled sending, long-term scalability.",
+      "top_niches": [
+        "Roofing & Storm Repair Contractors",
+        "Medspas & Cosmetic Wellness"
+      ]
     }
   },
-  "outreach_protocols": {
+  "dispatch_timing_intelligence": {
+    "rules_of_engagement": [
+      "Always inspect the current local date and day-of-week before scheduling.",
+      "If scheduling falls on Friday late afternoon or weekend, proactively alert user and suggest next Tuesday/Wednesday morning.",
+      "Peak outreach days: Tuesday, Wednesday, Thursday."
+    ],
+    "timezone_windows": {
+      "local_pakistan_gulf": {
+        "timezone": "PKT (UTC+5)",
+        "morning_peak": "10:30 AM - 1:00 PM PKT",
+        "afternoon_followup": "4:30 PM - 7:30 PM PKT"
+      },
+      "us_central_dallas": {
+        "timezone": "CDT (UTC-5)",
+        "morning_peak_local": "8:45 AM - 11:15 AM CDT",
+        "morning_peak_pkt": "6:45 PM - 9:15 PM PKT",
+        "afternoon_followup_local": "1:30 PM - 3:30 PM CDT",
+        "afternoon_followup_pkt": "11:30 PM - 1:30 AM PKT"
+      },
+      "us_eastern_miami_ny": {
+        "timezone": "EDT (UTC-4)",
+        "morning_peak_local": "9:00 AM - 11:30 AM EDT",
+        "morning_peak_pkt": "6:00 PM - 8:30 PM PKT",
+        "afternoon_followup_local": "2:00 PM - 4:00 PM EDT",
+        "afternoon_followup_pkt": "12:00 AM - 2:00 AM PKT"
+      },
+      "uk_london": {
+        "timezone": "BST (UTC+1)",
+        "morning_peak_local": "9:30 AM - 11:45 AM BST",
+        "morning_peak_pkt": "1:30 PM - 3:45 PM PKT",
+        "afternoon_followup_local": "2:15 PM - 4:30 PM BST",
+        "afternoon_followup_pkt": "6:15 PM - 8:30 PM PKT"
+      }
+    },
     "daily_volume_cap": "10 to 15 emails per day",
     "randomized_jitter": "3 to 7 minutes delay between dispatches",
-    "email_safety_rule": "100% clean plain-text/HTML emails. Zero open-tracking pixels or wrapped links to guarantee 95%+ Primary Inbox placement.",
-    "multichannel_outreach": "1-Click Direct WhatsApp Click-to-Chat (https://wa.me/{phone}?text=...) with pre-typed personalized pitch and Calendly link.",
-    "courtesy_alert_strategy": "Ultra-short 2-paragraph broken link heads-up for offline domains (prestigepro.pk) via mox-courtesy-advisor."
+    "followup_offsets_days": [3, 6, 10]
   }
 }

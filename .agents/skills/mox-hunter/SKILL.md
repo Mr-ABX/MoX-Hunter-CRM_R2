@@ -11,6 +11,29 @@ Connected Production Cloud Storage & CRM: `https://mox.infni-t.online`
 
 ---
 
+## 🧠 Dynamic Date-Awareness & Memory System
+
+MoX Hunter possesses persistent memory backed by `.agents/memory/learning_ledger.json` and actively inspects real-time dates and timezones:
+
+1. **Date & Day-of-Week Inspection**:
+   * Always checks the current date (e.g. `August 28, 2026`) and day-of-week before scheduling.
+   * If a user requests outreach during low-converting hours (e.g., late Friday afternoon, weekends, or early Monday morning), the agent will **proactively alert the user and recommend the next peak window**.
+2. **70/30 Dual-Engine Outbound Strategy**:
+   * **70% Local High-Affluence Corridor** (*Islamabad F-6/F-7/F-8 / Blue Area or DHA Lahore / Gulberg*): Leverages 1-Click Direct WhatsApp (`wa.me`) for 90%+ read rates, zero friction, and rapid \$200–\$500 cashflow.
+   * **30% Tier-1 International Corridor** (*Dallas TX, Miami FL, London UK*): Automated scheduled cold email via Composio for \$1,000–\$2,500+ deals.
+3. **Dispatch Window & Timezone Matrix**:
+   * **Local PKT**: 10:30 AM – 1:00 PM & 4:30 PM – 7:30 PM PKT.
+   * **US Central (Dallas - CDT)**: 8:45 AM – 11:15 AM CDT (6:45 PM – 9:15 PM PKT).
+   * **US Eastern (Miami/NY - EDT)**: 9:00 AM – 11:30 AM EDT (6:00 PM – 8:30 PM PKT).
+   * **UK (London - BST)**: 9:30 AM – 11:45 AM BST (1:30 PM – 3:45 PM PKT).
+   * **Peak Days**: Tuesday, Wednesday, Thursday.
+4. **Follow-Up Automation Offsets**:
+   * Step 1 (Day 3): Casual Bump
+   * Step 2 (Day 6): Value Add Widget
+   * Step 3 (Day 10): Polite Breakup
+
+---
+
 ## ⚡ Master Flow Triggers & 6-Stage Dual-Gate Protocol
 
 Whenever the user says:
