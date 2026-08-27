@@ -1,11 +1,41 @@
 {
-  "current_stage": "IDLE",
-  "scope": {},
-  "leads": [],
-  "user_notes": {},
-  "prototypes": [],
-  "outreach_pitches": [],
-  "gate1_approved": false,
-  "gate2_approved": false,
-  "updated_at": 1787883700.0
+  "current_stage": "GATE_2_WAITING_HUMAN_APPROVAL",
+  "scope": {
+    "targetCity": "Islamabad (F-6, F-7 Markaz, Blue Area)",
+    "nicheStrategy": "Cosmetic Dentistry & Aesthetic Dental Clinics"
+  },
+  "prototypes": [
+    "https://mox.infni-t.online/preview/care-n-cure-dental-f7-01",
+    "https://mox.infni-t.online/preview/kensington-dental-implant-f7-01"
+  ],
+  "pitches": [
+    {
+      "leadId": "8Zr3wNzElLivUIkJS4aA",
+      "name": "Care N Cure Dental Clinic",
+      "channel": "WhatsApp + Email",
+      "previewUrl": "https://mox.infni-t.online/preview/care-n-cure-dental-f7-01",
+      "emailSubject": "Quick heads-up / cncclinic.pk",
+      "emailBody": "Hey Care N Cure Team,\n\nSaw your 4.9\u2605 reviews in F-7 Markaz\u201412 years of serving Islamabad is incredible!\n\nJust noticed your website (cncclinic.pk) has a broken footer and distorted mobile sections on phones. Went ahead and put together a modern clinical prototype for your practice ($0 cost, no catch):\n\n\ud83d\udc49 https://mox.infni-t.online/preview/care-n-cure-dental-f7\n\nIf your team is already redesigning it, no worries at all! If you like the layout and want to connect it, happy to help out.\n\nBest,\nAbdulRahman-T",
+      "whatsappUrl": "https://wa.me/92512223870?text=Hey%20Care%20N%20Cure%20Team%21%20%F0%9F%91%8B%20Saw%20your%204.9%E2%98%85%20reviews%20in%20F-7%20Markaz%E2%80%94awesome%20work%20since%202013%21%0A%0AQuick%20heads-up%3A%20noticed%20your%20site%20%28cncclinic.pk%29%20has%20broken%20footer%20styling%20on%20mobile%20phones.%20Put%20together%20a%20fresh%20clinical%20prototype%20for%20your%20clinic%20for%20free%3A%0A%0A%F0%9F%91%89%20https%3A//mox.infni-t.online/preview/care-n-cure-dental-f7%0A%0AIf%20your%20team%20is%20already%20fixing%20it%2C%20all%20good%21%20If%20you%20ever%20want%20to%20use%20the%20new%20layout%2C%20happy%20to%20help%20anytime.%0A%0ABest%2C%0AAbdulRahman-T"
+    },
+    {
+      "leadId": "H11iOu7I0ilMuaf8DJHd",
+      "name": "Hissam & Associates Dental Care",
+      "channel": "WhatsApp + Email (Broken Link Courtesy)",
+      "emailSubject": "Quick heads-up regarding hissamdental.com",
+      "emailBody": "Hi Dr. Hissam & Associates,\n\nWas looking up your clinic in Beverly Centre (Blue Area) after seeing your flawless 5.0\u2605 reviews!\n\nQuick heads-up: I noticed your domain (hissamdental.com) currently has dead nameservers and won't open on phones. Wanted to let you know in case you're missing corporate/diplomatic inquiries.\n\nIf you're already fixing it, please disregard! If you ever need a hand diagnosing the DNS or want to test a bespoke Beverly Centre prototype, happy to help out for free.\n\nBest regards,\nAbdulRahman-T",
+      "whatsappUrl": "https://wa.me/923005143322?text=Hi%20Dr.%20Hissam%20%26%20Associates%20Team%21%20%F0%9F%91%8B%20Saw%20your%20flawless%205.0%E2%98%85%20rating%20in%20Beverly%20Centre%2C%20Blue%20Area%E2%80%94top%20tier%20work%21%0A%0AQuick%20heads-up%3A%20noticed%20your%20website%20%28hissamdental.com%29%20is%20currently%20offline/dead%20DNS%20on%20phones.%20Wanted%20to%20let%20you%20know%20in%20case%20you%27re%20losing%20new%20patient%20bookings.%0A%0AIf%20your%20team%20is%20already%20fixing%20it%2C%20all%20good%21%20If%20you%20ever%20want%20a%20free%20modern%20prototype%20for%20your%20practice%2C%20happy%20to%20help%20anytime.%0A%0ABest%2C%0AAbdulRahman-T"
+    },
+    {
+      "leadId": "mFEEMxUoRbxTlCJbOYtE",
+      "name": "Kensington Dental & Implant Centre",
+      "channel": "WhatsApp + Email",
+      "previewUrl": "https://mox.infni-t.online/preview/kensington-dental-implant-f7-01",
+      "emailSubject": "UK Standard Presentation / Kensington Dental F-7/2",
+      "emailBody": "Hi Kensington Dental Team,\n\nSaw your 4.9\u2605 reviews in F-7/2\u201410 years of providing UK Standard Clinical Care in Islamabad is remarkable!\n\nNoticed your current web layout (est. 2014) doesn't reflect the prestigious British Harley Street standard of care you provide. Put together a bespoke prototype highlighting your 10-year legacy and implantology suite:\n\n\ud83d\udc49 https://mox.infni-t.online/preview/kensington-dental-implant-f7\n\nZero pressure\u2014if you'd like to use this modern layout, happy to connect your domain. Either way, keep up the exceptional work!\n\nBest,\nAbdulRahman-T",
+      "whatsappUrl": "https://wa.me/92512608822?text=Hi%20Kensington%20Dental%20Team%21%20%F0%9F%91%8B%20Saw%20your%204.9%E2%98%85%20reviews%20in%20F-7/2%E2%80%9410%20years%20of%20UK%20Standard%20Clinical%20Care%20in%20Islamabad%20is%20awesome%21%0A%0ANoticed%20your%20current%20website%20from%202014%20doesn%27t%20quite%20reflect%20your%20high-end%20British%20clinical%20standard.%20Put%20together%20a%20free%20bespoke%20prototype%20for%20your%20practice%3A%0A%0A%F0%9F%91%89%20https%3A//mox.infni-t.online/preview/kensington-dental-implant-f7%0A%0AIf%20you%20like%20the%20layout%2C%20happy%20to%20help%20connect%20your%20domain.%20Keep%20up%20the%20top%20work%20in%20F-7%21%0A%0ABest%2C%0AAbdulRahman-T"
+    }
+  ],
+  "gate1_approved": true,
+  "gate2_approved": false
 }

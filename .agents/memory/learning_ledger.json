@@ -1,6 +1,6 @@
 {
-  "system_version": "2.7.0-date-aware-memory",
-  "last_updated": "2026-08-28T02:22:40+05:00",
+  "system_version": "2.8.0-enhanced-wizard",
+  "last_updated": "2026-08-28T03:00:00+05:00",
   "verified_credentials": {
     "sender_email": "abdulrahmant.official@gmail.com",
     "composio_connection": "gmail_prod-nide",
@@ -15,8 +15,22 @@
     "start lead scraping",
     "start building"
   ],
+  "discovery_wizard_parameters": {
+    "mode_options": {
+      "mode_1": "Dead / Offline Domains Only (DNS Failure, 404, 403 Server Error)",
+      "mode_2": "Broken / Outdated Layouts Only (Live sites needing modern redesign)",
+      "mode_3": "Zero Website Listed Only (Google Maps only profiles)",
+      "mode_4": "Blended High-Impact (Default - Highest conversion probability)"
+    },
+    "scoping_fields": [
+      "Target Area / City / Region",
+      "Niche / Business Category",
+      "Contact Filters (Must have WhatsApp/Phone, Email, Socials)",
+      "Asset Extraction (Original Logos, Real Portrait Avatars, Verified Reviews)"
+    ]
+  },
   "dual_gate_verification_protocol": {
-    "gate_1": "Human Lead Review Gate: Scraped batch is halted and presented in a table for user approval and custom notes before any prototype is synthesized.",
+    "gate_1": "Human Lead Review Gate: Scraped batch is halted and presented in a table with clickable website links, Google Maps URLs, attached original logos, and verified pain points for user approval and custom notes before any prototype is synthesized.",
     "gate_2": "Human Prototype & Pitch Review Gate: Live preview links, ultra-short DIC emails, and 1-Click WhatsApp links are presented for final user sign-off before controlled sending."
   },
   "market_strategy_70_30": {
