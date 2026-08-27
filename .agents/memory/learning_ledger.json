@@ -1,6 +1,6 @@
 {
-  "system_version": "2.5.0-supergrade",
-  "last_updated": "2026-08-25T05:26:45+05:00",
+  "system_version": "2.6.0-flow-orchestrator",
+  "last_updated": "2026-08-27T20:19:22+05:00",
   "verified_credentials": {
     "sender_email": "abdulrahmant.official@gmail.com",
     "composio_connection": "gmail_prod-nide",
@@ -9,9 +9,19 @@
     "live_preview_host": "https://mox.infni-t.online",
     "api_key": "mox_zZdcZAAI2KXJzVOEorV3U2chSFTj2HWz"
   },
+  "master_flow_triggers": [
+    "start the flow",
+    "start the MoX flow",
+    "start lead scraping",
+    "start building"
+  ],
+  "dual_gate_verification_protocol": {
+    "gate_1": "Human Lead Review Gate: Scraped batch is halted and presented in a table for user approval and custom notes before any prototype is synthesized.",
+    "gate_2": "Human Prototype & Pitch Review Gate: Live preview links, ultra-short DIC emails, and 1-Click WhatsApp links are presented for final user sign-off before controlled sending."
+  },
   "design_engine_standards": {
     "section_count_rule": "Strictly variable (7 to 12+ sections) tailored directly to the business category. Never rigid or twin layouts.",
-    "animation_standard": "Awwwards / One Page Love standard: IntersectionObserver scroll entrance reveals (cubic-bezier(0.16, 1, 0.3, 1)), interactive Before/After comparison sliders, dynamic price calculators, floating status pills, and interactive FAQ accordions.",
+    "animation_standard": "Awwwards / One Page Love standard: IntersectionObserver scroll entrance reveals, interactive Before/After comparison sliders, dynamic price calculators, floating status pills, and interactive FAQ accordions.",
     "photography_rule": "100% rich Unsplash/Pexels stock imagery across EVERY single section and card. Zero empty text voids. Real customer portrait avatars.",
     "typography_pairings": {
       "luxury_architecture": "Italiana + Plus Jakarta Sans",
@@ -26,32 +36,6 @@
     "randomized_jitter": "3 to 7 minutes delay between dispatches",
     "email_safety_rule": "100% clean plain-text/HTML emails. Zero open-tracking pixels or wrapped links to guarantee 95%+ Primary Inbox placement.",
     "multichannel_outreach": "1-Click Direct WhatsApp Click-to-Chat (https://wa.me/{phone}?text=...) with pre-typed personalized pitch and Calendly link.",
-    "followup_sequence": "3-Step Conversational Ladder (Day 3 casual bump, Day 6 micro-value add, Day 10 graceful breakup)"
-  },
-  "published_prototypes_portfolio": [
-    {
-      "id": "studio-archx-living-01",
-      "niche": "Luxury Architecture & Villa Remodeling",
-      "sections": 11,
-      "previewUrl": "https://mox.infni-t.online/preview/studio-archx-living-01"
-    },
-    {
-      "id": "cure-all-dentistry-04",
-      "niche": "24/7 Dental Emergency & Cosmetic Clinic",
-      "sections": 6,
-      "previewUrl": "https://mox.infni-t.online/preview/cure-all-dentistry-04"
-    },
-    {
-      "id": "arrington-roofing-01",
-      "niche": "Residential & Commercial Roofing",
-      "sections": 7,
-      "previewUrl": "https://mox.infni-t.online/preview/arrington-roofing-01"
-    },
-    {
-      "id": "park-cities-mobile-detail-01",
-      "niche": "Luxury Auto Concierge Detailing",
-      "sections": 6,
-      "previewUrl": "https://mox.infni-t.online/preview/park-cities-mobile-detail-01"
-    }
-  ]
+    "courtesy_alert_strategy": "Ultra-short 2-paragraph broken link heads-up for offline domains (prestigepro.pk) via mox-courtesy-advisor."
+  }
 }
