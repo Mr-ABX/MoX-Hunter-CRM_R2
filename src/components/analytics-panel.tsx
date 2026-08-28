@@ -159,10 +159,10 @@ export function AnalyticsPanel({ leads }: AnalyticsPanelProps) {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-zinc-900/80 backdrop-blur-md border border-zinc-800 rounded-2xl p-6 shadow-xl">
+          <div className="bg-zinc-900/80 backdrop-blur-md border border-zinc-800 rounded-2xl p-6 shadow-xl min-w-0">
             <h3 className="text-zinc-100 font-medium mb-6">Pipeline Funnel Health</h3>
-            <div className="h-[300px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
+            <div className="h-[300px] w-full min-w-0 min-h-[300px] relative">
+              <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                 <BarChart data={funnelData} layout="vertical" margin={{ top: 0, right: 30, left: 20, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#27272a" horizontal={false} />
                   <XAxis type="number" stroke="#71717a" fontSize={12} tickLine={false} axisLine={false} />
@@ -181,10 +181,10 @@ export function AnalyticsPanel({ leads }: AnalyticsPanelProps) {
             </div>
           </div>
 
-          <div className="bg-zinc-900/80 backdrop-blur-md border border-zinc-800 rounded-2xl p-6 shadow-xl">
+          <div className="bg-zinc-900/80 backdrop-blur-md border border-zinc-800 rounded-2xl p-6 shadow-xl min-w-0">
             <h3 className="text-zinc-100 font-medium mb-6">Projected Revenue Growth</h3>
-            <div className="h-[300px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
+            <div className="h-[300px] w-full min-w-0 min-h-[300px] relative">
+              <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                 <LineChart data={revenueData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#27272a" vertical={false} />
                   <XAxis dataKey="name" stroke="#71717a" fontSize={12} tickLine={false} axisLine={false} />
