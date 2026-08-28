@@ -7,6 +7,10 @@
   --font-display: 'Space Grotesk', 'Inter', ui-sans-serif, system-ui, sans-serif;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 @layer utilities {
   .bg-grid-zinc {
     background-image: linear-gradient(to right, #27272a1a 1px, transparent 1px),
@@ -20,3 +24,4 @@
     scrollbar-width: none;
   }
 }
+

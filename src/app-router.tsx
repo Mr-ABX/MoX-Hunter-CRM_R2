@@ -27,6 +27,10 @@ export function AppRouter() {
           element={!user ? <AuthScreen handleSignIn={handleSignIn} authError={authError} /> : <Navigate to="/dashboard" replace />} 
         />
         <Route 
+          path="/admin" 
+          element={user ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />} 
+        />
+        <Route 
           path="/dashboard/*" 
           element={user ? <App /> : <Navigate to="/login" replace />} 
         />

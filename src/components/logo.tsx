@@ -11,8 +11,8 @@ export function Logo({ className = "w-8 h-8" }: { className?: string }) {
 
 export function LogoFull({ className = "h-10" }: { className?: string }) {
   return (
-    <div className={`relative ${className} w-32`}>
-      <img src="/mox-hunter-full-holo-o-with-star-in-it.svg" alt="MoX Hunter" className="object-contain w-full h-full" referrerPolicy="no-referrer" />
+    <div className={`relative flex items-center ${className}`}>
+      <img src="/mox-hunter-full-holo-o-with-star-in-it.svg" alt="MoX Hunter" className="object-contain h-full w-auto max-w-none" referrerPolicy="no-referrer" />
     </div>
   );
 }

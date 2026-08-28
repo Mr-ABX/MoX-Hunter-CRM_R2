@@ -22,11 +22,20 @@ import {
   Mail,
   ChevronDown,
   Loader2,
+  Globe,
+  Share2,
+  Megaphone,
+  Palette,
+  Layers,
+  ShieldCheck,
+  TrendingUp,
+  Zap,
 } from "lucide-react";
-import { Logo, WolfLogo } from "./logo";
+import { Logo, LogoFull, WolfLogo } from "./logo";
 import { Link } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { TestimonialCarousel } from "./testimonial-carousel";
+import { EntranceSplash } from "./entrance-splash";
 
 const faqs = [
   {
@@ -346,31 +355,30 @@ function PricingReveal() {
         <div className="bg-zinc-900/50 backdrop-blur-xl border border-zinc-800 rounded-[2rem] p-6 sm:p-8 shadow-2xl relative flex flex-col">
           <div className="mb-8 flex-1">
             <div className="inline-block px-3 py-1 bg-zinc-800 border border-zinc-700 text-zinc-300 text-xs font-bold font-mono uppercase tracking-widest rounded-full mb-4">
-              Core Identity
+              Core Launch Package
             </div>
             <div className="flex items-end gap-2 mb-2">
               <span className="text-4xl sm:text-5xl font-display font-bold text-white">
                 $299
               </span>
-              <span className="text-zinc-400 pb-1">setup</span>
+              <span className="text-zinc-400 pb-1">one-time</span>
             </div>
             <div className="flex items-end gap-2">
               <span className="text-2xl font-bold text-white">+$29</span>
-              <span className="text-zinc-400 pb-1">/ month</span>
+              <span className="text-zinc-400 pb-1">/ month hosting & maintenance</span>
             </div>
             <p className="text-zinc-500 text-sm mt-4 leading-relaxed">
-              Perfect for businesses wanting to secure their brand, domain, and
-              a professional one-page presence.
+              For businesses ready to take their approved prototype live with a custom domain, fast hosting, and local presence.
             </p>
           </div>
 
           <ul className="space-y-4 mb-8">
             {[
-              "Custom Domain Connection",
-              "Premium Cloud Hosting",
-              "Professional One-Page Site",
-              "Basic SEO Setup",
-              "Standard Support",
+              "Custom Domain Connection & SSL",
+              "Ultra-Fast Global Cloud Infrastructure",
+              "Full Prototype Customization & Polish",
+              "Local SEO & Search Indexing Setup",
+              "Ongoing Server & Security Maintenance",
             ].map((feature, i) => (
               <li key={i} className="flex items-center gap-3">
                 <CheckCircle2 className="w-5 h-5 text-zinc-500 shrink-0" />
@@ -382,7 +390,7 @@ function PricingReveal() {
             href="#contact"
             className="block w-full py-4 text-center bg-zinc-800 text-white font-bold rounded-xl hover:bg-zinc-700 transition-colors"
           >
-            Select Core
+            Select Core Launch
           </a>
         </div>
 
@@ -391,31 +399,31 @@ function PricingReveal() {
           <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 blur-[60px] pointer-events-none rounded-full" />
           <div className="mb-8 flex-1 relative z-10">
             <div className="inline-block px-3 py-1 bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 text-xs font-bold font-mono uppercase tracking-widest rounded-full mb-4">
-              Growth Partner
+              Full Growth Partner
             </div>
             <div className="flex items-end gap-2 mb-2">
               <span className="text-4xl sm:text-5xl font-display font-bold text-white">
                 $499
               </span>
-              <span className="text-zinc-400 pb-1">setup</span>
+              <span className="text-zinc-400 pb-1">one-time</span>
             </div>
             <div className="flex items-end gap-2">
               <span className="text-2xl font-bold text-white">+$49</span>
-              <span className="text-zinc-400 pb-1">/ month</span>
+              <span className="text-zinc-400 pb-1">/ month automations & tuning</span>
             </div>
             <p className="text-zinc-500 text-sm mt-4 leading-relaxed">
-              Multi-page architecture and automation for businesses ready to
-              capture leads and scale.
+              Complete digital dominance with multi-channel lead funnels, automated email follow-ups, and social workflows.
             </p>
           </div>
 
           <ul className="space-y-4 mb-8 relative z-10">
             {[
-              "Everything in Core",
-              "Multi-Page Architecture",
-              "Continuous AI SEO Optimization",
-              "Lead Capture Forms & Automation",
-              "Priority Email & Chat Support",
+              "Everything in Core Launch",
+              "Multi-Page Custom Architecture",
+              "Automated Email & SMS Follow-Up Workflows",
+              "Social Media Content Distribution Setup",
+              "High-Conversion Exit Capture & CRM Sync",
+              "Priority 24/7 Support & Monthly Iterations",
             ].map((feature, i) => (
               <li key={i} className="flex items-center gap-3">
                 <CheckCircle2 className="w-5 h-5 text-indigo-400 shrink-0" />
@@ -427,7 +435,7 @@ function PricingReveal() {
             href="#contact"
             className="block w-full py-4 text-center bg-white text-black font-bold rounded-xl hover:bg-zinc-200 transition-colors relative z-10"
           >
-            Get Started Now
+            Start With Free Prototype
           </a>
         </div>
       </motion.div>
@@ -620,6 +628,29 @@ export function LandingPage() {
 
   const [showExitPopup, setShowExitPopup] = useState(false);
   const [hasShownPopup, setHasShownPopup] = useState(false);
+  const [showSplash, setShowSplash] = useState<boolean>(() => {
+    // Only display automatically if not previously shown in this session
+    try {
+      return sessionStorage.getItem("mox_splash_shown") !== "true";
+    } catch {
+      return false;
+    }
+  });
+
+  const handleSplashComplete = () => {
+    setShowSplash(false);
+    try {
+      sessionStorage.setItem("mox_hunter_splash_seen", "true");
+      sessionStorage.setItem("mox_splash_shown", "true");
+    } catch {
+      // ignore
+    }
+  };
+
+  const handleReplayIntro = () => {
+    setShowSplash(true);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   useEffect(() => {
     const handleMouseLeave = (e: MouseEvent) => {
@@ -637,6 +668,11 @@ export function LandingPage() {
 
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-50 font-sans selection:bg-indigo-500/30 overflow-clip">
+      {/* Cinematic Entrance Splash Screen */}
+      <AnimatePresence>
+        {showSplash && <EntranceSplash onComplete={handleSplashComplete} />}
+      </AnimatePresence>
+
       {/* Announcement Banner */}
       <div className="relative z-50 bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 px-4 py-2 flex items-center justify-center overflow-hidden">
         <motion.div
@@ -654,15 +690,10 @@ export function LandingPage() {
       {/* Navigation */}
       <nav className="sticky top-4 z-40 max-w-7xl mx-auto px-4 sm:px-6 transition-all duration-300 mt-4 mb-8">
         <div className="bg-zinc-950/80 backdrop-blur-xl border border-white/10 rounded-full h-16 flex items-center justify-between px-6 shadow-2xl">
-          <div className="flex items-center gap-3 group cursor-pointer">
-            <div className="w-8 h-8 bg-gradient-to-br from-zinc-900 to-zinc-950 border border-zinc-800/80 rounded-xl flex items-center justify-center shadow-[0_0_15px_rgba(225,29,72,0.15)] group-hover:shadow-[0_0_20px_rgba(225,29,72,0.3)] transition-all duration-500">
-              <WolfLogo className="w-5 h-5 text-rose-500" />
-            </div>
-            <span className="font-display font-bold text-lg tracking-tight text-white hidden sm:block">
-              MO-X Agency
-            </span>
-          </div>
-          <div className="flex items-center gap-6">
+          <a href="#" className="flex items-center gap-3 group cursor-pointer">
+            <LogoFull className="h-8 sm:h-9" />
+          </a>
+          <div className="flex items-center gap-3 sm:gap-6">
             <a
               href="#compare"
               className="text-sm font-medium text-zinc-400 hover:text-white transition-colors hidden md:block"
@@ -670,18 +701,36 @@ export function LandingPage() {
               The New Way
             </a>
             <a
-              href="#contact"
+              href="#how-it-works"
               className="text-sm font-medium text-zinc-400 hover:text-white transition-colors hidden md:block"
             >
-              Free Prototype
+              How It Works
             </a>
-            <Link
-              to="/login"
-              className="text-sm font-bold bg-white text-black px-6 py-2 rounded-full hover:bg-zinc-200 transition-colors flex items-center gap-2 hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(255,255,255,0.1)]"
+            <a
+              href="#services"
+              className="text-sm font-medium text-zinc-400 hover:text-white transition-colors hidden md:block"
             >
-              Client Portal
+              What We Build
+            </a>
+            <a
+              href="#roadmap"
+              className="text-sm font-medium text-zinc-400 hover:text-white transition-colors hidden lg:block"
+            >
+              Go Live & Scale
+            </a>
+            <a
+              href="#faq"
+              className="text-sm font-medium text-zinc-400 hover:text-white transition-colors hidden md:block"
+            >
+              FAQ
+            </a>
+            <a
+              href="#contact"
+              className="text-sm font-bold bg-white text-black px-5 sm:px-6 py-2 rounded-full hover:bg-zinc-200 transition-all flex items-center gap-2 hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(255,255,255,0.15)]"
+            >
+              <span>Free Prototype</span>
               <ArrowRight className="w-4 h-4" />
-            </Link>
+            </a>
           </div>
         </div>
       </nav>
@@ -711,7 +760,7 @@ export function LandingPage() {
               <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
             </span>
             <span className="tracking-widest uppercase text-[10px] sm:text-xs font-semibold text-zinc-300">
-              AI-Powered Digital Dominance
+              Proof First • Zero-Risk Prototype Architecture
             </span>
           </motion.div>
 
@@ -719,12 +768,12 @@ export function LandingPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="text-6xl sm:text-7xl lg:text-8xl font-display font-bold tracking-tighter mb-8 leading-[1.05] text-white"
+            className="text-5xl sm:text-7xl lg:text-8xl font-display font-bold tracking-tighter mb-8 leading-[1.08] text-white"
           >
-            You Run Your Business.
+            See Your Working Prototype Live.
             <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-rose-400">
-              AI Builds Your Website.
+              Before Spending A Single Dollar.
             </span>
           </motion.h1>
 
@@ -732,12 +781,9 @@ export function LandingPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="text-lg sm:text-xl text-zinc-400 max-w-2xl mx-auto mb-12 leading-relaxed font-light"
+            className="text-lg sm:text-xl text-zinc-400 max-w-3xl mx-auto mb-12 leading-relaxed font-light"
           >
-            Your leads are buying right now—just not from you. Stop losing local
-            market share to competitors with inferior services but a better
-            digital presence. We build elite, AI-optimized websites. Zero
-            upfront costs. Zero risk. Just aggressive growth.
+            Stop gambling thousands on slow agencies with broken promises. Our intelligent engine builds your custom, high-converting digital experience first — 100% free. You test and experience the real solution in real-time before making any financial commitment.
           </motion.p>
 
           <motion.div
@@ -762,13 +808,13 @@ export function LandingPage() {
             >
               <div className="absolute inset-0 bg-zinc-200 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
               <Monitor className="w-5 h-5 relative z-10" />
-              <span className="relative z-10">Claim Free Prototype</span>
+              <span className="relative z-10">Claim Free Working Prototype</span>
             </motion.a>
             <a
               href="#services"
               className="w-full sm:w-auto px-8 py-4 bg-transparent border border-zinc-700 text-zinc-300 font-bold rounded-full hover:bg-zinc-800 hover:border-zinc-600 transition-colors flex items-center justify-center gap-2"
             >
-              See Our Services
+              Explore What We Build
             </a>
           </motion.div>
 
@@ -922,133 +968,152 @@ export function LandingPage() {
       {/* Services Section */}
       <section
         id="services"
-        className="py-24 px-6 relative z-10 bg-zinc-900/10"
+        className="py-24 px-6 relative z-10 bg-zinc-900/10 scroll-mt-20"
       >
         <div className="max-w-7xl mx-auto">
           <div className="mb-16">
-            <h2 className="text-3xl sm:text-4xl font-display font-bold mb-4 text-white">
-              What We Build
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-mono font-semibold uppercase tracking-wider mb-4">
+              Comprehensive Growth Suite
+            </div>
+            <h2 className="text-3xl sm:text-5xl font-display font-bold mb-4 text-white">
+              What We Build & Scale
             </h2>
-            <p className="text-zinc-400 max-w-2xl">
-              Complete digital infrastructure designed for small businesses to
-              dominate local markets.
+            <p className="text-zinc-400 max-w-2xl text-lg">
+              High-end digital infrastructure and automated workflows priced transparently in the hundreds per project scope — never inflated agency retainers.
             </p>
           </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {/* Card 1: High-End Custom Web Development */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
-              className="bg-zinc-950/50 backdrop-blur-sm border border-zinc-800/80 rounded-3xl p-8 hover:border-indigo-500/50 hover:bg-indigo-500/5 transition-all duration-300 group shadow-[0_0_0_rgba(99,102,241,0)] hover:shadow-[0_0_30px_rgba(99,102,241,0.15)]"
+              className="bg-zinc-950/60 backdrop-blur-md border border-zinc-800/80 rounded-3xl p-8 hover:border-indigo-500/50 hover:bg-zinc-900/80 transition-all duration-500 group relative overflow-hidden shadow-[0_0_0_rgba(99,102,241,0)] hover:shadow-[0_0_35px_rgba(99,102,241,0.18)]"
             >
-              <div className="w-12 h-12 bg-zinc-900 border border-zinc-800 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-indigo-500/20 group-hover:border-indigo-500/30 transition-colors">
-                <Monitor className="w-6 h-6 text-indigo-400" />
+              {/* Subtle background glow & abstract geometry on hover */}
+              <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+              <div className="absolute -right-8 -bottom-8 w-36 h-36 bg-indigo-500/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700 pointer-events-none" />
+
+              <div className="w-12 h-12 bg-zinc-900 border border-zinc-800 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-indigo-500/20 group-hover:border-indigo-500/30 transition-colors relative z-10">
+                <Globe className="w-6 h-6 text-indigo-400" />
               </div>
-              <h3 className="text-xl font-bold mb-3 text-white">
-                AI-Powered Websites
+              <h3 className="text-xl font-bold mb-3 text-white relative z-10">
+                High-End Web Architecture
               </h3>
-              <p className="text-zinc-400 leading-relaxed">
-                Lightning-fast, highly-converting websites built specifically
-                for your brand. AI optimizations keep it ranking high.
+              <p className="text-zinc-400 leading-relaxed text-sm relative z-10">
+                Bespoke, lightning-fast web experiences engineered with modern UI/UX, responsive mobile design, and high-converting layouts tailored specifically to your brand.
               </p>
             </motion.div>
 
+            {/* Card 2: Social Media & Growth Automations */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.2 }}
-              className="bg-zinc-950/50 backdrop-blur-sm border border-zinc-800/80 rounded-3xl p-8 hover:border-rose-500/50 hover:bg-rose-500/5 transition-all duration-300 group shadow-[0_0_0_rgba(225,29,72,0)] hover:shadow-[0_0_30px_rgba(225,29,72,0.15)]"
+              className="bg-zinc-950/60 backdrop-blur-md border border-zinc-800/80 rounded-3xl p-8 hover:border-rose-500/50 hover:bg-zinc-900/80 transition-all duration-500 group relative overflow-hidden shadow-[0_0_0_rgba(225,29,72,0)] hover:shadow-[0_0_35px_rgba(225,29,72,0.18)]"
             >
-              <div className="w-12 h-12 bg-zinc-900 border border-zinc-800 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-rose-500/20 group-hover:border-rose-500/30 transition-colors">
-                <Sparkles className="w-6 h-6 text-rose-400" />
+              <div className="absolute inset-0 bg-gradient-to-br from-rose-500/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+              <div className="absolute -right-8 -bottom-8 w-36 h-36 bg-rose-500/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700 pointer-events-none" />
+
+              <div className="w-12 h-12 bg-zinc-900 border border-zinc-800 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-rose-500/20 group-hover:border-rose-500/30 transition-colors relative z-10">
+                <Share2 className="w-6 h-6 text-rose-400" />
               </div>
-              <h3 className="text-xl font-bold mb-3 text-white">
-                Social Media Automation
+              <h3 className="text-xl font-bold mb-3 text-white relative z-10">
+                Social Media & Growth Automations
               </h3>
-              <p className="text-zinc-400 leading-relaxed">
-                Never worry about what to post. Our AI systems generate and
-                schedule high-quality content that builds trust.
+              <p className="text-zinc-400 leading-relaxed text-sm relative z-10">
+                Omnipresent content pipelines, automated multi-channel publishing workflows, and engagement systems that keep your brand commanding attention hands-free.
               </p>
             </motion.div>
 
+            {/* Card 3: Intelligent Email & Follow-Up Engines */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.3 }}
-              className="bg-zinc-950/50 backdrop-blur-sm border border-zinc-800/80 rounded-3xl p-8 hover:border-indigo-500/50 hover:bg-indigo-500/5 transition-all duration-300 group shadow-[0_0_0_rgba(99,102,241,0)] hover:shadow-[0_0_30px_rgba(99,102,241,0.15)]"
+              className="bg-zinc-950/60 backdrop-blur-md border border-zinc-800/80 rounded-3xl p-8 hover:border-indigo-500/50 hover:bg-zinc-900/80 transition-all duration-500 group relative overflow-hidden shadow-[0_0_0_rgba(99,102,241,0)] hover:shadow-[0_0_35px_rgba(99,102,241,0.18)]"
             >
-              <div className="w-12 h-12 bg-zinc-900 border border-zinc-800 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-indigo-500/20 group-hover:border-indigo-500/30 transition-colors">
+              <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+              <div className="absolute -right-8 -bottom-8 w-36 h-36 bg-indigo-500/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700 pointer-events-none" />
+
+              <div className="w-12 h-12 bg-zinc-900 border border-zinc-800 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-indigo-500/20 group-hover:border-indigo-500/30 transition-colors relative z-10">
                 <Mail className="w-6 h-6 text-indigo-400" />
               </div>
-              <h3 className="text-xl font-bold mb-3 text-white">
-                5-Day Follow-Up Sequences
+              <h3 className="text-xl font-bold mb-3 text-white relative z-10">
+                Intelligent Email & Follow-Up Funnels
               </h3>
-              <p className="text-zinc-400 leading-relaxed">
-                Instantly drop new leads into automated 5-day email sequences.
-                We share social proof, handle objections, and push for the call.
+              <p className="text-zinc-400 leading-relaxed text-sm relative z-10">
+                Behavioral email follow-ups, automated objection handling, and appointment booking triggers that convert cold inquiries into signed clients.
               </p>
             </motion.div>
 
+            {/* Card 4: High-Converting Ads & Visual Campaigns */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.4 }}
-              className="bg-zinc-950/50 backdrop-blur-sm border border-zinc-800/80 rounded-3xl p-8 hover:border-amber-500/50 hover:bg-amber-500/5 transition-all duration-300 group shadow-[0_0_0_rgba(245,158,11,0)] hover:shadow-[0_0_30px_rgba(245,158,11,0.15)]"
+              className="bg-zinc-950/60 backdrop-blur-md border border-zinc-800/80 rounded-3xl p-8 hover:border-amber-500/50 hover:bg-zinc-900/80 transition-all duration-500 group relative overflow-hidden shadow-[0_0_0_rgba(245,158,11,0)] hover:shadow-[0_0_35px_rgba(245,158,11,0.18)]"
             >
-              <div className="w-12 h-12 bg-zinc-900 border border-zinc-800 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-amber-500/20 group-hover:border-amber-500/30 transition-colors">
-                <Play className="w-6 h-6 text-amber-400" />
+              <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+              <div className="absolute -right-8 -bottom-8 w-36 h-36 bg-amber-500/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700 pointer-events-none" />
+
+              <div className="w-12 h-12 bg-zinc-900 border border-zinc-800 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-amber-500/20 group-hover:border-amber-500/30 transition-colors relative z-10">
+                <Megaphone className="w-6 h-6 text-amber-400" />
               </div>
-              <h3 className="text-xl font-bold mb-3 text-white">
-                UGC Video Retargeting
+              <h3 className="text-xl font-bold mb-3 text-white relative z-10">
+                High-Impact Ad Creatives & Video
               </h3>
-              <p className="text-zinc-400 leading-relaxed">
-                People don't buy on visit one. We run authentic, AI-generated
-                video testimonials to retarget lost traffic and force
-                conversions.
+              <p className="text-zinc-400 leading-relaxed text-sm relative z-10">
+                High-conversion ad assets, retargeting sequences, and creative campaigns built to dominate local market share — priced in the hundreds, never agency thousands.
               </p>
             </motion.div>
 
+            {/* Card 5: Brand Identity & Custom Visual Design */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.5 }}
-              className="bg-zinc-950/50 backdrop-blur-sm border border-zinc-800/80 rounded-3xl p-8 hover:border-emerald-500/50 hover:bg-emerald-500/5 transition-all duration-300 group shadow-[0_0_0_rgba(16,185,129,0)] hover:shadow-[0_0_30px_rgba(16,185,129,0.15)]"
+              className="bg-zinc-950/60 backdrop-blur-md border border-zinc-800/80 rounded-3xl p-8 hover:border-purple-500/50 hover:bg-zinc-900/80 transition-all duration-500 group relative overflow-hidden shadow-[0_0_0_rgba(168,85,247,0)] hover:shadow-[0_0_35px_rgba(168,85,247,0.18)]"
             >
-              <div className="w-12 h-12 bg-zinc-900 border border-zinc-800 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-emerald-500/20 group-hover:border-emerald-500/30 transition-colors">
-                <XCircle className="w-6 h-6 text-emerald-400" />
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+              <div className="absolute -right-8 -bottom-8 w-36 h-36 bg-purple-500/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700 pointer-events-none" />
+
+              <div className="w-12 h-12 bg-zinc-900 border border-zinc-800 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-purple-500/20 group-hover:border-purple-500/30 transition-colors relative z-10">
+                <Palette className="w-6 h-6 text-purple-400" />
               </div>
-              <h3 className="text-xl font-bold mb-3 text-white">
-                Exit-Intent Capture
+              <h3 className="text-xl font-bold mb-3 text-white relative z-10">
+                Brand Identity & UI/UX Assets
               </h3>
-              <p className="text-zinc-400 leading-relaxed">
-                If a prospect tries to leave, we hit them with an irresistible
-                "Free Guide" or "Free Audit" popup, securing their email for
-                future marketing.
+              <p className="text-zinc-400 leading-relaxed text-sm relative z-10">
+                Distinctive modern logos, clean typography systems, bespoke vector iconography, and design guidelines that command instant credibility and client trust.
               </p>
             </motion.div>
 
+            {/* Card 6: Conversion Optimization & Lead Capture */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.6 }}
-              className="bg-zinc-950/50 backdrop-blur-sm border border-zinc-800/80 rounded-3xl p-8 hover:border-indigo-500/50 hover:bg-indigo-500/5 transition-all duration-300 group shadow-[0_0_0_rgba(99,102,241,0)] hover:shadow-[0_0_30px_rgba(99,102,241,0.15)]"
+              className="bg-zinc-950/60 backdrop-blur-md border border-zinc-800/80 rounded-3xl p-8 hover:border-emerald-500/50 hover:bg-zinc-900/80 transition-all duration-500 group relative overflow-hidden shadow-[0_0_0_rgba(16,185,129,0)] hover:shadow-[0_0_35px_rgba(16,185,129,0.18)]"
             >
-              <div className="w-12 h-12 bg-zinc-900 border border-zinc-800 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-indigo-500/20 group-hover:border-indigo-500/30 transition-colors">
-                <Rocket className="w-6 h-6 text-indigo-400" />
+              <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+              <div className="absolute -right-8 -bottom-8 w-36 h-36 bg-emerald-500/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700 pointer-events-none" />
+
+              <div className="w-12 h-12 bg-zinc-900 border border-zinc-800 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-emerald-500/20 group-hover:border-emerald-500/30 transition-colors relative z-10">
+                <TrendingUp className="w-6 h-6 text-emerald-400" />
               </div>
-              <h3 className="text-xl font-bold mb-3 text-white">
-                Hands-Free Growth
+              <h3 className="text-xl font-bold mb-3 text-white relative z-10">
+                Lead Capture & Conversion Systems
               </h3>
-              <p className="text-zinc-400 leading-relaxed">
-                You handle the customers, we handle the internet. From automated
-                lead capture to zero-touch maintenance.
+              <p className="text-zinc-400 leading-relaxed text-sm relative z-10">
+                Smart exit-intent mechanisms, interactive business audit widgets, and direct CRM sync that ensure zero lost opportunities from your visitor traffic.
               </p>
             </motion.div>
           </div>
@@ -1056,7 +1121,7 @@ export function LandingPage() {
       </section>
 
       {/* The Pain Agitation (Old Way vs New Way) */}
-      <section id="compare" className="py-24 px-6 relative z-10">
+      <section id="compare" className="py-24 px-6 relative z-10 scroll-mt-20">
         <div className="max-w-5xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -1065,11 +1130,10 @@ export function LandingPage() {
             className="text-center mb-16"
           >
             <h2 className="text-3xl sm:text-4xl font-display font-bold mb-4 text-white">
-              The Old Way vs. The MO-X Way
+              The Old Agency Way vs. The MoX Hunter Standard
             </h2>
             <p className="text-zinc-400 max-w-2xl mx-auto">
-              Stop paying thousands upfront for clunky templates that don't
-              convert.
+              Stop paying thousands upfront before seeing a single page. Experience the solution live first.
             </p>
           </motion.div>
 
@@ -1085,25 +1149,25 @@ export function LandingPage() {
                   <XCircle className="w-5 h-5 text-red-400" />
                 </div>
                 <h3 className="text-xl font-bold text-zinc-300">
-                  The Industry Standard
+                  Legacy Agency Retainers
                 </h3>
               </div>
               <ul className="space-y-4 text-zinc-400 font-medium">
                 <li className="flex items-start gap-3">
                   <XCircle className="w-5 h-5 text-red-500/50 shrink-0 mt-0.5" />{" "}
-                  High upfront costs ($3k-$10k+) before seeing any work.
+                  High upfront costs ($3k-$10k+) before seeing any tangible work.
                 </li>
                 <li className="flex items-start gap-3">
                   <XCircle className="w-5 h-5 text-red-500/50 shrink-0 mt-0.5" />{" "}
-                  Slow delivery times taking weeks or months.
+                  Slow delivery times dragging out over weeks or months.
                 </li>
                 <li className="flex items-start gap-3">
                   <XCircle className="w-5 h-5 text-red-500/50 shrink-0 mt-0.5" />{" "}
-                  Generic templates that look exactly like your competitors.
+                  Clunky templates that blend in with your local competitors.
                 </li>
                 <li className="flex items-start gap-3">
                   <XCircle className="w-5 h-5 text-red-500/50 shrink-0 mt-0.5" />{" "}
-                  Requires constant input and technical setup from your end.
+                  Requires endless meetings and technical management on your end.
                 </li>
               </ul>
             </motion.div>
@@ -1120,30 +1184,28 @@ export function LandingPage() {
                   <Check className="w-5 h-5 text-indigo-400" />
                 </div>
                 <h3 className="text-xl font-bold text-white">
-                  The MO-X Standard
+                  The MoX Hunter Standard
                 </h3>
                 <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold font-mono uppercase tracking-widest bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 shadow-[0_0_15px_rgba(99,102,241,0.2)] ml-auto">
-                  100% Free
+                  Prototype First • 100% Free
                 </span>
               </div>
               <ul className="space-y-4 text-zinc-200 font-medium relative z-10">
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-indigo-400 shrink-0 mt-0.5" />{" "}
-                  Instant, fully functional custom prototype.
+                  Interactive, fully functional working prototype delivered upfront.
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-indigo-400 shrink-0 mt-0.5" />{" "}
-                  Rapid deployment in under 24 hours.
+                  Rapid turnaround delivered to your inbox in 24 hours.
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-indigo-400 shrink-0 mt-0.5" />{" "}
-                  AI-engineered designs tuned specifically for local
-                  conversions.
+                  High-end bespoke architecture tuned specifically for client conversions.
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-indigo-400 shrink-0 mt-0.5" />{" "}
-                  Zero-touch experience. We handle the tech; you handle the
-                  leads.
+                  Transparent launch pricing in the hundreds, only when you approve the result.
                 </li>
               </ul>
             </motion.div>
@@ -1152,7 +1214,7 @@ export function LandingPage() {
       </section>
 
       {/* The 3-Step Mechanism */}
-      <section className="py-24 px-6 bg-zinc-900/20 border-y border-zinc-800/50 relative z-10 overflow-hidden">
+      <section id="how-it-works" className="py-24 px-6 bg-zinc-900/20 border-y border-zinc-800/50 relative z-10 overflow-hidden scroll-mt-20">
         <div className="absolute inset-0 bg-grid-zinc/[0.02] bg-[size:32px_32px] pointer-events-none" />
         <div className="max-w-6xl mx-auto relative z-10">
           <motion.div
@@ -1161,12 +1223,14 @@ export function LandingPage() {
             viewport={{ once: true }}
             className="text-center mb-20"
           >
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-mono font-semibold uppercase tracking-wider mb-4">
+              Clear & Risk-Free
+            </div>
             <h2 className="text-3xl sm:text-5xl font-display font-bold mb-6 text-white tracking-tight">
-              The AI-Engineered Pipeline
+              3 Steps From Vision To Reality
             </h2>
             <p className="text-xl text-zinc-400 max-w-2xl mx-auto font-light">
-              We don't do guesswork. Our proprietary models autonomously build
-              the perfect funnel for your business.
+              We eliminate client risk by engineering and delivering your live working prototype upfront.
             </p>
           </motion.div>
 
@@ -1185,12 +1249,10 @@ export function LandingPage() {
                 01
               </div>
               <h3 className="text-2xl font-bold mb-4 text-white flex items-center gap-3">
-                <Cpu className="w-6 h-6 text-indigo-400" /> The Analysis
+                <Cpu className="w-6 h-6 text-indigo-400" /> 1. Share Your Vision
               </h3>
               <p className="text-zinc-400 leading-relaxed">
-                We ingest millions of data points about your local market,
-                competitors, and ideal customers to craft a dominant digital
-                strategy.
+                Provide basic details about your business and ideal audience. Our intelligent systems map your local competition and identify high-converting angles.
               </p>
 
               {/* Decorative mini-UI */}
@@ -1198,7 +1260,7 @@ export function LandingPage() {
                 <div className="flex items-center gap-2 mb-2">
                   <div className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
                   <div className="text-xs text-zinc-500 font-mono">
-                    Scanning local competitors...
+                    Analyzing market gaps & keywords...
                   </div>
                 </div>
                 <div className="w-full bg-zinc-800 h-1 rounded-full overflow-hidden">
@@ -1227,12 +1289,10 @@ export function LandingPage() {
                 02
               </div>
               <h3 className="text-2xl font-bold mb-4 text-white flex items-center gap-3">
-                <Code2 className="w-6 h-6 text-indigo-400" /> The Build
+                <Code2 className="w-6 h-6 text-indigo-400" /> 2. Test Prototype Live
               </h3>
               <p className="text-zinc-400 leading-relaxed">
-                Our AI models generate a high-converting website prototype
-                instantly. Tailored copy, aggressive CTAs, and sleek UI deployed
-                in seconds.
+                We generate and host a fully interactive, working prototype within 24 hours. You test real functionality, layout, and copy with 100% zero obligation.
               </p>
 
               {/* Decorative mini-UI */}
@@ -1257,12 +1317,10 @@ export function LandingPage() {
                 03
               </div>
               <h3 className="text-2xl font-bold mb-4 text-white flex items-center gap-3">
-                <Rocket className="w-6 h-6 text-indigo-400" /> The Close
+                <Rocket className="w-6 h-6 text-indigo-400" /> 3. Go Live & Scale
               </h3>
               <p className="text-zinc-400 leading-relaxed">
-                You review the live link. If it blows your mind, we push it to
-                production and manage everything. You just handle the incoming
-                leads.
+                Only when you love the prototype do we connect your custom domain, activate lead automations, and manage your continuous growth systems.
               </p>
 
               {/* Decorative mini-UI */}
@@ -1284,7 +1342,7 @@ export function LandingPage() {
                   ))}
                 </div>
                 <div className="text-xs font-bold text-green-400">
-                  LEADS +340%
+                  CONVERSION READY
                 </div>
               </div>
             </motion.div>
@@ -1352,7 +1410,7 @@ export function LandingPage() {
         </div>
 
         {/* FAQ Section */}
-        <div className="max-w-4xl mx-auto relative z-10 mb-32">
+        <div id="faq" className="max-w-4xl mx-auto relative z-10 mb-32 scroll-mt-24">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-display font-bold mb-4 text-white">
               Frequently Asked Questions
@@ -1427,18 +1485,21 @@ export function LandingPage() {
         </motion.div>
       </section>
 
-      {/* The MO-X Roadmap & Pricing */}
+      {/* The Roadmap & Pricing */}
       <section
         id="roadmap"
-        className="py-24 px-6 bg-zinc-950 relative z-10 border-t border-zinc-800"
+        className="py-24 px-6 bg-zinc-950 relative z-10 border-t border-zinc-800 scroll-mt-20"
       >
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-display font-bold mb-4 text-white">
-              The MO-X Roadmap
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-mono font-semibold uppercase tracking-wider mb-4">
+              Transparent & Measurable
+            </div>
+            <h2 className="text-3xl sm:text-5xl font-display font-bold mb-4 text-white">
+              From Free Prototype to Full Launch
             </h2>
-            <p className="text-zinc-400 max-w-2xl mx-auto">
-              A transparent, risk-free path to dominating your local market.
+            <p className="text-zinc-400 max-w-2xl mx-auto text-lg">
+              A transparent, risk-free path to dominating your local market — no locked retainers or hidden agency fees.
             </p>
           </div>
 
@@ -1454,12 +1515,10 @@ export function LandingPage() {
                   </span>
                 </div>
                 <h3 className="text-xl font-bold text-white mb-2">
-                  Request Free Prototype
+                  1. Free Prototype Delivery
                 </h3>
                 <p className="text-zinc-400 leading-relaxed text-sm">
-                  Give us your business details. Our AI analyzes your market and
-                  we generate a functional website prototype tailored for your
-                  audience. Zero cost.
+                  We build and host a live working prototype tailored to your brand in 24 hours. You review real functionality with 100% zero upfront cost.
                 </p>
               </div>
 
@@ -1468,12 +1527,10 @@ export function LandingPage() {
                   <span className="text-zinc-400 font-bold font-mono">02</span>
                 </div>
                 <h3 className="text-xl font-bold text-white mb-2">
-                  Review & Iterate
+                  2. Review & Fine-Tune
                 </h3>
                 <p className="text-zinc-400 leading-relaxed text-sm">
-                  We send you the working link. If you love it, you can keep the
-                  single-page prototype for free on our subdomain. No strings
-                  attached.
+                  Test your interactive prototype link on all devices. If you decide not to proceed, keep your free preview link with zero strings attached.
                 </p>
               </div>
 
@@ -1482,11 +1539,10 @@ export function LandingPage() {
                   <span className="text-zinc-400 font-bold font-mono">03</span>
                 </div>
                 <h3 className="text-xl font-bold text-white mb-2">
-                  Go Live & Scale
+                  3. Production Launch & Scale
                 </h3>
                 <p className="text-zinc-400 leading-relaxed text-sm">
-                  Want more pages, your own custom domain, hosting, and advanced
-                  AI SEO? Choose a plan below and we handle everything.
+                  When you approve, we connect your custom domain, launch automations, and manage your continuous growth — priced in hundreds, not thousands.
                 </p>
               </div>
             </div>
@@ -1499,16 +1555,18 @@ export function LandingPage() {
       {/* Contact Form Section */}
       <section
         id="contact"
-        className="py-24 px-6 bg-zinc-900/40 relative z-10 border-t border-zinc-800/50"
+        className="py-24 px-6 bg-zinc-900/40 relative z-10 border-t border-zinc-800/50 scroll-mt-20"
       >
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-display font-bold mb-4 text-white">
-              Request Your Free Prototype
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-mono font-semibold uppercase tracking-wider mb-4">
+              100% Free • No Credit Card Required
+            </div>
+            <h2 className="text-3xl sm:text-5xl font-display font-bold mb-4 text-white">
+              Request Your Free Working Prototype
             </h2>
-            <p className="text-zinc-400">
-              Fill out the details below and our AI will begin analyzing your
-              market.
+            <p className="text-zinc-400 text-lg">
+              Tell us about your business. We will engineer your live prototype and deliver it within 24 hours so you can test the real solution first.
             </p>
           </div>
 
@@ -1517,26 +1575,63 @@ export function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 px-6 border-t border-zinc-800 relative z-10 bg-zinc-950">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6 text-sm text-zinc-500">
-          <div className="flex items-center gap-2">
-            <WolfLogo className="w-6 h-6 text-rose-500" />
-            <span className="font-bold text-white">MO-X Agency</span>
-            <span>© {new Date().getFullYear()}</span>
+      <footer className="py-16 px-6 border-t border-zinc-800 relative z-10 bg-zinc-950">
+        <div className="max-w-7xl mx-auto flex flex-col gap-10">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-8 pb-8 border-b border-zinc-800/80">
+            <div className="flex flex-col items-center md:items-start gap-3">
+              <LogoFull className="h-8 sm:h-9" />
+              <p className="text-sm text-zinc-400 max-w-md text-center md:text-left leading-relaxed">
+                MoX Hunter — The High-Authority Prototype & Growth Platform. Eliminating client risk with live prototypes before commitment.
+              </p>
+            </div>
+            <div className="flex flex-wrap justify-center items-center gap-6 text-sm text-zinc-400">
+              <a href="#compare" className="hover:text-white transition-colors">
+                The New Way
+              </a>
+              <a href="#how-it-works" className="hover:text-white transition-colors">
+                How It Works
+              </a>
+              <a href="#services" className="hover:text-white transition-colors">
+                What We Build
+              </a>
+              <a href="#roadmap" className="hover:text-white transition-colors">
+                Go Live
+              </a>
+              <a href="#faq" className="hover:text-white transition-colors">
+                FAQ
+              </a>
+              <a href="#contact" className="text-indigo-400 hover:text-indigo-300 font-semibold transition-colors">
+                Claim Prototype
+              </a>
+            </div>
           </div>
-          <div className="flex gap-6">
-            <a href="#" className="hover:text-white transition-colors">
-              Privacy Policy
-            </a>
-            <a href="#" className="hover:text-white transition-colors">
-              Terms of Service
-            </a>
-            <Link
-              to="/login"
-              className="hover:text-indigo-400 transition-colors font-medium"
-            >
-              Client Login
-            </Link>
+
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-500">
+            <div>
+              © {new Date().getFullYear()} MoX Hunter. All rights reserved. High-authority digital solutions.
+            </div>
+            <div className="flex items-center gap-6">
+              <a href="#" className="hover:text-zinc-300 transition-colors">
+                Privacy Policy
+              </a>
+              <a href="#" className="hover:text-zinc-300 transition-colors">
+                Terms of Service
+              </a>
+              <button
+                type="button"
+                onClick={handleReplayIntro}
+                className="hover:text-indigo-400 text-zinc-400 transition-colors font-medium flex items-center gap-1.5 cursor-pointer"
+              >
+                <Play className="w-3 h-3 fill-current" />
+                <span>Replay Intro</span>
+              </button>
+              <Link
+                to="/login"
+                className="hover:text-indigo-400 transition-colors font-medium"
+              >
+                Client / Admin Portal
+              </Link>
+            </div>
           </div>
         </div>
       </footer>
