@@ -1,12 +1,29 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Search, Filter, MoreVertical, LayoutTemplate, PenTool, ArrowRight, Loader2, CheckCircle2, Clock, Zap, MapPin, Globe, Phone, Mail, Star, Lightbulb, X, LayoutGrid, List, Send, RefreshCw, FolderOpen, Target, Eye } from 'lucide-react';
+import { Search, Filter, MoreVertical, LayoutTemplate, PenTool, ArrowRight, Loader2, CheckCircle2, Clock, Zap, MapPin, Globe, Phone, Mail, Star, Lightbulb, X, LayoutGrid, List, Send, RefreshCw, FolderOpen, Target, Eye, Sparkles, ExternalLink, Plus, MessageSquare } from 'lucide-react';
 import { Lead } from '@/App';
 import { Logo, LogoFull } from './logo';
 import { ConfirmModal } from './confirm-modal';
 import { LeadDetailsDrawer, WhatsAppIcon } from './leads-panel';
 import { useAuth } from '@/hooks/use-auth';
 import { useMetrics } from '@/hooks/use-metrics';
+
+export const formatWhatsAppPhone = (rawPhone?: string): string => {
+  if (!rawPhone) return '';
+  let cleaned = rawPhone.replace(/[^0-9]/g, '');
+  if (cleaned.startsWith('00')) {
+    cleaned = cleaned.substring(2);
+  } else if (cleaned.startsWith('0') && cleaned.length === 11) {
+    cleaned = '92' + cleaned.substring(1);
+  }
+  return cleaned;
+};
+
+export const getPersonalizedPitch = (lead: Lead): string => {
+  const previewLink = lead.previewUrl || (lead.prototypeId ? `https://mox.infni-t.online/preview/${lead.prototypeId}` : '');
+  if (lead.whatsappDraft) return lead.whatsappDraft;
+  return `Hi ${lead.name} Team! We built a custom live mobile prototype for your brand: ${previewLink || 'https://mox.infni-t.online'} - Let me know what you think!`;
+};
 
 interface LeadCRMProps {
   leads: Lead[];
@@ -358,7 +375,31 @@ export function LeadCRM({ leads, onGeneratePrototype, onNavigate, onUpdateLead, 
           </div>
         )}
 
-        {viewMode === 'list' ? (
+        {leads.length === 0 ? (
+          <div className="bg-zinc-900/50 backdrop-blur-sm border border-zinc-800 rounded-3xl p-12 text-center flex flex-col items-center justify-center max-w-xl mx-auto shadow-2xl">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-rose-500/20 via-indigo-500/20 to-purple-500/20 border border-zinc-700/60 flex items-center justify-center mb-5 text-rose-400 shadow-inner">
+              <Target className="w-8 h-8 opacity-90" />
+            </div>
+            <h3 className="text-xl font-bold font-display text-zinc-100 mb-2">No leads in pipeline</h3>
+            <p className="text-sm text-zinc-400 max-w-md mx-auto leading-relaxed mb-6">
+              Type <span className="font-mono text-xs text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded border border-rose-500/20 font-semibold">'start the flow'</span> to launch an automated hunt or click <span className="text-zinc-200 font-semibold">'+ Add Lead'</span> to ingest manually.
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              <button
+                onClick={() => setIsAddModalOpen(true)}
+                className="px-4 py-2.5 bg-rose-600 hover:bg-rose-500 text-white rounded-xl text-sm font-medium transition-all shadow-lg shadow-rose-600/20 flex items-center gap-2"
+              >
+                <Plus className="w-4 h-4" /> Add Lead
+              </button>
+              <button
+                onClick={() => onNavigate('discovery')}
+                className="px-4 py-2.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 rounded-xl text-sm font-medium transition-all border border-zinc-700 flex items-center gap-2"
+              >
+                <Zap className="w-4 h-4 text-indigo-400" /> Launch Automated Hunt
+              </button>
+            </div>
+          </div>
+        ) : viewMode === 'list' ? (
           <div className="bg-zinc-900/50 backdrop-blur-sm border border-zinc-800 rounded-2xl overflow-hidden shadow-xl">
             <table className="w-full text-left border-collapse">
               <thead>
@@ -373,137 +414,210 @@ export function LeadCRM({ leads, onGeneratePrototype, onNavigate, onUpdateLead, 
                 {filteredLeads.length === 0 ? (
                   <tr>
                     <td colSpan={4} className="py-12 text-center text-zinc-500">
-                      No leads found. <button onClick={() => onNavigate('discovery')} className="text-indigo-400 hover:underline">Go hunt some!</button>
+                      No leads match your search. <button onClick={() => { setSearchQuery(''); setFilterStatus('all'); }} className="text-indigo-400 hover:underline ml-1">Clear filters</button>
                     </td>
                   </tr>
                 ) : (
-                  filteredLeads.map((lead, i) => (
-                    <motion.tr 
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: i * 0.05 }}
-                      key={lead.id} 
-                      onClick={() => { setDrawerLead(lead); setIsDrawerOpen(true); }}
-                      className="hover:bg-zinc-800/30 transition-colors group cursor-pointer"
-                    >
-                      <td className="py-4 px-6">
-                        <div className="font-medium text-zinc-100 group-hover:text-indigo-300 transition-colors flex items-center gap-2">
-                          <span>{lead.name}</span>
-                          <Eye className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 text-indigo-400 transition-opacity" />
-                        </div>
-                        <div className="flex items-center gap-2 mt-2">
-                          {lead.rating && (
-                            <span className="flex items-center gap-1 text-xs text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">
-                              <Star className="w-3 h-3 fill-amber-400" /> {lead.rating}
-                            </span>
-                          )}
-                          {lead.score && (
-                            <span className="flex items-center gap-1 text-xs text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded-full border border-indigo-500/20">
-                              Score: {lead.score}
-                            </span>
-                          )}
-                          {lead.dealValue && (
-                            <span className="flex items-center gap-1 text-xs text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
-                              {getCurrencySymbol(lead.currency)}{lead.dealValue.toLocaleString()}
-                            </span>
-                          )}
-                          <button 
-                            onClick={(e) => { e.stopPropagation(); onSelectLead(lead.id); }}
-                            className="text-xs text-zinc-400 hover:text-zinc-100 bg-zinc-800/50 hover:bg-zinc-700 px-2 py-0.5 rounded-full border border-zinc-700 transition-colors"
-                          >
-                            Files & Assets
-                          </button>
-                        </div>
-                      </td>
-                      <td className="py-4 px-6">
-                        <div className="text-sm text-zinc-300">{lead.niche}</div>
-                        <div className="text-xs text-zinc-500">{lead.city}</div>
-                      </td>
-                      <td className="py-4 px-6">
-                        <div className="relative inline-block" onClick={(e) => e.stopPropagation()}>
-                          <select
-                            value={lead.status}
-                            onChange={(e) => handleStatusChange(lead.id, e.target.value as Lead['status'])}
-                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                          >
-                            <option value="Qualified">Qualified</option>
-                            <option value="Built">Built</option>
-                            <option value="Contacted">Contacted</option>
-                            <option value="Negotiating">Negotiating</option>
-                            <option value="Closed">Closed</option>
-                          </select>
-                          {getStatusBadge(lead.status)}
-                        </div>
-                      </td>
-                      <td className="py-4 px-6 text-right">
-                        <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <button 
-                            onClick={(e) => handleQuickWhatsApp(lead, e)}
-                            className="p-2 text-emerald-400 hover:text-emerald-300 rounded-lg hover:bg-emerald-500/10 transition-colors"
-                            title="1-Click WhatsApp Outreach"
-                          >
-                            <WhatsAppIcon className="w-4 h-4" />
-                          </button>
-                          <button 
-                            onClick={(e) => { e.stopPropagation(); onSelectLead(lead.id); }}
-                            className="p-2 text-zinc-400 hover:text-indigo-400 rounded-lg hover:bg-zinc-800 transition-colors"
-                            title="View Files"
-                          >
-                            <FolderOpen className="w-4 h-4" />
-                          </button>
-                          <button 
-                            onClick={(e) => { e.stopPropagation(); handleGenerateClick(lead); }}
-                            className="text-sm font-medium text-indigo-400 hover:text-indigo-300 flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-indigo-500/10 transition-colors"
-                          >
-                            <Zap className="w-4 h-4" /> 
-                            {lead.prototypeId ? 'Rebuild' : 'Generate'}
-                          </button>
-                          
-                          <div className="relative" onClick={(e) => e.stopPropagation()}>
-                            <button 
-                              onClick={() => setActiveMenuId(activeMenuId === lead.id ? null : lead.id)}
-                              className="p-2 text-zinc-500 hover:text-zinc-200 rounded-lg hover:bg-zinc-800 transition-colors"
+                  filteredLeads.map((lead, i) => {
+                    const cleanPhone = formatWhatsAppPhone(lead.phone);
+                    const personalizedPitch = getPersonalizedPitch(lead);
+                    const prototypeLink = lead.previewUrl || (lead.prototypeId ? `https://mox.infni-t.online/preview/${lead.prototypeId}` : '');
+
+                    return (
+                      <motion.tr 
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: i * 0.05 }}
+                        key={lead.id} 
+                        onClick={() => { setDrawerLead(lead); setIsDrawerOpen(true); }}
+                        className="hover:bg-zinc-800/30 transition-colors group cursor-pointer"
+                      >
+                        <td className="py-4 px-6">
+                          <div className="flex items-center">
+                            {lead.logo ? (
+                              <img
+                                src={lead.logo}
+                                alt={lead.name}
+                                className="h-10 w-10 object-contain rounded-xl bg-zinc-950 border border-zinc-800 p-1 mr-3 shrink-0"
+                                onError={(e) => { (e.target as HTMLElement).style.display = 'none'; }}
+                              />
+                            ) : (
+                              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500/20 via-purple-500/20 to-pink-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-300 font-bold font-display text-sm mr-3 shrink-0 shadow-sm">
+                                {lead.name ? lead.name.charAt(0).toUpperCase() : 'L'}
+                              </div>
+                            )}
+                            <div>
+                              <div className="font-medium text-zinc-100 group-hover:text-indigo-300 transition-colors flex items-center gap-2">
+                                <span>{lead.name}</span>
+                                <Eye className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 text-indigo-400 transition-opacity" />
+                              </div>
+                              <div className="flex flex-wrap items-center gap-2 mt-1.5">
+                                {lead.rating && (
+                                  <span className="flex items-center gap-1 text-xs text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">
+                                    <Star className="w-3 h-3 fill-amber-400" /> {lead.rating}
+                                  </span>
+                                )}
+                                {lead.score && (
+                                  <span className="flex items-center gap-1 text-xs text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded-full border border-indigo-500/20">
+                                    Score: {lead.score}
+                                  </span>
+                                )}
+                                {lead.dealValue && (
+                                  <span className="flex items-center gap-1 text-xs text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                                    {getCurrencySymbol(lead.currency)}{lead.dealValue.toLocaleString()}
+                                  </span>
+                                )}
+                                {prototypeLink && (
+                                  <a 
+                                    href={prototypeLink} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer" 
+                                    onClick={(e) => e.stopPropagation()}
+                                    className="inline-flex items-center gap-1.5 text-xs font-semibold bg-indigo-500/10 text-indigo-400 border border-indigo-500/30 px-3 py-1 rounded-xl hover:bg-indigo-500/20 shadow-[0_0_12px_rgba(99,102,241,0.15)] transition-all hover:scale-105"
+                                  >
+                                    <Sparkles className="w-3.5 h-3.5" /> Test Prototype
+                                  </a>
+                                )}
+                                {lead.googleMapsUrl && (
+                                  <a
+                                    href={lead.googleMapsUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    onClick={(e) => e.stopPropagation()}
+                                    className="inline-flex items-center gap-1 text-xs text-zinc-300 hover:text-emerald-400 transition-colors bg-zinc-950 px-2.5 py-1 rounded-xl border border-zinc-800"
+                                  >
+                                    <MapPin className="w-3.5 h-3.5 text-emerald-400" /> Maps
+                                  </a>
+                                )}
+                                {isValidWebsite(lead.website) && (
+                                  <a
+                                    href={lead.website.startsWith('http') ? lead.website : `https://${lead.website}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    onClick={(e) => e.stopPropagation()}
+                                    className="inline-flex items-center gap-1 text-xs text-zinc-300 hover:text-indigo-400 transition-colors bg-zinc-950 px-2.5 py-1 rounded-xl border border-zinc-800"
+                                  >
+                                    <Globe className="w-3.5 h-3.5 text-zinc-500" />
+                                    <span className="truncate max-w-[120px]">{lead.website.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')}</span>
+                                    <ExternalLink className="w-3 h-3 text-zinc-500" />
+                                  </a>
+                                )}
+                                {lead.phone && (
+                                  <a
+                                    href={`https://wa.me/${cleanPhone}?text=${encodeURIComponent(personalizedPitch)}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      if (lead.status === 'Qualified' || lead.status === 'Built') {
+                                        handleStatusChange(lead.id, 'Contacted');
+                                      }
+                                    }}
+                                    className="inline-flex items-center gap-1.5 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2.5 py-1 rounded-xl text-xs font-semibold transition-all shadow-[0_0_12px_rgba(16,185,129,0.1)]"
+                                  >
+                                    <WhatsAppIcon className="w-3.5 h-3.5" /> 💬 Chat on WhatsApp
+                                  </a>
+                                )}
+                                <button 
+                                  onClick={(e) => { e.stopPropagation(); onSelectLead(lead.id); }}
+                                  className="text-xs text-zinc-400 hover:text-zinc-100 bg-zinc-800/50 hover:bg-zinc-700 px-2 py-0.5 rounded-full border border-zinc-700 transition-colors"
+                                >
+                                  Files & Assets
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="py-4 px-6">
+                          <div className="text-sm text-zinc-300">{lead.niche}</div>
+                          <div className="text-xs text-zinc-500">{lead.city}</div>
+                        </td>
+                        <td className="py-4 px-6">
+                          <div className="relative inline-block" onClick={(e) => e.stopPropagation()}>
+                            <select
+                              value={lead.status}
+                              onChange={(e) => handleStatusChange(lead.id, e.target.value as Lead['status'])}
+                              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                             >
-                              <MoreVertical className="w-4 h-4" />
+                              <option value="Qualified">Qualified</option>
+                              <option value="Built">Built</option>
+                              <option value="Contacted">Contacted</option>
+                              <option value="Negotiating">Negotiating</option>
+                              <option value="Closed">Closed</option>
+                            </select>
+                            {getStatusBadge(lead.status)}
+                          </div>
+                        </td>
+                        <td className="py-4 px-6 text-right">
+                          <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button 
+                              onClick={(e) => handleQuickWhatsApp(lead, e)}
+                              className="p-2 text-emerald-400 hover:text-emerald-300 rounded-lg hover:bg-emerald-500/10 transition-colors"
+                              title="1-Click WhatsApp Outreach"
+                            >
+                              <WhatsAppIcon className="w-4 h-4" />
+                            </button>
+                            <button 
+                              onClick={(e) => { e.stopPropagation(); onSelectLead(lead.id); }}
+                              className="p-2 text-zinc-400 hover:text-indigo-400 rounded-lg hover:bg-zinc-800 transition-colors"
+                              title="View Files"
+                            >
+                              <FolderOpen className="w-4 h-4" />
+                            </button>
+                            <button 
+                              onClick={(e) => { e.stopPropagation(); handleGenerateClick(lead); }}
+                              className="text-sm font-medium text-indigo-400 hover:text-indigo-300 flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-indigo-500/10 transition-colors"
+                            >
+                              <Zap className="w-4 h-4" /> 
+                              {lead.prototypeId ? 'Rebuild' : 'Generate'}
                             </button>
                             
-                            <AnimatePresence>
-                              {activeMenuId === lead.id && (
-                                <>
-                                  <div className="fixed inset-0 z-40" onClick={() => setActiveMenuId(null)} />
-                                  <motion.div
-                                    initial={{ opacity: 0, scale: 0.95, y: -10 }}
-                                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                                    exit={{ opacity: 0, scale: 0.95, y: -10 }}
-                                    className="absolute right-0 top-full mt-2 w-36 bg-zinc-900 border border-zinc-800 rounded-xl shadow-2xl z-50 py-1 overflow-hidden"
-                                  >
-                                    <button 
-                                      onClick={() => {
-                                        setEditLead(lead);
-                                        setActiveMenuId(null);
-                                      }}
-                                      className="w-full text-left px-4 py-2 text-sm text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100 transition-colors flex items-center gap-2"
+                            <div className="relative" onClick={(e) => e.stopPropagation()}>
+                              <button 
+                                onClick={() => setActiveMenuId(activeMenuId === lead.id ? null : lead.id)}
+                                className="p-2 text-zinc-500 hover:text-zinc-200 rounded-lg hover:bg-zinc-800 transition-colors"
+                              >
+                                <MoreVertical className="w-4 h-4" />
+                              </button>
+                              
+                              <AnimatePresence>
+                                {activeMenuId === lead.id && (
+                                  <>
+                                    <div className="fixed inset-0 z-40" onClick={() => setActiveMenuId(null)} />
+                                    <motion.div
+                                      initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                                      exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                                      className="absolute right-0 top-full mt-2 w-36 bg-zinc-900 border border-zinc-800 rounded-xl shadow-2xl z-50 py-1 overflow-hidden"
                                     >
-                                      <PenTool className="w-3.5 h-3.5" /> Edit Lead
-                                    </button>
-                                    <button 
-                                      onClick={() => {
-                                        setDeleteConfirm({ isOpen: true, leadId: lead.id });
-                                        setActiveMenuId(null);
-                                      }}
-                                      className="w-full text-left px-4 py-2 text-sm text-rose-400 hover:bg-rose-500/10 transition-colors flex items-center gap-2"
-                                    >
-                                      <X className="w-3.5 h-3.5" /> Delete
-                                    </button>
-                                  </motion.div>
-                                </>
-                              )}
-                            </AnimatePresence>
+                                      <button 
+                                        onClick={() => {
+                                          setEditLead(lead);
+                                          setActiveMenuId(null);
+                                        }}
+                                        className="w-full text-left px-4 py-2 text-sm text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100 transition-colors flex items-center gap-2"
+                                      >
+                                        <PenTool className="w-3.5 h-3.5" /> Edit Lead
+                                      </button>
+                                      <button 
+                                        onClick={() => {
+                                          setDeleteConfirm({ isOpen: true, leadId: lead.id });
+                                          setActiveMenuId(null);
+                                        }}
+                                        className="w-full text-left px-4 py-2 text-sm text-rose-400 hover:bg-rose-500/10 transition-colors flex items-center gap-2"
+                                      >
+                                        <X className="w-3.5 h-3.5" /> Delete
+                                      </button>
+                                    </motion.div>
+                                  </>
+                                )}
+                              </AnimatePresence>
+                            </div>
                           </div>
-                        </div>
-                      </td>
-                    </motion.tr>
-                  ))
+                        </td>
+                      </motion.tr>
+                    );
+                  })
                 )}
               </tbody>
             </table>
@@ -527,117 +641,184 @@ export function LeadCRM({ leads, onGeneratePrototype, onNavigate, onUpdateLead, 
                 </div>
                 
                 <div className="flex-1 overflow-y-auto no-scrollbar space-y-3 pr-2">
-                  {filteredLeads.filter(l => l.status === status).map((lead) => (
-                    <motion.div 
-                      layoutId={`card-${lead.id}`}
-                      key={lead.id}
-                      onClick={() => { setDrawerLead(lead); setIsDrawerOpen(true); }}
-                      className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 hover:border-indigo-500/50 hover:bg-zinc-900/90 transition-all group cursor-pointer shadow-sm hover:shadow-indigo-500/5"
-                    >
-                      <div className="flex items-start justify-between mb-2">
-                        <h4 className="font-medium text-zinc-100 group-hover:text-indigo-300 transition-colors flex items-center gap-1.5">
-                          <span>{lead.name}</span>
-                          <Eye className="w-3 h-3 text-indigo-400 opacity-0 group-hover:opacity-100 transition-opacity" />
-                        </h4>
-                        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity" onClick={(e) => e.stopPropagation()}>
-                          <button 
-                            onClick={(e) => handleQuickWhatsApp(lead, e)}
-                            className="p-1 text-emerald-400 hover:text-emerald-300 rounded-md hover:bg-emerald-500/10 transition-colors"
-                            title="1-Click WhatsApp Outreach"
-                          >
-                            <WhatsAppIcon className="w-3.5 h-3.5" />
-                          </button>
-                          <button 
-                            onClick={(e) => { e.stopPropagation(); onSelectLead(lead.id); }}
-                            className="p-1 text-zinc-500 hover:text-indigo-400 rounded-md hover:bg-zinc-800 transition-colors"
-                          >
-                            <FolderOpen className="w-3.5 h-3.5" />
-                          </button>
-                          <div className="relative">
+                  {filteredLeads.filter(l => l.status === status).map((lead) => {
+                    const cleanPhone = formatWhatsAppPhone(lead.phone);
+                    const personalizedPitch = getPersonalizedPitch(lead);
+                    const prototypeLink = lead.previewUrl || (lead.prototypeId ? `https://mox.infni-t.online/preview/${lead.prototypeId}` : '');
+
+                    return (
+                      <motion.div 
+                        layoutId={`card-${lead.id}`}
+                        key={lead.id}
+                        onClick={() => { setDrawerLead(lead); setIsDrawerOpen(true); }}
+                        className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 hover:border-indigo-500/50 hover:bg-zinc-900/90 transition-all group cursor-pointer shadow-sm hover:shadow-indigo-500/5"
+                      >
+                        <div className="flex items-start justify-between mb-2">
+                          <div className="flex items-center gap-2.5 overflow-hidden">
+                            {lead.logo ? (
+                              <img
+                                src={lead.logo}
+                                alt={lead.name}
+                                className="h-8 w-8 object-contain rounded-lg bg-zinc-950 border border-zinc-800 p-0.5 shrink-0"
+                                onError={(e) => { (e.target as HTMLElement).style.display = 'none'; }}
+                              />
+                            ) : (
+                              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500/20 via-purple-500/20 to-pink-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-300 font-bold font-display text-xs shrink-0 shadow-sm">
+                                {lead.name ? lead.name.charAt(0).toUpperCase() : 'L'}
+                              </div>
+                            )}
+                            <h4 className="font-medium text-zinc-100 group-hover:text-indigo-300 transition-colors flex items-center gap-1.5 truncate">
+                              <span className="truncate">{lead.name}</span>
+                              <Eye className="w-3 h-3 text-indigo-400 opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
+                            </h4>
+                          </div>
+
+                          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0" onClick={(e) => e.stopPropagation()}>
                             <button 
-                              onClick={(e) => { e.stopPropagation(); setActiveMenuId(activeMenuId === lead.id ? null : lead.id); }}
-                              className="p-1 text-zinc-500 hover:text-zinc-200 rounded-md hover:bg-zinc-800 transition-colors"
+                              onClick={(e) => handleQuickWhatsApp(lead, e)}
+                              className="p-1 text-emerald-400 hover:text-emerald-300 rounded-md hover:bg-emerald-500/10 transition-colors"
+                              title="1-Click WhatsApp Outreach"
                             >
-                              <MoreVertical className="w-3.5 h-3.5" />
+                              <WhatsAppIcon className="w-3.5 h-3.5" />
                             </button>
-                            <AnimatePresence>
-                              {activeMenuId === lead.id && (
-                                <>
-                                  <div className="fixed inset-0 z-40" onClick={() => setActiveMenuId(null)} />
-                                  <motion.div
-                                    initial={{ opacity: 0, scale: 0.95, y: -10 }}
-                                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                                    exit={{ opacity: 0, scale: 0.95, y: -10 }}
-                                    className="absolute right-0 top-full mt-1 w-32 bg-zinc-900 border border-zinc-800 rounded-lg shadow-2xl z-50 py-1 overflow-hidden"
-                                  >
-                                    <button 
-                                      onClick={() => {
-                                        setEditLead(lead);
-                                        setActiveMenuId(null);
-                                      }}
-                                      className="w-full text-left px-3 py-1.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100 transition-colors flex items-center gap-2"
+                            <button 
+                              onClick={(e) => { e.stopPropagation(); onSelectLead(lead.id); }}
+                              className="p-1 text-zinc-500 hover:text-indigo-400 rounded-md hover:bg-zinc-800 transition-colors"
+                            >
+                              <FolderOpen className="w-3.5 h-3.5" />
+                            </button>
+                            <div className="relative">
+                              <button 
+                                onClick={(e) => { e.stopPropagation(); setActiveMenuId(activeMenuId === lead.id ? null : lead.id); }}
+                                className="p-1 text-zinc-500 hover:text-zinc-200 rounded-md hover:bg-zinc-800 transition-colors"
+                              >
+                                <MoreVertical className="w-3.5 h-3.5" />
+                              </button>
+                              <AnimatePresence>
+                                {activeMenuId === lead.id && (
+                                  <>
+                                    <div className="fixed inset-0 z-40" onClick={() => setActiveMenuId(null)} />
+                                    <motion.div
+                                      initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                                      exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                                      className="absolute right-0 top-full mt-1 w-32 bg-zinc-900 border border-zinc-800 rounded-lg shadow-2xl z-50 py-1 overflow-hidden"
                                     >
-                                      <PenTool className="w-3 h-3" /> Edit
-                                    </button>
-                                    <button 
-                                      onClick={() => {
-                                        setDeleteConfirm({ isOpen: true, leadId: lead.id });
-                                        setActiveMenuId(null);
-                                      }}
-                                      className="w-full text-left px-3 py-1.5 text-xs text-rose-400 hover:bg-rose-500/10 transition-colors flex items-center gap-2"
-                                    >
-                                      <X className="w-3 h-3" /> Delete
-                                    </button>
-                                  </motion.div>
-                                </>
-                              )}
-                            </AnimatePresence>
+                                      <button 
+                                        onClick={() => {
+                                          setEditLead(lead);
+                                          setActiveMenuId(null);
+                                        }}
+                                        className="w-full text-left px-3 py-1.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100 transition-colors flex items-center gap-2"
+                                      >
+                                        <PenTool className="w-3 h-3" /> Edit
+                                      </button>
+                                      <button 
+                                        onClick={() => {
+                                          setDeleteConfirm({ isOpen: true, leadId: lead.id });
+                                          setActiveMenuId(null);
+                                        }}
+                                        className="w-full text-left px-3 py-1.5 text-xs text-rose-400 hover:bg-rose-500/10 transition-colors flex items-center gap-2"
+                                      >
+                                        <X className="w-3 h-3" /> Delete
+                                      </button>
+                                    </motion.div>
+                                  </>
+                                )}
+                              </AnimatePresence>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                      <p className="text-xs text-zinc-400 mb-3">{lead.niche} • {lead.city}</p>
-                      
-                      <div className="flex flex-wrap gap-2 mb-4">
-                        {lead.score && (
-                          <span className="text-[10px] font-medium text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded-full border border-indigo-500/20">
-                            Score: {lead.score}
-                          </span>
-                        )}
-                        {lead.dealValue && (
-                          <span className="text-[10px] font-medium text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
-                            {getCurrencySymbol(lead.currency)}{lead.dealValue.toLocaleString()}
-                          </span>
-                        )}
-                        <button 
-                          onClick={(e) => { e.stopPropagation(); onSelectLead(lead.id); }}
-                          className="text-[10px] font-medium text-zinc-400 hover:text-zinc-100 bg-zinc-800/50 hover:bg-zinc-700 px-2 py-0.5 rounded-full border border-zinc-700 transition-colors"
-                        >
-                          Files
-                        </button>
-                      </div>
-                      
-                      <div className="pt-3 border-t border-zinc-800/50 flex items-center justify-between" onClick={(e) => e.stopPropagation()}>
-                        <select
-                          value={lead.status}
-                          onChange={(e) => handleStatusChange(lead.id, e.target.value as Lead['status'])}
-                          className="text-xs bg-transparent text-zinc-500 hover:text-zinc-300 focus:outline-none cursor-pointer"
-                        >
-                          <option value="Qualified">Move to Qualified</option>
-                          <option value="Built">Move to Built</option>
-                          <option value="Contacted">Move to Contacted</option>
-                          <option value="Negotiating">Move to Negotiating</option>
-                          <option value="Closed">Move to Closed</option>
-                        </select>
+                        <p className="text-xs text-zinc-400 mb-3">{lead.niche} • {lead.city}</p>
                         
-                        <button 
-                          onClick={(e) => { e.stopPropagation(); handleGenerateClick(lead); }}
-                          className="text-xs font-medium text-indigo-400 hover:text-indigo-300 flex items-center gap-1"
-                        >
-                          <Zap className="w-3 h-3" /> {lead.prototypeId ? 'Rebuild' : 'Build'}
-                        </button>
-                      </div>
-                    </motion.div>
-                  ))}
+                        <div className="flex flex-wrap gap-1.5 mb-3">
+                          {lead.score && (
+                            <span className="text-[10px] font-medium text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded-full border border-indigo-500/20">
+                              Score: {lead.score}
+                            </span>
+                          )}
+                          {lead.dealValue && (
+                            <span className="text-[10px] font-medium text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                              {getCurrencySymbol(lead.currency)}{lead.dealValue.toLocaleString()}
+                            </span>
+                          )}
+                          {prototypeLink && (
+                            <a
+                              href={prototypeLink}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={(e) => e.stopPropagation()}
+                              className="inline-flex items-center gap-1 text-[10px] font-semibold bg-indigo-500/10 text-indigo-400 border border-indigo-500/30 px-2 py-0.5 rounded-full hover:bg-indigo-500/20 transition-all"
+                            >
+                              <Sparkles className="w-2.5 h-2.5" /> Prototype
+                            </a>
+                          )}
+                          {lead.googleMapsUrl && (
+                            <a
+                              href={lead.googleMapsUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={(e) => e.stopPropagation()}
+                              className="inline-flex items-center gap-1 text-[10px] text-zinc-300 hover:text-emerald-400 bg-zinc-950 px-2 py-0.5 rounded-full border border-zinc-800 transition-colors"
+                            >
+                              <MapPin className="w-2.5 h-2.5 text-emerald-400" /> Map
+                            </a>
+                          )}
+                          {isValidWebsite(lead.website) && (
+                            <a
+                              href={lead.website.startsWith('http') ? lead.website : `https://${lead.website}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={(e) => e.stopPropagation()}
+                              className="inline-flex items-center gap-1 text-[10px] text-zinc-300 hover:text-indigo-400 bg-zinc-950 px-2 py-0.5 rounded-full border border-zinc-800 transition-colors"
+                            >
+                              <Globe className="w-2.5 h-2.5 text-zinc-500" /> Web
+                              <ExternalLink className="w-2.5 h-2.5 text-zinc-500" />
+                            </a>
+                          )}
+                        </div>
+
+                        {lead.phone && (
+                          <div className="mb-3" onClick={(e) => e.stopPropagation()}>
+                            <a
+                              href={`https://wa.me/${cleanPhone}?text=${encodeURIComponent(personalizedPitch)}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={() => {
+                                if (lead.status === 'Qualified' || lead.status === 'Built') {
+                                  handleStatusChange(lead.id, 'Contacted');
+                                }
+                              }}
+                              className="w-full inline-flex items-center justify-center gap-1.5 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 py-1.5 rounded-lg text-xs font-semibold transition-all shadow-sm"
+                            >
+                              <WhatsAppIcon className="w-3.5 h-3.5" /> Chat on WhatsApp
+                            </a>
+                          </div>
+                        )}
+                        
+                        <div className="pt-3 border-t border-zinc-800/50 flex items-center justify-between" onClick={(e) => e.stopPropagation()}>
+                          <select
+                            value={lead.status}
+                            onChange={(e) => handleStatusChange(lead.id, e.target.value as Lead['status'])}
+                            className="text-xs bg-transparent text-zinc-500 hover:text-zinc-300 focus:outline-none cursor-pointer"
+                          >
+                            <option value="Qualified">Move to Qualified</option>
+                            <option value="Built">Move to Built</option>
+                            <option value="Contacted">Move to Contacted</option>
+                            <option value="Negotiating">Move to Negotiating</option>
+                            <option value="Closed">Move to Closed</option>
+                          </select>
+                          
+                          <button 
+                            onClick={(e) => { e.stopPropagation(); handleGenerateClick(lead); }}
+                            className="text-xs font-medium text-indigo-400 hover:text-indigo-300 flex items-center gap-1"
+                          >
+                            <Zap className="w-3 h-3" /> {lead.prototypeId ? 'Rebuild' : 'Build'}
+                          </button>
+                        </div>
+                      </motion.div>
+                    );
+                  })}
                 </div>
               </div>
             ))}
@@ -982,34 +1163,82 @@ export function LeadCRM({ leads, onGeneratePrototype, onNavigate, onUpdateLead, 
               className="relative w-full max-w-2xl bg-zinc-900 border border-zinc-800 rounded-3xl p-8 shadow-2xl overflow-hidden"
             >
               <div className="flex items-center justify-between mb-6">
-                <div>
-                  <h2 className="text-2xl font-display font-semibold text-zinc-100">{detailsLead.name}</h2>
-                  <p className="text-sm text-zinc-400 mt-1">{detailsLead.niche} in {detailsLead.city}</p>
+                <div className="flex items-center gap-3">
+                  {detailsLead.logo ? (
+                    <img
+                      src={detailsLead.logo}
+                      alt={detailsLead.name}
+                      className="h-12 w-12 object-contain rounded-2xl bg-zinc-950 border border-zinc-800 p-1.5 shrink-0"
+                      onError={(e) => { (e.target as HTMLElement).style.display = 'none'; }}
+                    />
+                  ) : (
+                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500/20 via-purple-500/20 to-pink-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-300 font-bold font-display text-lg shrink-0 shadow-sm">
+                      {detailsLead.name ? detailsLead.name.charAt(0).toUpperCase() : 'L'}
+                    </div>
+                  )}
+                  <div>
+                    <h2 className="text-2xl font-display font-semibold text-zinc-100">{detailsLead.name}</h2>
+                    <p className="text-sm text-zinc-400 mt-0.5">{detailsLead.niche} in {detailsLead.city}</p>
+                  </div>
                 </div>
                 <button onClick={() => setFilesLead(null)} className="p-2 text-zinc-500 hover:text-zinc-300 rounded-lg bg-zinc-800/50 hover:bg-zinc-800 transition-colors">
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
-              <div className="flex flex-wrap gap-3 mb-6">
-                {detailsLead.address && (
-                  <a href={`https://maps.google.com/?q=${encodeURIComponent(detailsLead.address)}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-xs text-zinc-300 hover:text-indigo-400 transition-colors bg-zinc-950 px-3 py-2 rounded-xl border border-zinc-800">
-                    <MapPin className="w-4 h-4 text-zinc-500" /> <span className="truncate max-w-[250px]">{detailsLead.address}</span>
+              <div className="flex flex-wrap gap-2.5 mb-6">
+                {detailsLead.googleMapsUrl ? (
+                  <a 
+                    href={detailsLead.googleMapsUrl} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="flex items-center gap-1.5 text-xs text-zinc-300 hover:text-emerald-400 transition-colors bg-zinc-950 px-3 py-2 rounded-xl border border-zinc-800 shadow-sm"
+                  >
+                    <MapPin className="w-4 h-4 text-emerald-400" /> 
+                    <span>View on Google Maps</span>
+                    <ExternalLink className="w-3 h-3 text-zinc-500" />
+                  </a>
+                ) : detailsLead.address ? (
+                  <a 
+                    href={`https://maps.google.com/?q=${encodeURIComponent(detailsLead.address)}`} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="flex items-center gap-1.5 text-xs text-zinc-300 hover:text-emerald-400 transition-colors bg-zinc-950 px-3 py-2 rounded-xl border border-zinc-800 shadow-sm"
+                  >
+                    <MapPin className="w-4 h-4 text-emerald-400" /> 
+                    <span className="truncate max-w-[200px]">{detailsLead.address}</span>
+                    <ExternalLink className="w-3 h-3 text-zinc-500" />
+                  </a>
+                ) : null}
+
+                {isValidWebsite(detailsLead.website) && (
+                  <a 
+                    href={detailsLead.website.startsWith('http') ? detailsLead.website : `https://${detailsLead.website}`} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="flex items-center gap-1.5 text-xs text-zinc-300 hover:text-indigo-400 transition-colors bg-zinc-950 px-3 py-2 rounded-xl border border-zinc-800 shadow-sm"
+                  >
+                    <Globe className="w-4 h-4 text-zinc-500" /> 
+                    <span>{detailsLead.website.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')}</span>
+                    <ExternalLink className="w-3.5 h-3.5 text-zinc-500" />
                   </a>
                 )}
+
                 {detailsLead.phone && (
-                  <a href={`tel:${detailsLead.phone.replace(/[^0-9+]/g, '')}`} className="flex items-center gap-1.5 text-xs text-zinc-300 hover:text-indigo-400 transition-colors bg-zinc-950 px-3 py-2 rounded-xl border border-zinc-800">
+                  <a 
+                    href={`tel:${detailsLead.phone.replace(/[^0-9+]/g, '')}`} 
+                    className="flex items-center gap-1.5 text-xs text-zinc-300 hover:text-indigo-400 transition-colors bg-zinc-950 px-3 py-2 rounded-xl border border-zinc-800 shadow-sm"
+                  >
                     <Phone className="w-4 h-4 text-zinc-500" /> {detailsLead.phone}
                   </a>
                 )}
+
                 {isValidEmail(detailsLead.email) && (
-                  <a href={`mailto:${detailsLead.email}`} className="flex items-center gap-1.5 text-xs text-zinc-300 hover:text-indigo-400 transition-colors bg-zinc-950 px-3 py-2 rounded-xl border border-zinc-800">
+                  <a 
+                    href={`mailto:${detailsLead.email}`} 
+                    className="flex items-center gap-1.5 text-xs text-zinc-300 hover:text-indigo-400 transition-colors bg-zinc-950 px-3 py-2 rounded-xl border border-zinc-800 shadow-sm"
+                  >
                     <Mail className="w-4 h-4 text-zinc-500" /> {detailsLead.email}
-                  </a>
-                )}
-                {isValidWebsite(detailsLead.website) && (
-                  <a href={detailsLead.website.startsWith('http') ? detailsLead.website : `https://${detailsLead.website}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-xs text-zinc-300 hover:text-indigo-400 transition-colors bg-zinc-950 px-3 py-2 rounded-xl border border-zinc-800">
-                    <Globe className="w-4 h-4 text-zinc-500" /> Website
                   </a>
                 )}
               </div>

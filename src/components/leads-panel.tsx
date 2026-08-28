@@ -176,7 +176,7 @@ export function LeadDetailsDrawer({
 
   // Google Maps Query
   const mapsSearchQuery = encodeURIComponent(`${lead.name} ${lead.city || ''}`);
-  const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${mapsSearchQuery}`;
+  const mapsUrl = lead.googleMapsUrl || `https://www.google.com/maps/search/?api=1&query=${mapsSearchQuery}`;
 
   // Website status
   const hasWebsite = Boolean(
@@ -350,9 +350,18 @@ export function LeadDetailsDrawer({
             {/* Top Control Bar */}
             <div className="px-6 py-5 border-b border-zinc-800/70 flex items-center justify-between shrink-0 bg-zinc-900/40">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 font-bold font-display text-base shadow-sm">
-                  {lead.name ? lead.name.charAt(0).toUpperCase() : 'L'}
-                </div>
+                {lead.logo ? (
+                  <img
+                    src={lead.logo}
+                    alt={lead.name}
+                    className="h-10 w-10 object-contain rounded-2xl bg-zinc-950 border border-zinc-800 p-1 shrink-0"
+                    onError={(e) => { (e.target as HTMLElement).style.display = 'none'; }}
+                  />
+                ) : (
+                  <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-500/20 via-purple-500/20 to-pink-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-300 font-bold font-display text-base shadow-sm shrink-0">
+                    {lead.name ? lead.name.charAt(0).toUpperCase() : 'L'}
+                  </div>
+                )}
                 <div>
                   <span className="text-[11px] font-bold text-zinc-500 uppercase tracking-widest block">Lead Dossier</span>
                   <h2 className="text-xl font-bold font-display text-zinc-100 truncate max-w-sm">{lead.name}</h2>
