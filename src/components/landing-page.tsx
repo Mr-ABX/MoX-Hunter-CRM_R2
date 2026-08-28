@@ -30,6 +30,16 @@ import {
   ShieldCheck,
   TrendingUp,
   Zap,
+  Star,
+  Clock,
+  Lock,
+  CheckCheck,
+  Smartphone,
+  Laptop,
+  Gauge,
+  Send,
+  Building2,
+  ExternalLink,
 } from "lucide-react";
 import { Logo, LogoFull, WolfLogo } from "./logo";
 import { Link } from "react-router-dom";
@@ -456,116 +466,242 @@ function PricingReveal() {
 }
 
 function ContactForm() {
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedGoal, setSelectedGoal] = useState("Website Redesign");
+  const [submittingStep, setSubmittingStep] = useState<number>(0);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    business: "",
+    website: "",
+    notes: "",
+  });
+
+  const goals = [
+    { id: "Website Redesign", label: "Complete Redesign" },
+    { id: "New Brand Launch", label: "New Brand Launch" },
+    { id: "Lead Funnels", label: "Lead Funnel & CRM" },
+    { id: "Speed & SEO", label: "Conversion Optimization" },
+  ];
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
-    // Simulate API call
+    setSubmittingStep(1);
+
     setTimeout(() => {
-      setIsSubmitting(false);
+      setSubmittingStep(2);
+    }, 900);
+
+    setTimeout(() => {
+      setSubmittingStep(3);
+    }, 1800);
+
+    setTimeout(() => {
+      setSubmittingStep(0);
       setIsSuccess(true);
-    }, 2000);
+    }, 2600);
   };
 
-  return (
-    <form
-      className="bg-zinc-950 border border-zinc-800 rounded-[2rem] p-8 sm:p-10 shadow-2xl space-y-6 relative overflow-hidden"
-      onSubmit={handleSubmit}
-    >
-      <AnimatePresence>
-        {isSuccess ? (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="absolute inset-0 z-20 bg-zinc-950 flex flex-col items-center justify-center text-center px-6"
-          >
-            <div className="w-16 h-16 bg-emerald-500/20 border border-emerald-500/30 rounded-full flex items-center justify-center mb-6">
-              <Check className="w-8 h-8 text-emerald-400" />
-            </div>
-            <h3 className="text-2xl font-bold text-white mb-2">
-              Request Received!
-            </h3>
-            <p className="text-zinc-400 max-w-sm">
-              Our AI is already analyzing your market. We'll be in touch with
-              your prototype soon.
-            </p>
-          </motion.div>
-        ) : null}
-      </AnimatePresence>
+  const isSubmitting = submittingStep > 0;
 
-      <div className="grid sm:grid-cols-2 gap-6 relative z-10">
-        <div className="space-y-2">
-          <label className="text-sm font-bold text-zinc-400">Full Name</label>
-          <input
-            type="text"
-            placeholder="John Doe"
-            disabled={isSubmitting}
-            className="w-full bg-zinc-900/50 border border-zinc-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 transition-colors disabled:opacity-50"
-            required
-          />
-        </div>
-        <div className="space-y-2">
-          <label className="text-sm font-bold text-zinc-400">
-            Email Address
-          </label>
-          <input
-            type="email"
-            placeholder="john@example.com"
-            disabled={isSubmitting}
-            className="w-full bg-zinc-900/50 border border-zinc-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 transition-colors disabled:opacity-50"
-            required
-          />
-        </div>
-      </div>
-      <div className="space-y-2 relative z-10">
-        <label className="text-sm font-bold text-zinc-400">
-          Business Type / Industry
-        </label>
-        <input
-          type="text"
-          placeholder="e.g. Auto Repair, Bakery, HVAC"
-          disabled={isSubmitting}
-          className="w-full bg-zinc-900/50 border border-zinc-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 transition-colors disabled:opacity-50"
-          required
-        />
-      </div>
-      <div className="space-y-2 relative z-10">
-        <label className="text-sm font-bold text-zinc-400">
-          Current Website URL (Optional)
-        </label>
-        <input
-          type="url"
-          placeholder="https://yourwebsite.com"
-          disabled={isSubmitting}
-          className="w-full bg-zinc-900/50 border border-zinc-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 transition-colors disabled:opacity-50"
-        />
-      </div>
-      <div className="pt-4 relative z-10">
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-600/50 disabled:cursor-not-allowed text-white font-bold rounded-xl transition-colors flex items-center justify-center gap-2 group"
-        >
-          {isSubmitting ? (
-            <>
-              <Loader2 className="w-5 h-5 animate-spin" />
-              Analyzing Market...
-            </>
+  return (
+    <div className="relative">
+      {/* Background glow behind form */}
+      <div className="absolute -inset-1.5 bg-gradient-to-r from-indigo-500/20 via-purple-500/20 to-rose-500/20 rounded-[2.5rem] blur-xl opacity-60 pointer-events-none" />
+
+      <div className="relative bg-zinc-950/90 backdrop-blur-2xl border border-zinc-800/90 rounded-[2rem] p-6 sm:p-10 shadow-2xl overflow-hidden">
+        <AnimatePresence mode="wait">
+          {isSuccess ? (
+            <motion.div
+              key="success"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="py-8 flex flex-col items-center justify-center text-center px-4"
+            >
+              <div className="w-20 h-20 bg-emerald-500/10 border border-emerald-500/30 rounded-3xl flex items-center justify-center mb-6 shadow-[0_0_40px_rgba(16,185,129,0.2)]">
+                <CheckCheck className="w-10 h-10 text-emerald-400" />
+              </div>
+
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-mono font-semibold uppercase tracking-wider mb-3">
+                Ticket #MOX-{Math.floor(1000 + Math.random() * 9000)} Confirmed
+              </div>
+
+              <h3 className="text-2xl sm:text-3xl font-bold font-display text-white mb-3">
+                Your Free Prototype Is In Motion!
+              </h3>
+              <p className="text-zinc-400 max-w-md text-sm sm:text-base leading-relaxed mb-6">
+                Our specialized architecture engine has queued your business analysis. We will deliver your fully functional, interactive live prototype link to <strong className="text-white">{formData.email || "your email"}</strong> within 24 hours.
+              </p>
+
+              <div className="w-full max-w-md bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-5 mb-8 text-left space-y-3 text-xs sm:text-sm">
+                <div className="flex items-center justify-between text-zinc-400 border-b border-zinc-800 pb-2">
+                  <span className="flex items-center gap-2 text-zinc-300 font-medium">
+                    <Clock className="w-4 h-4 text-indigo-400" /> Guaranteed Delivery
+                  </span>
+                  <span className="font-mono text-indigo-300 font-bold">Within 24 Hours</span>
+                </div>
+                <div className="flex items-center justify-between text-zinc-400 border-b border-zinc-800 pb-2">
+                  <span className="flex items-center gap-2 text-zinc-300 font-medium">
+                    <ShieldCheck className="w-4 h-4 text-emerald-400" /> Upfront Cost
+                  </span>
+                  <span className="font-mono text-emerald-400 font-bold">$0.00 (Zero Risk)</span>
+                </div>
+                <div className="flex items-center justify-between text-zinc-400">
+                  <span className="flex items-center gap-2 text-zinc-300 font-medium">
+                    <Zap className="w-4 h-4 text-amber-400" /> Prototype Type
+                  </span>
+                  <span className="font-mono text-zinc-300">{selectedGoal}</span>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setIsSuccess(false);
+                  setFormData({ name: "", email: "", business: "", website: "", notes: "" });
+                }}
+                className="text-xs font-mono tracking-wider uppercase text-zinc-400 hover:text-white px-6 py-2.5 rounded-full border border-zinc-800 hover:border-zinc-700 bg-zinc-900/40 transition-colors"
+              >
+                Submit Another Request
+              </button>
+            </motion.div>
           ) : (
-            <>
-              <Rocket className="w-5 h-5 group-hover:translate-y-[-2px] group-hover:translate-x-[2px] transition-transform" />
-              Generate My Prototype
-            </>
+            <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
+              {/* Step 1: Goal Selectors */}
+              <div>
+                <label className="block text-xs font-mono uppercase tracking-widest text-zinc-400 mb-3">
+                  1. Select Primary Objective
+                </label>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                  {goals.map((goal) => {
+                    const isSelected = selectedGoal === goal.id;
+                    return (
+                      <button
+                        type="button"
+                        key={goal.id}
+                        onClick={() => setSelectedGoal(goal.id)}
+                        className={`px-3 py-2.5 rounded-xl text-xs font-semibold text-center transition-all duration-200 cursor-pointer border ${
+                          isSelected
+                            ? "bg-indigo-600/20 border-indigo-500/80 text-white shadow-[0_0_15px_rgba(99,102,241,0.25)]"
+                            : "bg-zinc-900/50 border-zinc-800/80 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50"
+                        }`}
+                      >
+                        {goal.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Step 2: Information Inputs */}
+              <div>
+                <label className="block text-xs font-mono uppercase tracking-widest text-zinc-400 mb-3">
+                  2. Business & Contact Information
+                </label>
+                
+                <div className="grid sm:grid-cols-2 gap-4 mb-4">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-medium text-zinc-400">Full Name *</label>
+                    <input
+                      type="text"
+                      placeholder="Alex Morgan"
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      disabled={isSubmitting}
+                      className="w-full bg-zinc-900/70 border border-zinc-800 rounded-xl px-4 py-3 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all disabled:opacity-50"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-medium text-zinc-400">Business / Work Email *</label>
+                    <input
+                      type="email"
+                      placeholder="alex@yourcompany.com"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      disabled={isSubmitting}
+                      className="w-full bg-zinc-900/70 border border-zinc-800 rounded-xl px-4 py-3 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all disabled:opacity-50"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-medium text-zinc-400">Company Name / Industry *</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Apex Dental, Precision HVAC"
+                      value={formData.business}
+                      onChange={(e) => setFormData({ ...formData, business: e.target.value })}
+                      disabled={isSubmitting}
+                      className="w-full bg-zinc-900/70 border border-zinc-800 rounded-xl px-4 py-3 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all disabled:opacity-50"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-medium text-zinc-400">Current Website URL (Optional)</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. yourbrand.com (if any)"
+                      value={formData.website}
+                      onChange={(e) => setFormData({ ...formData, website: e.target.value })}
+                      disabled={isSubmitting}
+                      className="w-full bg-zinc-900/70 border border-zinc-800 rounded-xl px-4 py-3 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all disabled:opacity-50"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Submit CTA with multi-phase animation */}
+              <div className="pt-2">
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full py-4 bg-gradient-to-r from-indigo-500 via-indigo-600 to-purple-600 hover:from-indigo-400 hover:to-purple-500 text-white font-bold rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(99,102,241,0.3)] hover:shadow-[0_0_35px_rgba(99,102,241,0.5)] disabled:opacity-75 disabled:cursor-not-allowed group cursor-pointer"
+                >
+                  {submittingStep === 1 ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      <span>1/3 Analyzing Market & Competitors...</span>
+                    </>
+                  ) : submittingStep === 2 ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin text-purple-300" />
+                      <span>2/3 Engineering Live Architecture...</span>
+                    </>
+                  ) : submittingStep === 3 ? (
+                    <>
+                      <Sparkles className="w-5 h-5 animate-spin text-emerald-300" />
+                      <span>3/3 Scheduling 24-Hour Prototype Delivery...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Send className="w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform duration-200" />
+                      <span>Build My Free Working Prototype (Zero Risk)</span>
+                    </>
+                  )}
+                </button>
+              </div>
+
+              {/* Trust Badges below button */}
+              <div className="pt-2 flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-xs text-zinc-500 font-medium">
+                <span className="flex items-center gap-1.5">
+                  <ShieldCheck className="w-4 h-4 text-emerald-400" /> 100% Free Upfront
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <Lock className="w-4 h-4 text-indigo-400" /> No Credit Card Required
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <Clock className="w-4 h-4 text-amber-400" /> 24-Hour Turnaround
+                </span>
+              </div>
+            </form>
           )}
-        </button>
+        </AnimatePresence>
       </div>
-      <p className="text-xs text-center text-zinc-500 font-medium relative z-10 mt-4">
-        By submitting, you agree to receive emails regarding your prototype
-        setup.
-      </p>
-    </form>
+    </div>
   );
 }
 
@@ -688,12 +824,12 @@ export function LandingPage() {
       </div>
 
       {/* Navigation */}
-      <nav className="sticky top-4 z-40 max-w-7xl mx-auto px-4 sm:px-6 transition-all duration-300 mt-4 mb-8">
-        <div className="bg-zinc-950/80 backdrop-blur-xl border border-white/10 rounded-full h-16 flex items-center justify-between px-6 shadow-2xl">
+      <nav className="sticky top-2 sm:top-4 z-40 max-w-7xl mx-auto px-3 sm:px-6 transition-all duration-300 mt-2 sm:mt-3 mb-2 sm:mb-4">
+        <div className="bg-zinc-950/85 backdrop-blur-xl border border-white/10 rounded-full h-15 sm:h-16 flex items-center justify-between px-4 sm:px-6 shadow-2xl">
           <a href="#" className="flex items-center gap-3 group cursor-pointer">
-            <LogoFull className="h-8 sm:h-9" />
+            <LogoFull className="h-7 sm:h-9" />
           </a>
-          <div className="flex items-center gap-3 sm:gap-6">
+          <div className="flex items-center gap-2 sm:gap-6">
             <a
               href="#compare"
               className="text-sm font-medium text-zinc-400 hover:text-white transition-colors hidden md:block"
@@ -726,215 +862,265 @@ export function LandingPage() {
             </a>
             <a
               href="#contact"
-              className="text-sm font-bold bg-white text-black px-5 sm:px-6 py-2 rounded-full hover:bg-zinc-200 transition-all flex items-center gap-2 hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(255,255,255,0.15)]"
+              className="text-xs sm:text-sm font-bold bg-white text-black px-4 sm:px-6 py-2 rounded-full hover:bg-zinc-200 transition-all flex items-center gap-1.5 sm:gap-2 hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(255,255,255,0.15)]"
             >
               <span>Free Prototype</span>
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </a>
           </div>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <section className="pt-28 pb-20 px-6 relative overflow-hidden">
-        {/* Dynamic Background */}
-        <div className="absolute inset-0 bg-grid-zinc/[0.04] bg-[size:32px_32px] pointer-events-none" />
+      <section className="pt-4 sm:pt-8 pb-16 sm:pb-24 px-4 sm:px-6 relative overflow-hidden">
+        {/* Dynamic Background Grid & Ambient Glows */}
+        <div className="absolute inset-0 bg-grid-zinc/[0.03] bg-[size:32px_32px] pointer-events-none" />
         <motion.div
           style={{ y: y1 }}
-          className="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-indigo-500/10 blur-[120px] rounded-full pointer-events-none"
+          className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] sm:w-[900px] h-[450px] bg-gradient-to-b from-indigo-500/15 via-purple-500/10 to-transparent blur-[120px] rounded-full pointer-events-none"
         />
         <motion.div
           style={{ y: y2 }}
-          className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-rose-500/10 blur-[100px] rounded-full pointer-events-none"
+          className="absolute bottom-10 right-10 w-[400px] h-[400px] bg-rose-500/10 blur-[100px] rounded-full pointer-events-none"
         />
 
         <div className="max-w-6xl mx-auto text-center relative z-10">
+          {/* Framer-Style Social Proof Pill */}
           <motion.div
-            initial={{ opacity: 0, y: 30, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-900/50 border border-zinc-800 backdrop-blur-md mb-8 shadow-[0_0_20px_rgba(0,0,0,0.5)]"
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            className="inline-flex flex-wrap items-center justify-center gap-3 px-4 py-1.5 rounded-full bg-zinc-900/70 border border-zinc-800/90 backdrop-blur-md mb-6 sm:mb-8 shadow-[0_0_25px_rgba(0,0,0,0.6)]"
           >
-            <span className="flex h-2 w-2 relative">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
+            {/* Avatar Group */}
+            <div className="flex items-center -space-x-2">
+              {[
+                "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=64&auto=format&fit=crop&q=80",
+                "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=64&auto=format&fit=crop&q=80",
+                "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=64&auto=format&fit=crop&q=80",
+                "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=64&auto=format&fit=crop&q=80",
+              ].map((src, i) => (
+                <img
+                  key={i}
+                  src={src}
+                  alt="Client"
+                  className="w-6 h-6 rounded-full border-2 border-zinc-950 object-cover"
+                />
+              ))}
+            </div>
+
+            {/* Stars */}
+            <div className="flex items-center gap-0.5 text-amber-400">
+              {[...Array(5)].map((_, i) => (
+                <Star key={i} className="w-3 h-3 fill-amber-400 text-amber-400" />
+              ))}
+            </div>
+
+            <span className="text-[11px] sm:text-xs font-medium text-zinc-300">
+              Rated <strong className="text-white font-semibold">4.9/5</strong> by 140+ Founders
             </span>
-            <span className="tracking-widest uppercase text-[10px] sm:text-xs font-semibold text-zinc-300">
-              Proof First • Zero-Risk Prototype Architecture
+
+            <span className="hidden sm:inline-block text-zinc-600">•</span>
+            <span className="hidden sm:inline-flex items-center gap-1 text-[11px] text-emerald-400 font-mono">
+              <ShieldCheck className="w-3 h-3" /> Proof First
             </span>
           </motion.div>
 
+          {/* Main Headline */}
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="text-5xl sm:text-7xl lg:text-8xl font-display font-bold tracking-tighter mb-8 leading-[1.08] text-white"
+            transition={{ delay: 0.15, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            className="text-4xl sm:text-6xl lg:text-7xl font-display font-bold tracking-tight mb-6 leading-[1.1] text-white max-w-5xl mx-auto"
           >
-            See Your Working Prototype Live.
+            See Your High-Converting Prototype Live.
             <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-rose-400">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-300 to-rose-400">
               Before Spending A Single Dollar.
             </span>
           </motion.h1>
 
+          {/* Subtext */}
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="text-lg sm:text-xl text-zinc-400 max-w-3xl mx-auto mb-12 leading-relaxed font-light"
+            transition={{ delay: 0.25, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            className="text-base sm:text-lg lg:text-xl text-zinc-400 max-w-3xl mx-auto mb-8 sm:mb-10 leading-relaxed font-normal"
           >
-            Stop gambling thousands on slow agencies with broken promises. Our intelligent engine builds your custom, high-converting digital experience first — 100% free. You test and experience the real solution in real-time before making any financial commitment.
+            Stop gambling thousands on slow agencies with broken promises. Our intelligent engine engineers your custom, interactive digital experience within 24 hours — 100% free with zero upfront commitment.
           </motion.p>
 
+          {/* CTAs */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-24"
+            transition={{ delay: 0.35, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10"
           >
             <motion.a
               href="#contact"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              animate={{
-                boxShadow: [
-                  "0px 0px 0px rgba(99,102,241,0)",
-                  "0px 0px 30px rgba(99,102,241,0.4)",
-                  "0px 0px 0px rgba(99,102,241,0)",
-                ],
-              }}
-              transition={{ repeat: Infinity, duration: 2.5 }}
-              className="w-full sm:w-auto px-8 py-4 bg-white text-black font-bold rounded-full flex items-center justify-center gap-2 relative overflow-hidden group"
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              className="w-full sm:w-auto px-8 py-4 bg-white text-black font-bold rounded-full flex items-center justify-center gap-2 relative overflow-hidden group shadow-[0_0_30px_rgba(255,255,255,0.2)] hover:shadow-[0_0_40px_rgba(99,102,241,0.5)] transition-shadow"
             >
-              <div className="absolute inset-0 bg-zinc-200 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
-              <Monitor className="w-5 h-5 relative z-10" />
-              <span className="relative z-10">Claim Free Working Prototype</span>
+              <Monitor className="w-5 h-5" />
+              <span>Claim Free Working Prototype</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </motion.a>
             <a
               href="#services"
-              className="w-full sm:w-auto px-8 py-4 bg-transparent border border-zinc-700 text-zinc-300 font-bold rounded-full hover:bg-zinc-800 hover:border-zinc-600 transition-colors flex items-center justify-center gap-2"
+              className="w-full sm:w-auto px-8 py-4 bg-zinc-900/60 border border-zinc-800 text-zinc-300 font-semibold rounded-full hover:bg-zinc-850 hover:border-zinc-700 hover:text-white transition-all flex items-center justify-center gap-2"
             >
               Explore What We Build
             </a>
           </motion.div>
 
-          {/* Interactive Hero Visual (Multi-layered 3D Cards) */}
+          {/* 4 Key Framer-Style Metric Badges */}
           <motion.div
-            initial={{ opacity: 0, y: 100, scale: 0.9, rotateX: 20 }}
-            animate={{ opacity: 1, y: 0, scale: 1, rotateX: 0 }}
-            transition={{
-              delay: 0.5,
-              duration: 1.5,
-              type: "spring",
-              bounce: 0.3,
-            }}
-            style={{ perspective: 2000 }}
-            className="relative max-w-5xl mx-auto hidden sm:flex justify-center items-center h-[400px] mt-10"
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.45, duration: 0.8 }}
+            className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-4xl mx-auto mb-12 text-left"
           >
-            {/* Back Card (Abstract Code) */}
-            <motion.div
-              animate={{ y: [-10, 10, -10], rotateZ: [-2, -2, -2] }}
-              transition={{ repeat: Infinity, duration: 8, ease: "easeInOut" }}
-              className="absolute w-[600px] h-[350px] bg-zinc-950/80 backdrop-blur-xl border border-zinc-800 rounded-3xl p-6 shadow-2xl -translate-x-32 -translate-y-10 opacity-60 z-0"
-            >
-              <div className="flex gap-2 mb-4">
-                <div className="w-3 h-3 rounded-full bg-rose-500/50" />
-                <div className="w-3 h-3 rounded-full bg-amber-500/50" />
-                <div className="w-3 h-3 rounded-full bg-emerald-500/50" />
+            <div className="bg-zinc-900/40 border border-zinc-800/80 rounded-2xl p-3 sm:p-4 backdrop-blur-sm">
+              <div className="flex items-center gap-2 text-indigo-400 mb-1">
+                <Clock className="w-4 h-4" />
+                <span className="text-xs font-mono font-bold uppercase tracking-wider">24h Delivery</span>
               </div>
-              <div className="space-y-3 font-mono text-xs text-indigo-400/50">
-                <p>import &#123; createPrototype &#125; from '@mox/ai';</p>
-                <p className="pl-4">
-                  const analyze = await marketAnalysis('local_roofing');
-                </p>
-                <p className="pl-4">
-                  const design = await generateUI(analyze.competitors);
-                </p>
-                <p className="pl-4">deploy(design); // Time: 0.03s</p>
-                <div className="mt-8 space-y-2">
-                  <div className="h-2 w-3/4 bg-zinc-800/50 rounded" />
-                  <div className="h-2 w-1/2 bg-zinc-800/50 rounded" />
-                  <div className="h-2 w-5/6 bg-zinc-800/50 rounded" />
-                </div>
-              </div>
-            </motion.div>
+              <p className="text-xs text-zinc-400 leading-snug">Working interactive prototype ready in 24 hours.</p>
+            </div>
 
-            {/* Middle Card (Generated UI) */}
-            <motion.div
-              animate={{ y: [10, -10, 10], rotateZ: [1, 1, 1] }}
-              transition={{ repeat: Infinity, duration: 7, ease: "easeInOut" }}
-              className="absolute w-[650px] h-[380px] bg-gradient-to-b from-zinc-900 to-zinc-950 border border-zinc-700/50 rounded-3xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] z-10 ml-20"
-            >
-              <div className="h-12 border-b border-zinc-800/50 bg-zinc-900/50 flex items-center px-6 justify-between">
-                <div className="flex gap-2">
-                  <div className="w-3 h-3 rounded-full bg-zinc-700" />
-                  <div className="w-3 h-3 rounded-full bg-zinc-700" />
-                  <div className="w-3 h-3 rounded-full bg-zinc-700" />
-                </div>
-                <div className="w-1/2 h-6 bg-zinc-950 rounded-md border border-zinc-800 flex items-center justify-center">
-                  <span className="text-[10px] font-mono text-zinc-500">
-                    https://prototype.yourbrand.com
-                  </span>
-                </div>
+            <div className="bg-zinc-900/40 border border-zinc-800/80 rounded-2xl p-3 sm:p-4 backdrop-blur-sm">
+              <div className="flex items-center gap-2 text-emerald-400 mb-1">
+                <ShieldCheck className="w-4 h-4" />
+                <span className="text-xs font-mono font-bold uppercase tracking-wider">$0 Upfront</span>
               </div>
-              <div className="p-8 flex flex-col gap-6 relative">
-                <div className="flex justify-between items-center">
-                  <div className="w-32 h-8 bg-zinc-800 rounded-lg" />
-                  <div className="flex gap-3">
-                    <div className="w-16 h-2 bg-zinc-800 rounded" />
-                    <div className="w-16 h-2 bg-zinc-800 rounded" />
-                    <div className="w-24 h-8 bg-indigo-500/20 rounded-lg border border-indigo-500/30" />
-                  </div>
-                </div>
-                <div className="w-3/4 h-16 bg-gradient-to-r from-zinc-800 to-zinc-900 rounded-xl mt-4" />
-                <div className="w-1/2 h-4 bg-zinc-800 rounded" />
+              <p className="text-xs text-zinc-400 leading-snug">Zero credit card or financial lock-in.</p>
+            </div>
 
-                <div className="grid grid-cols-3 gap-4 mt-6">
-                  <div className="h-32 bg-zinc-800/50 rounded-2xl border border-zinc-700/30 p-4">
-                    <div className="w-8 h-8 rounded-full bg-zinc-700 mb-4" />
-                    <div className="w-full h-2 bg-zinc-700 rounded mb-2" />
-                    <div className="w-2/3 h-2 bg-zinc-700 rounded" />
-                  </div>
-                  <div className="h-32 bg-zinc-800/50 rounded-2xl border border-zinc-700/30 p-4">
-                    <div className="w-8 h-8 rounded-full bg-zinc-700 mb-4" />
-                    <div className="w-full h-2 bg-zinc-700 rounded mb-2" />
-                    <div className="w-2/3 h-2 bg-zinc-700 rounded" />
-                  </div>
-                  <div className="h-32 bg-indigo-500/10 rounded-2xl border border-indigo-500/20 p-4 relative overflow-hidden">
-                    <div className="absolute inset-0 bg-indigo-500/5 animate-pulse" />
-                    <div className="w-8 h-8 rounded-full bg-indigo-500/40 mb-4" />
-                    <div className="w-full h-2 bg-indigo-400/50 rounded mb-2" />
-                    <div className="w-2/3 h-2 bg-indigo-400/50 rounded" />
-                  </div>
+            <div className="bg-zinc-900/40 border border-zinc-800/80 rounded-2xl p-3 sm:p-4 backdrop-blur-sm">
+              <div className="flex items-center gap-2 text-purple-400 mb-1">
+                <TrendingUp className="w-4 h-4" />
+                <span className="text-xs font-mono font-bold uppercase tracking-wider">+310% Leads</span>
+              </div>
+              <p className="text-xs text-zinc-400 leading-snug">Engineered for high-intent client conversion.</p>
+            </div>
+
+            <div className="bg-zinc-900/40 border border-zinc-800/80 rounded-2xl p-3 sm:p-4 backdrop-blur-sm">
+              <div className="flex items-center gap-2 text-amber-400 mb-1">
+                <Zap className="w-4 h-4" />
+                <span className="text-xs font-mono font-bold uppercase tracking-wider">99+ Speed</span>
+              </div>
+              <p className="text-xs text-zinc-400 leading-snug">Instant mobile load with modern edge infrastructure.</p>
+            </div>
+          </motion.div>
+
+          {/* Interactive Hero Visual (Framer-Agency Prototype Stage) */}
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5, duration: 1, ease: [0.16, 1, 0.3, 1] }}
+            className="relative max-w-5xl mx-auto mt-4"
+          >
+            {/* Glowing Accent Ring */}
+            <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500/30 via-purple-500/20 to-rose-500/30 rounded-3xl blur-2xl opacity-50" />
+
+            <div className="relative bg-zinc-950 border border-zinc-800 rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_25px_60px_rgba(0,0,0,0.8)] text-left">
+              {/* Browser Bar */}
+              <div className="h-11 sm:h-13 bg-zinc-900/90 border-b border-zinc-800 px-4 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-rose-500/70" />
+                  <div className="w-3 h-3 rounded-full bg-amber-500/70" />
+                  <div className="w-3 h-3 rounded-full bg-emerald-500/70" />
                 </div>
 
-                {/* Scanning Laser */}
-                <motion.div
-                  animate={{ top: ["0%", "100%", "0%"] }}
-                  transition={{ repeat: Infinity, duration: 3, ease: "linear" }}
-                  className="absolute left-0 right-0 h-0.5 bg-indigo-500 shadow-[0_0_20px_rgba(99,102,241,1)] z-20"
-                />
-              </div>
-            </motion.div>
+                <div className="flex items-center gap-2 bg-zinc-950/80 border border-zinc-800/90 rounded-lg px-3 py-1 text-[11px] font-mono text-zinc-400">
+                  <Lock className="w-3 h-3 text-emerald-400" />
+                  <span>https://preview.moxhunter.com/your-brand</span>
+                </div>
 
-            {/* Floating Action Badge */}
-            <motion.div
-              animate={{ y: [-5, 5, -5] }}
-              transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-              className="absolute z-30 bottom-10 -right-10 bg-white border border-zinc-200 rounded-2xl p-4 shadow-[0_20px_40px_rgba(0,0,0,0.4)] flex items-center gap-4"
-            >
-              <div className="w-12 h-12 bg-green-500/20 rounded-xl flex items-center justify-center">
-                <Check className="w-6 h-6 text-green-600" />
+                <div className="flex items-center gap-2 text-xs font-mono text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-md border border-emerald-500/20">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="hidden sm:inline">LIVE PROTOTYPE</span>
+                </div>
               </div>
-              <div className="text-left">
-                <p className="text-xs font-bold text-zinc-900 uppercase">
-                  Prototype Ready
-                </p>
-                <p className="text-xs text-zinc-500 font-mono">
-                  Sent to prospect email
-                </p>
+
+              {/* Prototype Mock Preview Surface */}
+              <div className="p-5 sm:p-8 bg-gradient-to-b from-zinc-900/40 to-zinc-950 relative overflow-hidden">
+                {/* Mock Header inside prototype */}
+                <div className="flex items-center justify-between pb-6 border-b border-zinc-800/60">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center font-bold text-white text-xs">
+                      YB
+                    </div>
+                    <div>
+                      <div className="text-sm font-bold text-white">Your Brand & Co.</div>
+                      <div className="text-[10px] text-zinc-500 font-mono">Premium Local Authority</div>
+                    </div>
+                  </div>
+                  <div className="hidden sm:flex items-center gap-3 text-xs text-zinc-400 font-medium">
+                    <span>Services</span>
+                    <span>Reviews (48)</span>
+                    <span>Pricing</span>
+                    <span className="px-3 py-1.5 bg-indigo-600 text-white rounded-lg font-bold">Book Estimate</span>
+                  </div>
+                </div>
+
+                {/* Mock Hero inside prototype */}
+                <div className="grid md:grid-cols-12 gap-6 items-center py-6">
+                  <div className="md:col-span-7 space-y-3">
+                    <div className="inline-block px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 text-[10px] font-mono uppercase font-bold">
+                      #1 Rated in Region
+                    </div>
+                    <h3 className="text-xl sm:text-3xl font-display font-bold text-white leading-tight">
+                      Experience Superior Service Engineered for Modern Clients.
+                    </h3>
+                    <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed">
+                      Instant online booking, upfront transparent pricing, and 5-star customer care.
+                    </p>
+                    <div className="flex items-center gap-3 pt-1">
+                      <div className="px-4 py-2 bg-white text-black font-bold rounded-lg text-xs flex items-center gap-1">
+                        <span>Get Instant Quote</span>
+                        <ArrowRight className="w-3 h-3" />
+                      </div>
+                      <div className="px-4 py-2 bg-zinc-800 text-zinc-300 rounded-lg text-xs font-medium">
+                        View Past Projects
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="md:col-span-5 grid grid-cols-2 gap-3">
+                    <div className="bg-zinc-900/80 border border-zinc-800 p-3.5 rounded-xl">
+                      <div className="text-lg font-bold text-white mb-0.5">4.9 ★★★★★</div>
+                      <div className="text-[11px] text-zinc-400">Over 180 Verified Google Reviews</div>
+                    </div>
+                    <div className="bg-zinc-900/80 border border-zinc-800 p-3.5 rounded-xl">
+                      <div className="text-lg font-bold text-indigo-400 mb-0.5">&lt; 15 min</div>
+                      <div className="text-[11px] text-zinc-400">Average Response Time Guarantee</div>
+                    </div>
+                    <div className="col-span-2 bg-indigo-950/40 border border-indigo-500/30 p-3.5 rounded-xl flex items-center justify-between">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
+                        <div>
+                          <div className="text-xs font-bold text-white">Live Inquiries Synced</div>
+                          <div className="text-[10px] text-indigo-300 font-mono">14 new leads captured this week</div>
+                        </div>
+                      </div>
+                      <span className="text-xs font-mono font-bold text-emerald-400">+24%</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Bottom interactive indicator */}
+                <div className="pt-4 border-t border-zinc-800/60 flex flex-wrap items-center justify-between gap-3 text-xs text-zinc-500">
+                  <span className="font-mono text-[11px]">⚡ Built with MoX Hunter High-Speed Prototype Core</span>
+                  <a href="#contact" className="text-indigo-400 hover:text-indigo-300 font-medium flex items-center gap-1">
+                    <span>Generate One For Your Brand</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                </div>
               </div>
-            </motion.div>
+            </div>
           </motion.div>
         </div>
       </section>
@@ -1575,62 +1761,81 @@ export function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="py-16 px-6 border-t border-zinc-800 relative z-10 bg-zinc-950">
+      <footer className="py-14 sm:py-16 px-4 sm:px-6 border-t border-zinc-800/80 relative z-10 bg-zinc-950">
         <div className="max-w-7xl mx-auto flex flex-col gap-10">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-8 pb-8 border-b border-zinc-800/80">
-            <div className="flex flex-col items-center md:items-start gap-3">
+          <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-8 pb-8 border-b border-zinc-800/80">
+            <div className="flex flex-col items-center md:items-start gap-3 max-w-md">
               <LogoFull className="h-8 sm:h-9" />
-              <p className="text-sm text-zinc-400 max-w-md text-center md:text-left leading-relaxed">
-                MoX Hunter — The High-Authority Prototype & Growth Platform. Eliminating client risk with live prototypes before commitment.
+              <p className="text-sm text-zinc-300 text-center md:text-left leading-relaxed">
+                MoX Hunter is the proof-first growth platform. We engineer and host your working digital prototype in 24 hours — 100% free with zero financial lock-in.
               </p>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-mono">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                Zero Risk • Free 24h Working Prototype
+              </div>
             </div>
-            <div className="flex flex-wrap justify-center items-center gap-6 text-sm text-zinc-400">
-              <a href="#compare" className="hover:text-white transition-colors">
+
+            {/* Quick Links with Enhanced Legibility & Pop */}
+            <div className="flex flex-wrap justify-center items-center gap-x-8 gap-y-3 text-sm font-medium">
+              <a
+                href="#compare"
+                className="text-zinc-300 hover:text-white transition-colors duration-200 hover:underline underline-offset-4"
+              >
                 The New Way
               </a>
-              <a href="#how-it-works" className="hover:text-white transition-colors">
+              <a
+                href="#how-it-works"
+                className="text-zinc-300 hover:text-white transition-colors duration-200 hover:underline underline-offset-4"
+              >
                 How It Works
               </a>
-              <a href="#services" className="hover:text-white transition-colors">
+              <a
+                href="#services"
+                className="text-zinc-300 hover:text-white transition-colors duration-200 hover:underline underline-offset-4"
+              >
                 What We Build
               </a>
-              <a href="#roadmap" className="hover:text-white transition-colors">
+              <a
+                href="#roadmap"
+                className="text-zinc-300 hover:text-white transition-colors duration-200 hover:underline underline-offset-4"
+              >
                 Go Live
               </a>
-              <a href="#faq" className="hover:text-white transition-colors">
+              <a
+                href="#faq"
+                className="text-zinc-300 hover:text-white transition-colors duration-200 hover:underline underline-offset-4"
+              >
                 FAQ
               </a>
-              <a href="#contact" className="text-indigo-400 hover:text-indigo-300 font-semibold transition-colors">
-                Claim Prototype
+              <a
+                href="#contact"
+                className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-indigo-600/30 text-indigo-200 border border-indigo-500/40 hover:bg-indigo-600/50 hover:text-white font-semibold transition-all shadow-[0_0_15px_rgba(99,102,241,0.2)]"
+              >
+                <span>Claim Free Prototype</span>
+                <ArrowRight className="w-3.5 h-3.5" />
               </a>
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-500">
-            <div>
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-400">
+            <div className="text-center sm:text-left">
               © {new Date().getFullYear()} MoX Hunter. All rights reserved. High-authority digital solutions.
             </div>
-            <div className="flex items-center gap-6">
-              <a href="#" className="hover:text-zinc-300 transition-colors">
+            <div className="flex flex-wrap items-center justify-center gap-6">
+              <a href="#" className="text-zinc-400 hover:text-zinc-100 transition-colors">
                 Privacy Policy
               </a>
-              <a href="#" className="hover:text-zinc-300 transition-colors">
+              <a href="#" className="text-zinc-400 hover:text-zinc-100 transition-colors">
                 Terms of Service
               </a>
               <button
                 type="button"
                 onClick={handleReplayIntro}
-                className="hover:text-indigo-400 text-zinc-400 transition-colors font-medium flex items-center gap-1.5 cursor-pointer"
+                className="text-zinc-300 hover:text-indigo-300 transition-colors font-medium flex items-center gap-1.5 cursor-pointer px-2.5 py-1 rounded-md bg-zinc-900 border border-zinc-800 hover:border-indigo-500/40"
               >
-                <Play className="w-3 h-3 fill-current" />
-                <span>Replay Intro</span>
+                <Play className="w-3 h-3 fill-current text-indigo-400" />
+                <span>Replay Wolf Intro</span>
               </button>
-              <Link
-                to="/login"
-                className="hover:text-indigo-400 transition-colors font-medium"
-              >
-                Client / Admin Portal
-              </Link>
             </div>
           </div>
         </div>
