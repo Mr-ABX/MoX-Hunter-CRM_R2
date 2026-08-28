@@ -13,6 +13,10 @@ async function startServer() {
   app.use(cors());
   app.use(express.json());
 
+  app.get("/api/health", (req, res) => {
+    res.json({ status: "ok" });
+  });
+
   
 async function createUniqueSlug(baseText: string, customSlug?: string): Promise<string> {
   let base = (customSlug || baseText || 'prototype')
@@ -1456,4 +1460,6 @@ Requirements:
   });
 }
 
-startServer();
+startServer().catch((err) => {
+  console.error("Critical error starting server:", err);
+});
