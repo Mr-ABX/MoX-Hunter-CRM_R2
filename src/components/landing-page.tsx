@@ -40,12 +40,17 @@ import {
   Send,
   Building2,
   ExternalLink,
+  Info,
+  SlidersHorizontal,
+  HelpCircle,
 } from "lucide-react";
 import { Logo, LogoFull, WolfLogo } from "./logo";
 import { Link } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { TestimonialCarousel } from "./testimonial-carousel";
 import { EntranceSplash } from "./entrance-splash";
+import { db } from "@/lib/firebase";
+import { collection, addDoc } from "firebase/firestore";
 
 const faqs = [
   {
@@ -466,9 +471,11 @@ function PricingReveal() {
 }
 
 function ContactForm() {
-  const [selectedGoal, setSelectedGoal] = useState("Website Redesign");
+  const [selectedGoal, setSelectedGoal] = useState("Website Redesign & Conversion Modernization");
   const [submittingStep, setSubmittingStep] = useState<number>(0);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [showTooltip, setShowTooltip] = useState(false);
+  const [ticketId, setTicketId] = useState<string>("");
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -477,29 +484,62 @@ function ContactForm() {
     notes: "",
   });
 
-  const goals = [
-    { id: "Website Redesign", label: "Complete Redesign" },
-    { id: "New Brand Launch", label: "New Brand Launch" },
-    { id: "Lead Funnels", label: "Lead Funnel & CRM" },
-    { id: "Speed & SEO", label: "Conversion Optimization" },
+  const objectiveOptions = [
+    { value: "Website Redesign & Conversion Modernization", label: "Complete High-Converting Website Redesign" },
+    { value: "New Brand & Digital Authority Launch", label: "New Brand Launch & Digital Authority" },
+    { value: "Automated Lead Capture & CRM Pipeline", label: "Automated Lead Funnel & CRM Pipeline" },
+    { value: "Mobile Speed & Core Web Vitals Optimization", label: "Mobile Speed & SEO Core Web Vitals" },
+    { value: "Custom Web Application / Booking Engine", label: "Custom Booking Engine / Portal System" },
   ];
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmittingStep(1);
 
+    const generatedTicket = `MOX-${Math.floor(1000 + Math.random() * 9000)}`;
+    setTicketId(generatedTicket);
+
+    // Prepare lead data
+    const leadPayload = {
+      name: formData.name.trim(),
+      email: formData.email.trim(),
+      niche: formData.business.trim(),
+      city: "",
+      website: formData.website.trim(),
+      notes: `Primary Objective: ${selectedGoal}${formData.notes ? ' | Notes: ' + formData.notes : ''} | Ticket: #${generatedTicket}`,
+      status: 'Qualified',
+      source: 'Landing Page Free Prototype Request',
+      createdAt: Date.now(),
+    };
+
+    // Save to Firestore and local storage in parallel
+    try {
+      if (db) {
+        await addDoc(collection(db, 'leads'), leadPayload);
+      }
+    } catch (err) {
+      console.warn("Firestore sync warning (stored in local backup):", err);
+    }
+
+    try {
+      const localBackups = JSON.parse(localStorage.getItem('mox_leads_backup') || '[]');
+      localStorage.setItem('mox_leads_backup', JSON.stringify([leadPayload, ...localBackups]));
+    } catch (err) {
+      console.warn("Local storage warning:", err);
+    }
+
     setTimeout(() => {
       setSubmittingStep(2);
-    }, 900);
+    }, 800);
 
     setTimeout(() => {
       setSubmittingStep(3);
-    }, 1800);
+    }, 1600);
 
     setTimeout(() => {
       setSubmittingStep(0);
       setIsSuccess(true);
-    }, 2600);
+    }, 2400);
   };
 
   const isSubmitting = submittingStep > 0;
@@ -507,9 +547,9 @@ function ContactForm() {
   return (
     <div className="relative">
       {/* Background glow behind form */}
-      <div className="absolute -inset-1.5 bg-gradient-to-r from-indigo-500/20 via-purple-500/20 to-rose-500/20 rounded-[2.5rem] blur-xl opacity-60 pointer-events-none" />
+      <div className="absolute -inset-1.5 bg-gradient-to-r from-indigo-500/20 via-purple-500/20 to-rose-500/20 rounded-[2rem] blur-xl opacity-50 pointer-events-none" />
 
-      <div className="relative bg-zinc-950/90 backdrop-blur-2xl border border-zinc-800/90 rounded-[2rem] p-6 sm:p-10 shadow-2xl overflow-hidden">
+      <div className="relative bg-zinc-950/90 backdrop-blur-2xl border border-zinc-800/90 rounded-[2rem] p-6 sm:p-8 shadow-2xl overflow-hidden">
         <AnimatePresence mode="wait">
           {isSuccess ? (
             <motion.div
@@ -517,31 +557,31 @@ function ContactForm() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="py-8 flex flex-col items-center justify-center text-center px-4"
+              className="py-6 flex flex-col items-center justify-center text-center px-2 sm:px-4"
             >
-              <div className="w-20 h-20 bg-emerald-500/10 border border-emerald-500/30 rounded-3xl flex items-center justify-center mb-6 shadow-[0_0_40px_rgba(16,185,129,0.2)]">
-                <CheckCheck className="w-10 h-10 text-emerald-400" />
+              <div className="w-16 h-16 sm:w-20 sm:h-20 bg-emerald-500/10 border border-emerald-500/30 rounded-3xl flex items-center justify-center mb-5 shadow-[0_0_40px_rgba(16,185,129,0.2)]">
+                <CheckCheck className="w-8 h-8 sm:w-10 sm:h-10 text-emerald-400" />
               </div>
 
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-mono font-semibold uppercase tracking-wider mb-3">
-                Ticket #MOX-{Math.floor(1000 + Math.random() * 9000)} Confirmed
+                Ticket #{ticketId || "MOX-8821"} Confirmed
               </div>
 
-              <h3 className="text-2xl sm:text-3xl font-bold font-display text-white mb-3">
+              <h3 className="text-2xl sm:text-3xl font-bold font-display text-white mb-2">
                 Your Free Prototype Is In Motion!
               </h3>
               <p className="text-zinc-400 max-w-md text-sm sm:text-base leading-relaxed mb-6">
-                Our specialized architecture engine has queued your business analysis. We will deliver your fully functional, interactive live prototype link to <strong className="text-white">{formData.email || "your email"}</strong> within 24 hours.
+                Our engineering engine has queued your business analysis. We will deliver your live interactive prototype link to <strong className="text-white font-semibold">{formData.email || "your email"}</strong> within 24–48 hours.
               </p>
 
-              <div className="w-full max-w-md bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-5 mb-8 text-left space-y-3 text-xs sm:text-sm">
-                <div className="flex items-center justify-between text-zinc-400 border-b border-zinc-800 pb-2">
+              <div className="w-full max-w-md bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-4 sm:p-5 mb-6 text-left space-y-2.5 text-xs sm:text-sm">
+                <div className="flex items-center justify-between text-zinc-400 border-b border-zinc-800/80 pb-2">
                   <span className="flex items-center gap-2 text-zinc-300 font-medium">
-                    <Clock className="w-4 h-4 text-indigo-400" /> Guaranteed Delivery
+                    <Clock className="w-4 h-4 text-indigo-400" /> Turnaround Time
                   </span>
-                  <span className="font-mono text-indigo-300 font-bold">Within 24 Hours</span>
+                  <span className="font-mono text-indigo-300 font-bold">24–48 Hours</span>
                 </div>
-                <div className="flex items-center justify-between text-zinc-400 border-b border-zinc-800 pb-2">
+                <div className="flex items-center justify-between text-zinc-400 border-b border-zinc-800/80 pb-2">
                   <span className="flex items-center gap-2 text-zinc-300 font-medium">
                     <ShieldCheck className="w-4 h-4 text-emerald-400" /> Upfront Cost
                   </span>
@@ -549,9 +589,9 @@ function ContactForm() {
                 </div>
                 <div className="flex items-center justify-between text-zinc-400">
                   <span className="flex items-center gap-2 text-zinc-300 font-medium">
-                    <Zap className="w-4 h-4 text-amber-400" /> Prototype Type
+                    <Zap className="w-4 h-4 text-amber-400" /> Objective
                   </span>
-                  <span className="font-mono text-zinc-300">{selectedGoal}</span>
+                  <span className="font-mono text-zinc-300 text-right truncate max-w-[180px]">{selectedGoal}</span>
                 </div>
               </div>
 
@@ -561,47 +601,43 @@ function ContactForm() {
                   setIsSuccess(false);
                   setFormData({ name: "", email: "", business: "", website: "", notes: "" });
                 }}
-                className="text-xs font-mono tracking-wider uppercase text-zinc-400 hover:text-white px-6 py-2.5 rounded-full border border-zinc-800 hover:border-zinc-700 bg-zinc-900/40 transition-colors"
+                className="text-xs font-mono tracking-wider uppercase text-zinc-400 hover:text-white px-5 py-2.5 rounded-full border border-zinc-800 hover:border-zinc-700 bg-zinc-900/40 transition-colors cursor-pointer"
               >
                 Submit Another Request
               </button>
             </motion.div>
           ) : (
-            <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
-              {/* Step 1: Goal Selectors */}
+            <form onSubmit={handleSubmit} className="space-y-5 relative z-10">
+              {/* Step 1: Goal Select Dropdown */}
               <div>
-                <label className="block text-xs font-mono uppercase tracking-widest text-zinc-400 mb-3">
+                <label className="block text-xs font-mono uppercase tracking-wider text-zinc-400 mb-2">
                   1. Select Primary Objective
                 </label>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                  {goals.map((goal) => {
-                    const isSelected = selectedGoal === goal.id;
-                    return (
-                      <button
-                        type="button"
-                        key={goal.id}
-                        onClick={() => setSelectedGoal(goal.id)}
-                        className={`px-3 py-2.5 rounded-xl text-xs font-semibold text-center transition-all duration-200 cursor-pointer border ${
-                          isSelected
-                            ? "bg-indigo-600/20 border-indigo-500/80 text-white shadow-[0_0_15px_rgba(99,102,241,0.25)]"
-                            : "bg-zinc-900/50 border-zinc-800/80 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50"
-                        }`}
-                      >
-                        {goal.label}
-                      </button>
-                    );
-                  })}
+                <div className="relative">
+                  <select
+                    value={selectedGoal}
+                    onChange={(e) => setSelectedGoal(e.target.value)}
+                    disabled={isSubmitting}
+                    className="w-full appearance-none bg-zinc-900/80 border border-zinc-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all disabled:opacity-50 cursor-pointer pr-10"
+                  >
+                    {objectiveOptions.map((opt) => (
+                      <option key={opt.value} value={opt.value} className="bg-zinc-950 text-white py-2">
+                        {opt.label}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown className="w-4 h-4 text-zinc-400 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                 </div>
               </div>
 
               {/* Step 2: Information Inputs */}
-              <div>
-                <label className="block text-xs font-mono uppercase tracking-widest text-zinc-400 mb-3">
+              <div className="space-y-4">
+                <label className="block text-xs font-mono uppercase tracking-wider text-zinc-400">
                   2. Business & Contact Information
                 </label>
                 
-                <div className="grid sm:grid-cols-2 gap-4 mb-4">
-                  <div className="space-y-1.5">
+                <div className="grid sm:grid-cols-2 gap-3.5">
+                  <div className="space-y-1">
                     <label className="text-xs font-medium text-zinc-400">Full Name *</label>
                     <input
                       type="text"
@@ -609,11 +645,11 @@ function ContactForm() {
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       disabled={isSubmitting}
-                      className="w-full bg-zinc-900/70 border border-zinc-800 rounded-xl px-4 py-3 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all disabled:opacity-50"
+                      className="w-full bg-zinc-900/70 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all disabled:opacity-50"
                       required
                     />
                   </div>
-                  <div className="space-y-1.5">
+                  <div className="space-y-1">
                     <label className="text-xs font-medium text-zinc-400">Business / Work Email *</label>
                     <input
                       type="email"
@@ -621,26 +657,26 @@ function ContactForm() {
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       disabled={isSubmitting}
-                      className="w-full bg-zinc-900/70 border border-zinc-800 rounded-xl px-4 py-3 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all disabled:opacity-50"
+                      className="w-full bg-zinc-900/70 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all disabled:opacity-50"
                       required
                     />
                   </div>
                 </div>
 
-                <div className="grid sm:grid-cols-2 gap-4">
-                  <div className="space-y-1.5">
+                <div className="grid sm:grid-cols-2 gap-3.5">
+                  <div className="space-y-1">
                     <label className="text-xs font-medium text-zinc-400">Company Name / Industry *</label>
                     <input
                       type="text"
-                      placeholder="e.g. Apex Dental, Precision HVAC"
+                      placeholder="e.g. Apex Dental, Horizon Roofing"
                       value={formData.business}
                       onChange={(e) => setFormData({ ...formData, business: e.target.value })}
                       disabled={isSubmitting}
-                      className="w-full bg-zinc-900/70 border border-zinc-800 rounded-xl px-4 py-3 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all disabled:opacity-50"
+                      className="w-full bg-zinc-900/70 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all disabled:opacity-50"
                       required
                     />
                   </div>
-                  <div className="space-y-1.5">
+                  <div className="space-y-1">
                     <label className="text-xs font-medium text-zinc-400">Current Website URL (Optional)</label>
                     <input
                       type="text"
@@ -648,9 +684,57 @@ function ContactForm() {
                       value={formData.website}
                       onChange={(e) => setFormData({ ...formData, website: e.target.value })}
                       disabled={isSubmitting}
-                      className="w-full bg-zinc-900/70 border border-zinc-800 rounded-xl px-4 py-3 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all disabled:opacity-50"
+                      className="w-full bg-zinc-900/70 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all disabled:opacity-50"
                     />
                   </div>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-medium text-zinc-400">Specific Requirements or Competitor URLs (Optional)</label>
+                  <textarea
+                    rows={2}
+                    placeholder="Tell us any specific features, competitors you admire, or goals..."
+                    value={formData.notes}
+                    onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                    disabled={isSubmitting}
+                    className="w-full bg-zinc-900/70 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 transition-all disabled:opacity-50 resize-none"
+                  />
+                </div>
+              </div>
+
+              {/* Turnaround Badge with Interactive Tooltip */}
+              <div className="relative pt-1 flex items-center justify-between bg-zinc-900/40 border border-zinc-800/70 rounded-xl p-3 text-xs">
+                <div className="flex items-center gap-2 text-zinc-300">
+                  <Clock className="w-4 h-4 text-indigo-400 shrink-0" />
+                  <span>Turnaround: <strong className="text-white font-semibold">24–48 Hours</strong></span>
+                </div>
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={() => setShowTooltip(!showTooltip)}
+                    onMouseEnter={() => setShowTooltip(true)}
+                    onMouseLeave={() => setShowTooltip(false)}
+                    className="flex items-center gap-1 text-zinc-400 hover:text-indigo-300 transition-colors text-[11px] cursor-pointer"
+                  >
+                    <Info className="w-3.5 h-3.5 text-indigo-400" />
+                    <span className="hidden sm:inline">Traffic Queue Info</span>
+                  </button>
+
+                  <AnimatePresence>
+                    {showTooltip && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 5 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 5 }}
+                        className="absolute right-0 bottom-full mb-2 w-64 p-2.5 bg-zinc-900 border border-zinc-700 rounded-xl shadow-xl z-30 text-[11px] text-zinc-300 leading-snug"
+                      >
+                        <div className="font-semibold text-white mb-1 flex items-center gap-1">
+                          <Zap className="w-3 h-3 text-amber-400" /> Prototype Queue Notice
+                        </div>
+                        Delivery is typically 24 to 48 hours depending on live incoming prototype queue volume. Each prototype is custom engineered.
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               </div>
 
@@ -674,7 +758,7 @@ function ContactForm() {
                   ) : submittingStep === 3 ? (
                     <>
                       <Sparkles className="w-5 h-5 animate-spin text-emerald-300" />
-                      <span>3/3 Scheduling 24-Hour Prototype Delivery...</span>
+                      <span>3/3 Queuing 24–48h Delivery Link...</span>
                     </>
                   ) : (
                     <>
@@ -686,7 +770,7 @@ function ContactForm() {
               </div>
 
               {/* Trust Badges below button */}
-              <div className="pt-2 flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-xs text-zinc-500 font-medium">
+              <div className="pt-1 flex flex-wrap items-center justify-center gap-4 text-xs text-zinc-500 font-medium">
                 <span className="flex items-center gap-1.5">
                   <ShieldCheck className="w-4 h-4 text-emerald-400" /> 100% Free Upfront
                 </span>
@@ -694,7 +778,7 @@ function ContactForm() {
                   <Lock className="w-4 h-4 text-indigo-400" /> No Credit Card Required
                 </span>
                 <span className="flex items-center gap-1.5">
-                  <Clock className="w-4 h-4 text-amber-400" /> 24-Hour Turnaround
+                  <Clock className="w-4 h-4 text-amber-400" /> 24–48h Turnaround
                 </span>
               </div>
             </form>
@@ -919,21 +1003,16 @@ export function LandingPage() {
             <span className="text-[11px] sm:text-xs font-medium text-zinc-300">
               Rated <strong className="text-white font-semibold">4.9/5</strong> by 140+ Founders
             </span>
-
-            <span className="hidden sm:inline-block text-zinc-600">•</span>
-            <span className="hidden sm:inline-flex items-center gap-1 text-[11px] text-emerald-400 font-mono">
-              <ShieldCheck className="w-3 h-3" /> Proof First
-            </span>
           </motion.div>
 
-          {/* Main Headline */}
+          {/* Main Headline (Laser-Focused 2 Lines) */}
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.15, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="text-4xl sm:text-6xl lg:text-7xl font-display font-bold tracking-tight mb-6 leading-[1.1] text-white max-w-5xl mx-auto"
+            className="text-4xl sm:text-6xl lg:text-7xl font-display font-bold tracking-tight mb-5 leading-[1.1] text-white max-w-5xl mx-auto"
           >
-            See Your High-Converting Prototype Live.
+            See Your Working Prototype Live.
             <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-300 to-rose-400">
               Before Spending A Single Dollar.
@@ -945,9 +1024,9 @@ export function LandingPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.25, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="text-base sm:text-lg lg:text-xl text-zinc-400 max-w-3xl mx-auto mb-8 sm:mb-10 leading-relaxed font-normal"
+            className="text-base sm:text-lg text-zinc-400 max-w-3xl mx-auto mb-8 sm:mb-10 leading-relaxed font-normal"
           >
-            Stop gambling thousands on slow agencies with broken promises. Our intelligent engine engineers your custom, interactive digital experience within 24 hours — 100% free with zero upfront commitment.
+            Stop gambling thousands on slow agencies with broken promises. We engineer and host your custom, interactive prototype within 24–48 hours — 100% free with zero upfront commitment.
           </motion.p>
 
           {/* CTAs */}
@@ -955,173 +1034,283 @@ export function LandingPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.35, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10"
+            className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6 sm:mb-10"
           >
             <motion.a
               href="#contact"
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
-              className="w-full sm:w-auto px-8 py-4 bg-white text-black font-bold rounded-full flex items-center justify-center gap-2 relative overflow-hidden group shadow-[0_0_30px_rgba(255,255,255,0.2)] hover:shadow-[0_0_40px_rgba(99,102,241,0.5)] transition-shadow"
+              className="w-full sm:w-auto px-8 py-4 bg-white text-black font-bold rounded-full flex items-center justify-center gap-2 relative overflow-hidden group shadow-[0_0_30px_rgba(255,255,255,0.2)] hover:shadow-[0_0_40px_rgba(99,102,241,0.5)] transition-shadow cursor-pointer"
             >
               <Monitor className="w-5 h-5" />
               <span>Claim Free Working Prototype</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </motion.a>
             <a
-              href="#services"
-              className="w-full sm:w-auto px-8 py-4 bg-zinc-900/60 border border-zinc-800 text-zinc-300 font-semibold rounded-full hover:bg-zinc-850 hover:border-zinc-700 hover:text-white transition-all flex items-center justify-center gap-2"
+              href="#guarantees"
+              className="w-full sm:w-auto px-8 py-4 bg-zinc-900/60 border border-zinc-800 text-zinc-300 font-semibold rounded-full hover:bg-zinc-850 hover:border-zinc-700 hover:text-white transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
-              Explore What We Build
+              Explore Our Process
             </a>
           </motion.div>
 
-          {/* 4 Key Framer-Style Metric Badges */}
+          {/* Interactive Hero Visual (3D Multi-Layered Laser Prototype) */}
           <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.45, duration: 0.8 }}
-            className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-4xl mx-auto mb-12 text-left"
-          >
-            <div className="bg-zinc-900/40 border border-zinc-800/80 rounded-2xl p-3 sm:p-4 backdrop-blur-sm">
-              <div className="flex items-center gap-2 text-indigo-400 mb-1">
-                <Clock className="w-4 h-4" />
-                <span className="text-xs font-mono font-bold uppercase tracking-wider">24h Delivery</span>
-              </div>
-              <p className="text-xs text-zinc-400 leading-snug">Working interactive prototype ready in 24 hours.</p>
-            </div>
-
-            <div className="bg-zinc-900/40 border border-zinc-800/80 rounded-2xl p-3 sm:p-4 backdrop-blur-sm">
-              <div className="flex items-center gap-2 text-emerald-400 mb-1">
-                <ShieldCheck className="w-4 h-4" />
-                <span className="text-xs font-mono font-bold uppercase tracking-wider">$0 Upfront</span>
-              </div>
-              <p className="text-xs text-zinc-400 leading-snug">Zero credit card or financial lock-in.</p>
-            </div>
-
-            <div className="bg-zinc-900/40 border border-zinc-800/80 rounded-2xl p-3 sm:p-4 backdrop-blur-sm">
-              <div className="flex items-center gap-2 text-purple-400 mb-1">
-                <TrendingUp className="w-4 h-4" />
-                <span className="text-xs font-mono font-bold uppercase tracking-wider">+310% Leads</span>
-              </div>
-              <p className="text-xs text-zinc-400 leading-snug">Engineered for high-intent client conversion.</p>
-            </div>
-
-            <div className="bg-zinc-900/40 border border-zinc-800/80 rounded-2xl p-3 sm:p-4 backdrop-blur-sm">
-              <div className="flex items-center gap-2 text-amber-400 mb-1">
-                <Zap className="w-4 h-4" />
-                <span className="text-xs font-mono font-bold uppercase tracking-wider">99+ Speed</span>
-              </div>
-              <p className="text-xs text-zinc-400 leading-snug">Instant mobile load with modern edge infrastructure.</p>
-            </div>
-          </motion.div>
-
-          {/* Interactive Hero Visual (Framer-Agency Prototype Stage) */}
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, duration: 1, ease: [0.16, 1, 0.3, 1] }}
+            initial={{ opacity: 0, y: 60, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ delay: 0.45, duration: 1, ease: [0.16, 1, 0.3, 1] }}
             className="relative max-w-5xl mx-auto mt-4"
           >
-            {/* Glowing Accent Ring */}
-            <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500/30 via-purple-500/20 to-rose-500/30 rounded-3xl blur-2xl opacity-50" />
-
-            <div className="relative bg-zinc-950 border border-zinc-800 rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_25px_60px_rgba(0,0,0,0.8)] text-left">
-              {/* Browser Bar */}
-              <div className="h-11 sm:h-13 bg-zinc-900/90 border-b border-zinc-800 px-4 flex items-center justify-between">
-                <div className="flex items-center gap-2">
+            {/* Desktop 3D Layered Mockup */}
+            <div className="hidden sm:flex justify-center items-center h-[390px] relative">
+              {/* Back Card (Abstract Code & Automation Engine) */}
+              <motion.div
+                animate={{ y: [-8, 8, -8], rotateZ: [-2, -2, -2] }}
+                transition={{ repeat: Infinity, duration: 7, ease: "easeInOut" }}
+                className="absolute w-[580px] h-[330px] bg-zinc-950/90 backdrop-blur-xl border border-zinc-800/90 rounded-3xl p-6 shadow-2xl -translate-x-28 -translate-y-8 opacity-70 z-0 text-left font-mono text-xs"
+              >
+                <div className="flex items-center gap-2 mb-4">
                   <div className="w-3 h-3 rounded-full bg-rose-500/70" />
                   <div className="w-3 h-3 rounded-full bg-amber-500/70" />
                   <div className="w-3 h-3 rounded-full bg-emerald-500/70" />
+                  <span className="text-[10px] text-zinc-500 ml-2">mox-prototype-engine.ts</span>
+                </div>
+                <div className="space-y-2 text-indigo-300/80">
+                  <p className="text-zinc-500">// Step 1: Scan competitor conversion gaps</p>
+                  <p><span className="text-purple-400">const</span> analysis = <span className="text-purple-400">await</span> MoX.scan(<span className="text-emerald-300">'industry_leaders'</span>);</p>
+                  <p className="text-zinc-500 pt-1">// Step 2: Generate high-speed interactive UI</p>
+                  <p><span className="text-purple-400">const</span> prototype = <span className="text-purple-400">await</span> MoX.buildInteractive(analysis);</p>
+                  <p className="text-emerald-400 font-semibold">deploy(prototype); // Deployed in 0.04s — $0 Upfront</p>
+                  <div className="mt-6 space-y-2 opacity-50">
+                    <div className="h-2 w-3/4 bg-zinc-800 rounded" />
+                    <div className="h-2 w-1/2 bg-zinc-800 rounded" />
+                    <div className="h-2 w-5/6 bg-zinc-800 rounded" />
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Front Main Card (Live Generated UI Mockup with Laser Scan) */}
+              <motion.div
+                animate={{ y: [8, -8, 8], rotateZ: [1, 1, 1] }}
+                transition={{ repeat: Infinity, duration: 8, ease: "easeInOut" }}
+                className="absolute w-[640px] h-[360px] bg-gradient-to-b from-zinc-900 to-zinc-950 border border-zinc-700/80 rounded-3xl overflow-hidden shadow-[0_25px_60px_rgba(0,0,0,0.8)] z-10 ml-24 text-left"
+              >
+                {/* Browser Header Bar */}
+                <div className="h-11 border-b border-zinc-800/80 bg-zinc-900/90 flex items-center px-5 justify-between">
+                  <div className="flex gap-2">
+                    <div className="w-3 h-3 rounded-full bg-rose-500/70" />
+                    <div className="w-3 h-3 rounded-full bg-amber-500/70" />
+                    <div className="w-3 h-3 rounded-full bg-emerald-500/70" />
+                  </div>
+                  <div className="w-1/2 h-6 bg-zinc-950 rounded-md border border-zinc-800 flex items-center justify-center gap-1.5 px-3">
+                    <Lock className="w-2.5 h-2.5 text-emerald-400" />
+                    <span className="text-[10px] font-mono text-zinc-400 truncate">
+                      https://preview.moxhunter.com/your-brand
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1.5 text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                    LIVE
+                  </div>
                 </div>
 
-                <div className="flex items-center gap-2 bg-zinc-950/80 border border-zinc-800/90 rounded-lg px-3 py-1 text-[11px] font-mono text-zinc-400">
-                  <Lock className="w-3 h-3 text-emerald-400" />
-                  <span>https://preview.moxhunter.com/your-brand</span>
-                </div>
+                {/* Inner Mock Visual */}
+                <div className="p-6 flex flex-col gap-4 relative">
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-2">
+                      <div className="w-7 h-7 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold text-xs">
+                        YB
+                      </div>
+                      <div className="w-24 h-4 bg-zinc-800 rounded" />
+                    </div>
+                    <div className="flex gap-2 items-center">
+                      <div className="w-14 h-3 bg-zinc-800 rounded hidden sm:block" />
+                      <div className="w-14 h-3 bg-zinc-800 rounded hidden sm:block" />
+                      <div className="px-3 py-1 bg-indigo-600 text-white rounded-lg text-[10px] font-bold">
+                        Book Service
+                      </div>
+                    </div>
+                  </div>
 
-                <div className="flex items-center gap-2 text-xs font-mono text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-md border border-emerald-500/20">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                  <span className="hidden sm:inline">LIVE PROTOTYPE</span>
+                  <div className="space-y-2 mt-2">
+                    <div className="w-3/4 h-8 bg-gradient-to-r from-zinc-800 to-zinc-700 rounded-lg" />
+                    <div className="w-1/2 h-3.5 bg-zinc-800/80 rounded" />
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-3 mt-3">
+                    <div className="h-24 bg-zinc-900/90 rounded-xl border border-zinc-800 p-3 flex flex-col justify-between">
+                      <div className="w-6 h-6 rounded-lg bg-zinc-800 flex items-center justify-center">
+                        <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
+                      </div>
+                      <div className="space-y-1">
+                        <div className="w-full h-2 bg-zinc-700 rounded" />
+                        <div className="w-2/3 h-1.5 bg-zinc-800 rounded" />
+                      </div>
+                    </div>
+
+                    <div className="h-24 bg-zinc-900/90 rounded-xl border border-zinc-800 p-3 flex flex-col justify-between">
+                      <div className="w-6 h-6 rounded-lg bg-zinc-800 flex items-center justify-center">
+                        <Zap className="w-3 h-3 text-indigo-400" />
+                      </div>
+                      <div className="space-y-1">
+                        <div className="w-full h-2 bg-zinc-700 rounded" />
+                        <div className="w-2/3 h-1.5 bg-zinc-800 rounded" />
+                      </div>
+                    </div>
+
+                    <div className="h-24 bg-indigo-500/10 rounded-xl border border-indigo-500/30 p-3 relative overflow-hidden flex flex-col justify-between">
+                      <div className="w-6 h-6 rounded-lg bg-indigo-500/30 flex items-center justify-center">
+                        <TrendingUp className="w-3 h-3 text-indigo-300" />
+                      </div>
+                      <div className="space-y-1">
+                        <div className="w-full h-2 bg-indigo-400/50 rounded" />
+                        <div className="w-2/3 h-1.5 bg-indigo-400/30 rounded" />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Scanning Laser */}
+                  <motion.div
+                    animate={{ top: ["5%", "95%", "5%"] }}
+                    transition={{ repeat: Infinity, duration: 3.5, ease: "easeInOut" }}
+                    className="absolute left-0 right-0 h-0.5 bg-indigo-400 shadow-[0_0_20px_rgba(99,102,241,1)] z-20 pointer-events-none"
+                  />
                 </div>
+              </motion.div>
+
+              {/* Floating Action Badge */}
+              <motion.div
+                animate={{ y: [-6, 6, -6] }}
+                transition={{ repeat: Infinity, duration: 4.5, ease: "easeInOut" }}
+                className="absolute z-30 -bottom-4 -right-2 bg-zinc-900/95 border border-zinc-700 rounded-2xl p-3.5 shadow-[0_20px_40px_rgba(0,0,0,0.6)] flex items-center gap-3"
+              >
+                <div className="w-10 h-10 bg-emerald-500/20 rounded-xl flex items-center justify-center shrink-0">
+                  <CheckCheck className="w-5 h-5 text-emerald-400" />
+                </div>
+                <div className="text-left">
+                  <p className="text-xs font-bold text-white uppercase tracking-wide">
+                    Prototype Active
+                  </p>
+                  <p className="text-[11px] text-zinc-400 font-mono">
+                    Ready for client preview
+                  </p>
+                </div>
+              </motion.div>
+            </div>
+
+            {/* Mobile Fallback Card */}
+            <div className="sm:hidden bg-zinc-950 border border-zinc-800 rounded-2xl p-4 text-left shadow-2xl space-y-3">
+              <div className="flex items-center justify-between pb-3 border-b border-zinc-800">
+                <div className="flex items-center gap-2">
+                  <div className="w-2.5 h-2.5 rounded-full bg-rose-500" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-amber-500" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+                </div>
+                <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+                  ● LIVE PROTOTYPE
+                </span>
               </div>
-
-              {/* Prototype Mock Preview Surface */}
-              <div className="p-5 sm:p-8 bg-gradient-to-b from-zinc-900/40 to-zinc-950 relative overflow-hidden">
-                {/* Mock Header inside prototype */}
-                <div className="flex items-center justify-between pb-6 border-b border-zinc-800/60">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center font-bold text-white text-xs">
-                      YB
-                    </div>
-                    <div>
-                      <div className="text-sm font-bold text-white">Your Brand & Co.</div>
-                      <div className="text-[10px] text-zinc-500 font-mono">Premium Local Authority</div>
-                    </div>
-                  </div>
-                  <div className="hidden sm:flex items-center gap-3 text-xs text-zinc-400 font-medium">
-                    <span>Services</span>
-                    <span>Reviews (48)</span>
-                    <span>Pricing</span>
-                    <span className="px-3 py-1.5 bg-indigo-600 text-white rounded-lg font-bold">Book Estimate</span>
-                  </div>
+              <div className="h-6 w-3/4 bg-zinc-800 rounded" />
+              <div className="h-3 w-1/2 bg-zinc-850 rounded" />
+              <div className="grid grid-cols-2 gap-2 pt-2">
+                <div className="bg-zinc-900 p-2.5 rounded-xl border border-zinc-800 text-xs">
+                  <div className="font-bold text-white">4.9 ★★★★★</div>
+                  <div className="text-[10px] text-zinc-400">High-Trust Rating</div>
                 </div>
-
-                {/* Mock Hero inside prototype */}
-                <div className="grid md:grid-cols-12 gap-6 items-center py-6">
-                  <div className="md:col-span-7 space-y-3">
-                    <div className="inline-block px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 text-[10px] font-mono uppercase font-bold">
-                      #1 Rated in Region
-                    </div>
-                    <h3 className="text-xl sm:text-3xl font-display font-bold text-white leading-tight">
-                      Experience Superior Service Engineered for Modern Clients.
-                    </h3>
-                    <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed">
-                      Instant online booking, upfront transparent pricing, and 5-star customer care.
-                    </p>
-                    <div className="flex items-center gap-3 pt-1">
-                      <div className="px-4 py-2 bg-white text-black font-bold rounded-lg text-xs flex items-center gap-1">
-                        <span>Get Instant Quote</span>
-                        <ArrowRight className="w-3 h-3" />
-                      </div>
-                      <div className="px-4 py-2 bg-zinc-800 text-zinc-300 rounded-lg text-xs font-medium">
-                        View Past Projects
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="md:col-span-5 grid grid-cols-2 gap-3">
-                    <div className="bg-zinc-900/80 border border-zinc-800 p-3.5 rounded-xl">
-                      <div className="text-lg font-bold text-white mb-0.5">4.9 ★★★★★</div>
-                      <div className="text-[11px] text-zinc-400">Over 180 Verified Google Reviews</div>
-                    </div>
-                    <div className="bg-zinc-900/80 border border-zinc-800 p-3.5 rounded-xl">
-                      <div className="text-lg font-bold text-indigo-400 mb-0.5">&lt; 15 min</div>
-                      <div className="text-[11px] text-zinc-400">Average Response Time Guarantee</div>
-                    </div>
-                    <div className="col-span-2 bg-indigo-950/40 border border-indigo-500/30 p-3.5 rounded-xl flex items-center justify-between">
-                      <div className="flex items-center gap-2.5">
-                        <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
-                        <div>
-                          <div className="text-xs font-bold text-white">Live Inquiries Synced</div>
-                          <div className="text-[10px] text-indigo-300 font-mono">14 new leads captured this week</div>
-                        </div>
-                      </div>
-                      <span className="text-xs font-mono font-bold text-emerald-400">+24%</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Bottom interactive indicator */}
-                <div className="pt-4 border-t border-zinc-800/60 flex flex-wrap items-center justify-between gap-3 text-xs text-zinc-500">
-                  <span className="font-mono text-[11px]">⚡ Built with MoX Hunter High-Speed Prototype Core</span>
-                  <a href="#contact" className="text-indigo-400 hover:text-indigo-300 font-medium flex items-center gap-1">
-                    <span>Generate One For Your Brand</span>
-                    <ExternalLink className="w-3 h-3" />
-                  </a>
+                <div className="bg-indigo-950/40 p-2.5 rounded-xl border border-indigo-500/30 text-xs">
+                  <div className="font-bold text-indigo-300">24–48h Ready</div>
+                  <div className="text-[10px] text-zinc-400">$0 Upfront</div>
                 </div>
               </div>
             </div>
           </motion.div>
+        </div>
+      </section>
+
+      {/* 4 Dedicated Core Guarantees & Performance Pillars Section */}
+      <section id="guarantees" className="py-16 sm:py-20 px-4 sm:px-6 relative z-10 border-t border-zinc-800/60 bg-zinc-950/60 scroll-mt-20">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-mono font-semibold uppercase tracking-wider mb-3">
+              The 4 Pillars of MoX Hunter
+            </div>
+            <h2 className="text-2xl sm:text-4xl font-display font-bold text-white mb-3">
+              Engineered For Speed, Proof, and Conversion
+            </h2>
+            <p className="text-zinc-400 text-sm sm:text-base max-w-2xl mx-auto">
+              We replaced traditional agency friction with instant, transparent architecture.
+            </p>
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {/* Pillar 1: 24-48h Delivery */}
+            <motion.div
+              whileHover={{ y: -4 }}
+              className="bg-zinc-900/50 border border-zinc-800 hover:border-indigo-500/50 rounded-2xl p-6 transition-all duration-300 relative group overflow-hidden"
+            >
+              <div className="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 mb-4 group-hover:scale-110 transition-transform">
+                <Clock className="w-6 h-6" />
+              </div>
+              <div className="text-xs font-mono font-bold uppercase tracking-wider text-indigo-400 mb-1">
+                24–48h Turnaround
+              </div>
+              <h3 className="text-lg font-bold text-white mb-2">Rapid Deployment</h3>
+              <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed">
+                Receive your live interactive prototype link fast, custom-tailored to your exact niche and business goals.
+              </p>
+            </motion.div>
+
+            {/* Pillar 2: $0 Upfront Risk */}
+            <motion.div
+              whileHover={{ y: -4 }}
+              className="bg-zinc-900/50 border border-zinc-800 hover:border-emerald-500/50 rounded-2xl p-6 transition-all duration-300 relative group overflow-hidden"
+            >
+              <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 mb-4 group-hover:scale-110 transition-transform">
+                <ShieldCheck className="w-6 h-6" />
+              </div>
+              <div className="text-xs font-mono font-bold uppercase tracking-wider text-emerald-400 mb-1">
+                $0 Upfront Cost
+              </div>
+              <h3 className="text-lg font-bold text-white mb-2">100% Risk Free</h3>
+              <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed">
+                Zero deposits, zero credit card requirements. Test the real product on your phone and computer before committing.
+              </p>
+            </motion.div>
+
+            {/* Pillar 3: +310% Leads */}
+            <motion.div
+              whileHover={{ y: -4 }}
+              className="bg-zinc-900/50 border border-zinc-800 hover:border-purple-500/50 rounded-2xl p-6 transition-all duration-300 relative group overflow-hidden"
+            >
+              <div className="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 mb-4 group-hover:scale-110 transition-transform">
+                <TrendingUp className="w-6 h-6" />
+              </div>
+              <div className="text-xs font-mono font-bold uppercase tracking-wider text-purple-400 mb-1">
+                +310% Lead Lift
+              </div>
+              <h3 className="text-lg font-bold text-white mb-2">Conversion Architecture</h3>
+              <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed">
+                Engineered with psychology-backed conversion triggers, frictionless inquiry capture, and automated sync.
+              </p>
+            </motion.div>
+
+            {/* Pillar 4: 99+ Speed */}
+            <motion.div
+              whileHover={{ y: -4 }}
+              className="bg-zinc-900/50 border border-zinc-800 hover:border-amber-500/50 rounded-2xl p-6 transition-all duration-300 relative group overflow-hidden"
+            >
+              <div className="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 mb-4 group-hover:scale-110 transition-transform">
+                <Zap className="w-6 h-6" />
+              </div>
+              <div className="text-xs font-mono font-bold uppercase tracking-wider text-amber-400 mb-1">
+                99+ Core Vitals
+              </div>
+              <h3 className="text-lg font-bold text-white mb-2">Instant Load Speed</h3>
+              <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed">
+                Sub-second loading times on all mobile networks with zero bloat and modern edge CDN distribution.
+              </p>
+            </motion.div>
+          </div>
         </div>
       </section>
 
@@ -1741,22 +1930,129 @@ export function LandingPage() {
       {/* Contact Form Section */}
       <section
         id="contact"
-        className="py-24 px-6 bg-zinc-900/40 relative z-10 border-t border-zinc-800/50 scroll-mt-20"
+        className="py-20 sm:py-28 px-4 sm:px-6 bg-zinc-900/30 relative z-10 border-t border-zinc-800/60 scroll-mt-20 overflow-hidden"
       >
-        <div className="max-w-3xl mx-auto">
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-mono font-semibold uppercase tracking-wider mb-4">
-              100% Free • No Credit Card Required
+        {/* Ambient Glows */}
+        <div className="absolute top-1/2 left-0 w-96 h-96 bg-indigo-500/10 blur-[120px] rounded-full pointer-events-none -translate-y-1/2" />
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-purple-500/10 blur-[120px] rounded-full pointer-events-none" />
+
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-mono font-semibold uppercase tracking-wider mb-4">
+              100% Free • Zero Financial Lock-In
             </div>
             <h2 className="text-3xl sm:text-5xl font-display font-bold mb-4 text-white">
               Request Your Free Working Prototype
             </h2>
-            <p className="text-zinc-400 text-lg">
-              Tell us about your business. We will engineer your live prototype and deliver it within 24 hours so you can test the real solution first.
+            <p className="text-zinc-400 text-base sm:text-lg leading-relaxed">
+              Tell us about your business. We engineer your live, interactive prototype and deliver a private demo link within 24–48 hours so you can test the real solution before spending $1.
             </p>
           </div>
 
-          <ContactForm />
+          {/* 2-Column Landing Section: Visual Showcase Left + Contact Form Right */}
+          <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+            {/* Left Column: Visual Showcase & Delivery Pipeline */}
+            <div className="lg:col-span-5 space-y-6">
+              {/* Visual Prototype Preview Card */}
+              <div className="bg-zinc-950/80 border border-zinc-800/90 rounded-3xl p-6 sm:p-7 relative overflow-hidden shadow-2xl">
+                {/* Background accent */}
+                <div className="absolute top-0 right-0 w-48 h-48 bg-indigo-500/10 blur-3xl rounded-full pointer-events-none" />
+
+                {/* Mockup Window */}
+                <div className="rounded-2xl border border-zinc-800 bg-zinc-900/90 overflow-hidden mb-6 shadow-lg">
+                  <div className="h-9 bg-zinc-950 px-3.5 flex items-center justify-between border-b border-zinc-800">
+                    <div className="flex gap-1.5">
+                      <div className="w-2.5 h-2.5 rounded-full bg-rose-500/80" />
+                      <div className="w-2.5 h-2.5 rounded-full bg-amber-500/80" />
+                      <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/80" />
+                    </div>
+                    <span className="text-[10px] font-mono text-zinc-400 truncate max-w-[180px]">
+                      preview.moxhunter.com/demo
+                    </span>
+                    <div className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                  </div>
+                  <div className="p-4 space-y-3 bg-gradient-to-b from-zinc-900 to-zinc-950">
+                    <div className="flex items-center justify-between">
+                      <div className="w-20 h-4 bg-zinc-800 rounded" />
+                      <div className="w-16 h-5 bg-indigo-600/30 border border-indigo-500/40 rounded text-[9px] font-mono text-indigo-300 flex items-center justify-center font-bold">
+                        Interactive
+                      </div>
+                    </div>
+                    <div className="h-6 w-4/5 bg-zinc-800 rounded" />
+                    <div className="grid grid-cols-2 gap-2 pt-1">
+                      <div className="h-14 bg-zinc-850 rounded-xl border border-zinc-800 p-2 space-y-1">
+                        <div className="w-1/2 h-2 bg-zinc-700 rounded" />
+                        <div className="w-3/4 h-2 bg-zinc-750 rounded" />
+                      </div>
+                      <div className="h-14 bg-indigo-950/40 rounded-xl border border-indigo-500/30 p-2 space-y-1">
+                        <div className="w-1/2 h-2 bg-indigo-400 rounded" />
+                        <div className="w-3/4 h-2 bg-indigo-300/60 rounded" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 3 Step Delivery Process */}
+                <div className="space-y-4">
+                  <h4 className="text-xs font-mono uppercase tracking-wider text-zinc-400 font-bold">
+                    What Happens Once You Submit:
+                  </h4>
+                  
+                  <div className="space-y-3 text-xs">
+                    <div className="flex items-start gap-3">
+                      <div className="w-6 h-6 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 font-mono font-bold flex items-center justify-center shrink-0 text-[11px] mt-0.5">
+                        1
+                      </div>
+                      <div>
+                        <strong className="text-white block font-semibold text-xs sm:text-sm">Competitor & Conversion Scan</strong>
+                        <p className="text-zinc-400 text-[11px] sm:text-xs">We analyze top-performing players in your market to identify your biggest revenue gaps.</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-3">
+                      <div className="w-6 h-6 rounded-lg bg-purple-500/10 border border-purple-500/20 text-purple-400 font-mono font-bold flex items-center justify-center shrink-0 text-[11px] mt-0.5">
+                        2
+                      </div>
+                      <div>
+                        <strong className="text-white block font-semibold text-xs sm:text-sm">Interactive Prototype Built</strong>
+                        <p className="text-zinc-400 text-[11px] sm:text-xs">A real, clickable web prototype is deployed with high-speed architecture.</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-3">
+                      <div className="w-6 h-6 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-mono font-bold flex items-center justify-center shrink-0 text-[11px] mt-0.5">
+                        3
+                      </div>
+                      <div>
+                        <strong className="text-white block font-semibold text-xs sm:text-sm">24–48h Private Delivery Link</strong>
+                        <p className="text-zinc-400 text-[11px] sm:text-xs">Test it on your smartphone or desktop. No credit card, no pressure, no sales traps.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Social Proof Quote */}
+                <div className="mt-6 pt-5 border-t border-zinc-800/80">
+                  <div className="flex items-center gap-1 text-amber-400 mb-2">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                    ))}
+                  </div>
+                  <p className="text-xs text-zinc-300 italic mb-2 leading-relaxed">
+                    "Seeing our actual business interactive prototype before paying made this a total no-brainer. Closed 6 new high-ticket clients in our first week."
+                  </p>
+                  <p className="text-[11px] font-mono text-zinc-500">
+                    — Marcus V., Founder at Apex Mechanical
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column: Contact Form */}
+            <div className="lg:col-span-7">
+              <ContactForm />
+            </div>
+          </div>
         </div>
       </section>
 
