@@ -11,16 +11,47 @@ Connected Production Cloud Storage & CRM: `https://mox.infni-t.online`
 
 ---
 
+## 🛠️ Production Executable CLI Tools (`scripts/`)
+
+MoX Hunter is equipped with standalone, zero-dependency executable Python CLI tools that empower the squad to scrape, verify, design, and copywrite with real-world execution:
+
+### 1. `mox_scraper.py` (Live Business & Social Asset Scraper)
+* **Location**: `scripts/mox_scraper.py`
+* **Capabilities**: Scrapes real logos, phone numbers, clean emails, social profile links (Facebook, Instagram, LinkedIn, WhatsApp), and meta tags from live business websites.
+* **Usage**: `python3 scripts/mox_scraper.py <url> [clinic_name]`
+
+### 2. `mox_verifier.py` (Lead & URL Health Diagnostic Engine)
+* **Location**: `scripts/mox_verifier.py`
+* **Capabilities**: Deeply audits HTTP status codes (200, 403, 404, 500), SSL cert validity, DNS resolution, and mobile viewport tags. Classifies leads into diagnostic categories (`BROKEN_DNS_OR_DOMAIN_DEAD`, `HTTP_403_FORBIDDEN`, `DEFICIENT_UX`, `OUTDATED_REDESIGN`).
+* **Usage**: `python3 scripts/mox_verifier.py <url>`
+
+### 3. `mox_designer.py` (Interactive Prototype Synthesizer & Publisher)
+* **Location**: `scripts/mox_designer.py`
+* **Capabilities**: Ingests custom HTML, validates markup, and automatically publishes the prototype to `POST /api/mcp/publish-prototype`, returning live `https://mox.infni-t.online/preview/{slug}` URLs.
+* **Usage**: `python3 scripts/mox_designer.py <title> <slug> <html_file> [lead_id]`
+
+### 4. `mox_copywriter.py` (Dynamic DIC Outreach & 1-Click WhatsApp Generator)
+* **Location**: `scripts/mox_copywriter.py`
+* **Capabilities**: Crafts ultra-short 3-sentence DIC (Disrupt, Intrigue, Click) emails and encodes pre-filled 1-Click WhatsApp direct links (`https://wa.me/{phone}?text={encoded}`).
+* **Usage**: `python3 scripts/mox_copywriter.py [lead_json_file]`
+
+### 5. `mox_flow.py` (Master Unified CLI Orchestrator)
+* **Location**: `scripts/mox_flow.py`
+* **Capabilities**: Unified CLI connecting all sub-tools into an automated workflow.
+* **Usage**: `python3 scripts/mox_flow.py --action status|verify|scrape|copy`
+
+---
+
 ## 🧠 Dynamic Date-Awareness & Memory System
 
 MoX Hunter possesses persistent memory backed by `.agents/memory/learning_ledger.json` and actively inspects real-time dates and timezones:
 
 1. **Date & Day-of-Week Inspection**:
-   * Always checks the current date (e.g. `August 28, 2026`) and day-of-week before scheduling.
-   * If a user requests outreach during low-converting hours (e.g., late Friday afternoon, weekends, or early Monday morning), the agent will **proactively alert the user and recommend the next peak window**.
+   * Always checks the current date (e.g. `September 1, 2026`) and day-of-week before scheduling.
+   * If a user requests outreach during low-converting hours, the agent will **proactively alert the user and recommend the next peak window**.
 2. **70/30 Dual-Engine Outbound Strategy**:
-   * **70% Local High-Affluence Corridor** (*Islamabad F-6/F-7/F-8 / Blue Area or DHA Lahore / Gulberg*): Leverages 1-Click Direct WhatsApp (`wa.me`) for 90%+ read rates, zero friction, and rapid \$200–\$500 cashflow.
-   * **30% Tier-1 International Corridor** (*Dallas TX, Miami FL, London UK*): Automated scheduled cold email via Composio for \$1,000–\$2,500+ deals.
+   * **70% Local High-Affluence Corridor** (*Islamabad F-6/F-7/F-8 / Blue Area or DHA Lahore / Gulberg*): Leverages 1-Click Direct WhatsApp (`wa.me`) for 90%+ read rates, zero friction, and rapid $200–$500 cashflow.
+   * **30% Tier-1 International Corridor** (*Dallas TX, Miami FL, London UK*): Automated scheduled cold email via Composio for $1,000–$2,500+ deals.
 3. **Dispatch Window & Timezone Matrix**:
    * **Local PKT**: 10:30 AM – 1:00 PM & 4:30 PM – 7:30 PM PKT.
    * **US Central (Dallas - CDT)**: 8:45 AM – 11:15 AM CDT (6:45 PM – 9:15 PM PKT).
@@ -76,7 +107,7 @@ MoX Hunter immediately initiates the **6-Stage Interactive Master Flow** with **
 ┌────────────────────────────────────────────────────────┐
 │ STAGE 3: Super-Grade Prototype & Pitch Synthesis       │
 │ • mox-design-researcher curates Awwwards design tokens │
-│ • mox-ui-designer builds bespoke HTML (7-12 sections)  │
+│ • mox-ui-designer builds bespoke HTML (8-12 sections)  │
 │   incorporating any custom notes provided by user      │
 │ • POST /api/mcp/publish-prototype deploys live preview │
 │ • mox-sales-closer & courtesy-advisor draft pitches    │
@@ -120,9 +151,9 @@ MoX Hunter immediately initiates the **6-Stage Interactive Master Flow** with **
 ## 🏆 Super-Grade Awwwards & One Page Love Architecture
 
 Every bespoke prototype built by `mox-ui-designer` must reflect world-class web design excellence:
-1. **Smart Dynamic Narrative & Variable Depth (7 to 12+ Sections)**.
-2. **Buttery Scroll Entrance Animations (`IntersectionObserver`)**.
-3. **Interactive Conversion Mechanics** (Before/After sliders, interactive pricing calculators, floating pills).
+1. **Smart Dynamic Narrative & Variable Depth (8 to 12+ Sections)**.
+2. **5 Distinct Structural Archetypes** (Split-Screen Slider, British Royal Editorial, Luxury Diplomatic Lounge, Specialist Bento Matrix, 24/7 Rapid Emergency Triage).
+3. **High-Converting 2-Column Booking Forms** with Doctor portraits and verified trust badges.
 4. **Editorial Typography & Color Matching** (`Italiana`, `Cormorant Garamond`, `Space Grotesk`, `Plus Jakarta Sans`).
 5. **Rich Context-Matched Photography** (100% photo-backed cards, real customer portrait avatars).
 
