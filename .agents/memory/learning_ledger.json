@@ -66,7 +66,8 @@
     "rule": "Every image must strictly match the verified clinical/specialist category (operatory, veneers, clear aligners, microscope surgery, verified patient portraits). Any unverified or spa/bathroom photo triggers a fatal build error."
   },
   "continuous_self_evolution_protocol": {
-    "rule": "All new user design feedback, preferences, and architectural upgrades automatically append to this ledger and sync to GitHub without altering baseline safety protocols. The system compounds knowledge over time across every run."
+    "rule": "All new user design feedback, preferences, and architectural upgrades automatically append to this ledger and sync to GitHub without altering baseline safety protocols. The system compounds knowledge over time across every run.",
+    "cumulative_compounding_directive": "MANDATORY: Never wipe, overwrite, or discard historical system rules, design architectures, image linter standards, or flow protocols. Always build additively on top of existing knowledge, treating previous iterations as foundational baseline rules that must be preserved, refined, and complimented."
   },
   "market_strategy_70_30": {
     "local_engine_70_pct": {
