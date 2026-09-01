@@ -1,6 +1,6 @@
 {
-  "system_version": "3.1.0-decoupled-two-stage-ground-truth",
-  "last_updated": "2026-09-01T19:30:00+05:00",
+  "system_version": "3.2.0-strategic-audit-and-notes-injection",
+  "last_updated": "2026-09-01T21:30:00+05:00",
   "git_repository_sync": {
     "remote_url": "https://github.com/Mr-ABX/MoX-Hunter-CRM_R2.git",
     "active_branch": "antigravity-agents-core",
@@ -10,6 +10,22 @@
       ".agents/memory/ (Persistent Learning Ledger & State Machine)",
       "~/.gemini/config/skills/mox-hunter/ (Global Mirror for Cross-Session Continuity)"
     ]
+  },
+  "website_triage_and_outreach_strategy_matrix": {
+    "mandate": "Differentiate pitch strategy strictly by website condition and inject human Gate 1 review notes into every outreach.",
+    "condition_1_broken_or_offline_website": {
+      "detection": "Site returns DNS failure, 404/403, or has severely broken mobile layout/footers (e.g. Care N Cure, Dr. Hissam).",
+      "strategy": "Build bespoke 10-section modern prototype fixing their exact layout/mobile friction points. Pitch live preview as a free gift."
+    },
+    "condition_2_decent_modern_website": {
+      "detection": "Business already has a clean, functional, modern website (e.g. The Dental Consultants).",
+      "strategy": "DO NOT pitch a basic static redesign. Instead, run Technical SEO, Core Web Vitals, speed, schema markup, and local ranking audit. Record technical gaps in remarks/notes and craft a high-value optimization advisory pitch."
+    },
+    "condition_3_zero_website_listed": {
+      "detection": "Business only has a Google My Business or Facebook presence.",
+      "strategy": "Synthesize full 10-section bespoke mobile-first portal with original branding, patient reviews, and 1-click booking."
+    },
+    "gate_1_human_notes_injection_mandate": "The copywriter and outreach engine MUST always inspect human remarks/notes recorded during Gate 1 and weave them directly into the email/WhatsApp pitch."
   },
   "two_stage_decoupled_hunting_architecture": {
     "mandate": "MANDATORY DECOUPLING: Never combine identity discovery with asset synthesis in a single step.",

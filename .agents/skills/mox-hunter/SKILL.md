@@ -117,14 +117,15 @@ MoX Hunter immediately initiates the **6-Stage Interactive Master Flow** with **
 ┌────────────────────────────────────────────────────────┐
 │ STAGE 2: Automated Discovery & Asset Verification      │
 │ • mox-cma-agent hunts & deduplicates against CRM       │
-│ • mox-verifier checks DNS health & social 200 URLs     │
-│ • extract_brand_assets scrapes real reviews & phone    │
+│ • mox-contact-verifier validates GMB phone & emails    │
+│ • Website Triage Rule: If site is modern/decent, run   │
+│   SEO/Speed audit; DO NOT pitch generic redesign       │
 └──────────────────────┬─────────────────────────────────┘
                        │
                        ▼
 ┌────────────────────────────────────────────────────────┐
 │ 🛑 GATE 1: Human Lead Review Checkpoint                │
-│ • Presents clean table with verified metrics & ratings │
+│ • Presents clean table with verified contacts & notes  │
 │ • Prompts user: "Please review the batch. Any custom   │
 │   notes or specific design requests per lead?"         │
 │ • HALTS EXECUTION until user approves / adds notes     │
@@ -133,9 +134,10 @@ MoX Hunter immediately initiates the **6-Stage Interactive Master Flow** with **
                        ▼
 ┌────────────────────────────────────────────────────────┐
 │ STAGE 3: Super-Grade Prototype & Pitch Synthesis       │
-│ • mox-design-researcher curates Awwwards design tokens │
+│ • Strictly injects Gate 1 user notes into copy/pitch   │
 │ • mox-ui-designer builds bespoke HTML (7-10 sections)  │
-│   incorporating any custom notes provided by user      │
+│   for broken/offline sites using real brand assets     │
+│ • For decent sites: generates Technical SEO Audit note │
 │ • POST /api/mcp/publish-prototype deploys live preview │
 │ • mox-sales-closer & courtesy-advisor draft pitches    │
 └──────────────────────┬─────────────────────────────────┘
