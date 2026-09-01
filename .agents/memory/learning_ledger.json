@@ -1,6 +1,16 @@
 {
-  "system_version": "2.8.0-enhanced-wizard",
-  "last_updated": "2026-08-28T03:00:00+05:00",
+  "system_version": "3.0.0-universal-archetypes-and-linter",
+  "last_updated": "2026-09-01T17:15:00+05:00",
+  "git_repository_sync": {
+    "remote_url": "https://github.com/Mr-ABX/MoX-Hunter-CRM_R2.git",
+    "active_branch": "antigravity-agents-core",
+    "backup_locations": [
+      ".agents/agents/ (Agent Prompts & Specialized Subagent Instructions)",
+      ".agents/skills/mox-hunter/ (Workspace Skill & Executable Python CLI Tools)",
+      ".agents/memory/ (Persistent Learning Ledger & State Machine)",
+      "~/.gemini/config/skills/mox-hunter/ (Global Mirror for Cross-Session Continuity)"
+    ]
+  },
   "verified_credentials": {
     "sender_email": "abdulrahmant.official@gmail.com",
     "composio_connection": "gmail_prod-nide",
@@ -15,81 +25,64 @@
     "start lead scraping",
     "start building"
   ],
-  "discovery_wizard_parameters": {
-    "mode_options": {
-      "mode_1": "Dead / Offline Domains Only (DNS Failure, 404, 403 Server Error)",
-      "mode_2": "Broken / Outdated Layouts Only (Live sites needing modern redesign)",
-      "mode_3": "Zero Website Listed Only (Google Maps only profiles)",
-      "mode_4": "Blended High-Impact (Default - Highest conversion probability)"
-    },
-    "scoping_fields": [
-      "Target Area / City / Region",
-      "Niche / Business Category",
-      "Contact Filters (Must have WhatsApp/Phone, Email, Socials)",
-      "Asset Extraction (Original Logos, Real Portrait Avatars, Verified Reviews)"
+  "universal_ui_archetypes_mandate": {
+    "mandatory_section_depth": "Strict 7 to 10 substantive, unique sections per prototype.",
+    "header_archetypes": [
+      "Style A: Floating Glassmorphism Island (Apple/Linear Capsule with live status pulse)",
+      "Style B: Dual-Tier Enterprise Navigation Bar (Top utility contact ribbon + Sticky navbar)",
+      "Style C: Minimalist Asymmetric Monogram Bar (Large brand crest + 1-Click WhatsApp)",
+      "Style D: Split Contextual Alert Ribbon Navigation (Top emergency ribbon + Clean menu)",
+      "Style E: Ultra-Clean Ghost Minimalist Header (Borderless translucent navigation)"
+    ],
+    "hero_archetypes": [
+      "Style 1: Split-Screen Interactive Hero (55% Copy + 45% Live Diagnostic/Slider Card)",
+      "Style 2: Full-Bleed Atmospheric Editorial Hero (Cinematic imagery + Centered Serif Display)",
+      "Style 3: Asymmetrical Offset Bento Hero (Headline + Asymmetrical floating metric tiles)",
+      "Style 4: Interactive Triage / Scope Estimator Hero (Live timeline & category selector)",
+      "Style 5: High-Urgency Rapid Action Hub (Urgent problem resolution + Countdown timer)"
+    ],
+    "form_archetypes": [
+      "Style 1: Horizontal Full-Width Glassmorphism Booking Bar (Inline selector chips & pills)",
+      "Style 2: Stacked Bio & Certification Card with Direct Dial Hotline",
+      "Style 3: Centered Luxury VIP Concierge Capsule Modal Card (Floating inputs + Privacy seal)",
+      "Style 4: Side-by-Side Scope & Timeline Estimator + Direct Reservation Portal",
+      "Style 5: Interactive 3-Click Emergency Stepper Wizard (Zero traditional form inputs)"
+    ],
+    "footer_archetypes": [
+      "Style 1: Minimalist 2-Row Modern Glass Footer (Linear style with live status dot)",
+      "Style 2: Royal British Dual-Tier Footer (Accreditation ribbon + Legal disinfection protocols)",
+      "Style 3: Editorial Monogram Watermark Footer (Faint monogram background + Concierge links)",
+      "Style 4: Interactive Landmark & Hours Split Footer (60/40 map directions + Hours)",
+      "Style 5: High-Contrast 24/7 Emergency Strip Footer (Urgent hotline ribbon + Instant navigation)"
     ]
   },
-  "dual_gate_verification_protocol": {
-    "gate_1": "Human Lead Review Gate: Scraped batch is halted and presented in a table with clickable website links, Google Maps URLs, attached original logos, and verified pain points for user approval and custom notes before any prototype is synthesized.",
-    "gate_2": "Human Prototype & Pitch Review Gate: Live preview links, ultra-short DIC emails, and 1-Click WhatsApp links are presented for final user sign-off before controlled sending."
+  "image_verification_and_linter_guard": {
+    "enforcement_engine": "scripts/image_linter.py connected to mox_designer.py",
+    "hardcoded_blacklist": [
+      "photo-1507652313519-d4e9174996dd",
+      "photo-1584622650111-993a426fbf0a",
+      "photo-1584622781564-1d987f7333c1"
+    ],
+    "rule": "Every image must strictly match the verified clinical/specialist category (operatory, veneers, clear aligners, microscope surgery, verified patient portraits). Any unverified or spa/bathroom photo triggers a fatal build error."
+  },
+  "continuous_self_evolution_protocol": {
+    "rule": "All new user design feedback, preferences, and architectural upgrades automatically append to this ledger and sync to GitHub without altering baseline safety protocols. The system compounds knowledge over time across every run."
   },
   "market_strategy_70_30": {
     "local_engine_70_pct": {
       "focus": "High-Affluence Local Corridor (Islamabad F-6/F-7/F-8 / Blue Area or DHA Lahore / Gulberg)",
       "channels": "1-Click Direct WhatsApp Click-to-Chat (wa.me) + Clean Email",
       "target_ticket": "$200 - $500 (PKR 60,000 - 150,000)",
-      "advantages": "90%+ WhatsApp open/read rates within 15 mins, zero friction, 24-48h close cycle, instant portfolio proof.",
-      "top_niches": [
-        "Cosmetic Dentistry & Orthodontics (Invisalign, Veneers)",
-        "Luxury Auto Detailing & PPF Studios",
-        "High-End Architecture & Interior Design"
-      ]
+      "advantages": "90%+ WhatsApp open/read rates within 15 mins, zero friction, 24-48h close cycle, instant portfolio proof."
     },
     "international_engine_30_pct": {
       "focus": "Tier-1 International Corridor (Dallas TX, Miami FL, London UK)",
       "channels": "Clean Composio Cold Email + Calendly strategy link",
       "target_ticket": "$1,000 - $2,500+",
-      "advantages": "High-ticket USD invoices, automated scheduled sending, long-term scalability.",
-      "top_niches": [
-        "Roofing & Storm Repair Contractors",
-        "Medspas & Cosmetic Wellness"
-      ]
+      "advantages": "High-ticket USD invoices, automated scheduled sending, long-term scalability."
     }
   },
   "dispatch_timing_intelligence": {
-    "rules_of_engagement": [
-      "Always inspect the current local date and day-of-week before scheduling.",
-      "If scheduling falls on Friday late afternoon or weekend, proactively alert user and suggest next Tuesday/Wednesday morning.",
-      "Peak outreach days: Tuesday, Wednesday, Thursday."
-    ],
-    "timezone_windows": {
-      "local_pakistan_gulf": {
-        "timezone": "PKT (UTC+5)",
-        "morning_peak": "10:30 AM - 1:00 PM PKT",
-        "afternoon_followup": "4:30 PM - 7:30 PM PKT"
-      },
-      "us_central_dallas": {
-        "timezone": "CDT (UTC-5)",
-        "morning_peak_local": "8:45 AM - 11:15 AM CDT",
-        "morning_peak_pkt": "6:45 PM - 9:15 PM PKT",
-        "afternoon_followup_local": "1:30 PM - 3:30 PM CDT",
-        "afternoon_followup_pkt": "11:30 PM - 1:30 AM PKT"
-      },
-      "us_eastern_miami_ny": {
-        "timezone": "EDT (UTC-4)",
-        "morning_peak_local": "9:00 AM - 11:30 AM EDT",
-        "morning_peak_pkt": "6:00 PM - 8:30 PM PKT",
-        "afternoon_followup_local": "2:00 PM - 4:00 PM EDT",
-        "afternoon_followup_pkt": "12:00 AM - 2:00 AM PKT"
-      },
-      "uk_london": {
-        "timezone": "BST (UTC+1)",
-        "morning_peak_local": "9:30 AM - 11:45 AM BST",
-        "morning_peak_pkt": "1:30 PM - 3:45 PM PKT",
-        "afternoon_followup_local": "2:15 PM - 4:30 PM BST",
-        "afternoon_followup_pkt": "6:15 PM - 8:30 PM PKT"
-      }
-    },
     "daily_volume_cap": "10 to 15 emails per day",
     "randomized_jitter": "3 to 7 minutes delay between dispatches",
     "followup_offsets_days": [3, 6, 10]
