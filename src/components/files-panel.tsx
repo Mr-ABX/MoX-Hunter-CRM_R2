@@ -124,7 +124,7 @@ export function FilesPanel({ messages, leads, initialLeadId, isCompact = false, 
 
         {!selectedLeadId ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {leads.map((lead) => {
+            {leads.map((lead, index) => {
               const leadAssets = assets.filter(a => a.leadId === lead.id);
               return (
                 <motion.button
@@ -137,7 +137,12 @@ export function FilesPanel({ messages, leads, initialLeadId, isCompact = false, 
                   <div className="w-12 h-12 bg-zinc-950 border border-zinc-800 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                     <Folder className="w-6 h-6 text-indigo-400" />
                   </div>
-                  <h3 className="text-lg font-semibold text-zinc-100 mb-1 group-hover:text-indigo-400 transition-colors">{lead.name}</h3>
+                  <div className="flex items-center gap-2 mb-1 w-full">
+                    <span className="font-mono text-xs font-semibold px-2 py-0.5 rounded-md bg-zinc-800 text-indigo-400 border border-zinc-700/60 shrink-0">
+                      #{index + 1}
+                    </span>
+                    <h3 className="text-lg font-semibold text-zinc-100 group-hover:text-indigo-400 transition-colors truncate">{lead.name}</h3>
+                  </div>
                   <p className="text-sm text-zinc-500 mb-4">{lead.niche} • {lead.city}</p>
                   <div className="mt-auto flex items-center justify-between w-full">
                     <span className="text-xs font-medium px-2 py-1 bg-zinc-800 text-zinc-400 rounded-md">
@@ -160,7 +165,12 @@ export function FilesPanel({ messages, leads, initialLeadId, isCompact = false, 
                 <div className="w-12 h-12 bg-zinc-950 border border-zinc-800 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                   <FileText className="w-6 h-6 text-zinc-500" />
                 </div>
-                <h3 className="text-lg font-semibold text-zinc-100 mb-1">General Assets</h3>
+                <div className="flex items-center gap-2 mb-1 w-full">
+                  <span className="font-mono text-xs font-semibold px-2 py-0.5 rounded-md bg-zinc-800 text-indigo-400 border border-zinc-700/60 shrink-0">
+                    #{leads.length + 1}
+                  </span>
+                  <h3 className="text-lg font-semibold text-zinc-100 truncate">General Assets</h3>
+                </div>
                 <p className="text-sm text-zinc-500 mb-4">Unassigned drafts and notes</p>
                 <div className="mt-auto">
                   <span className="text-xs font-medium px-2 py-1 bg-zinc-800 text-zinc-400 rounded-md">
@@ -219,14 +229,17 @@ export function FilesPanel({ messages, leads, initialLeadId, isCompact = false, 
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-zinc-800/50">
-                        {filteredAssets.map(asset => (
+                        {filteredAssets.map((asset, index) => (
                           <tr key={asset.id} className="hover:bg-zinc-800/20 transition-colors group">
                             <td className="px-6 py-4">
                               <div className="flex items-center gap-3">
-                                <div className="p-2 bg-zinc-800/50 rounded-lg border border-zinc-700/50">
+                                <div className="p-2 bg-zinc-800/50 rounded-lg border border-zinc-700/50 shrink-0">
                                   {getIcon(asset.canvasMode || '')}
                                 </div>
-                                <div>
+                                <div className="flex items-center gap-2 min-w-0">
+                                  <span className="font-mono text-xs font-semibold px-1.5 py-0.5 rounded-md bg-zinc-800 text-indigo-400 border border-zinc-700/60 shrink-0">
+                                    #{index + 1}
+                                  </span>
                                   <a href={`/preview/${asset.id}`} target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-zinc-200 hover:text-indigo-400 line-clamp-1 transition-colors">
                                     {asset.title || 'Untitled Draft'}
                                   </a>
@@ -249,9 +262,9 @@ export function FilesPanel({ messages, leads, initialLeadId, isCompact = false, 
                             <td className="px-6 py-4">
                               <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                 <a 
-                                  href={`/preview/${asset.id}`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
+                                  href={`/preview/${asset.id}`} 
+                                  target="_blank" 
+                                  rel="noopener noreferrer" 
                                   className="p-1.5 bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500/20 rounded-md transition-colors"
                                   title="View Live"
                                 >
@@ -277,7 +290,7 @@ export function FilesPanel({ messages, leads, initialLeadId, isCompact = false, 
                 
                 {(viewMode === 'grid' || isCompact) && (
                   <div className={`grid grid-cols-1 ${isCompact ? 'gap-3' : 'md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'}`}>
-                {filteredAssets.map((asset) => (
+                {filteredAssets.map((asset, index) => (
                   <motion.div
                     key={asset.id}
                     initial={{ opacity: 0, y: 10 }}
@@ -312,9 +325,14 @@ export function FilesPanel({ messages, leads, initialLeadId, isCompact = false, 
                               {asset.canvasMode}
                             </span>
                           </div>
-                          <h3 className="text-zinc-200 font-medium text-sm line-clamp-2 mb-3" title={asset.title || 'Untitled Draft'}>
-                            {asset.title || 'Untitled Draft'}
-                          </h3>
+                          <div className="flex items-center gap-2 mb-3">
+                            <span className="font-mono text-xs font-semibold px-2 py-0.5 rounded-md bg-zinc-800 text-indigo-400 border border-zinc-700/60 shrink-0">
+                              #{index + 1}
+                            </span>
+                            <h3 className="text-zinc-200 font-medium text-sm line-clamp-2" title={asset.title || 'Untitled Draft'}>
+                              {asset.title || 'Untitled Draft'}
+                            </h3>
+                          </div>
                           <div className="flex items-center justify-between text-xs text-zinc-500 mb-4">
                             <span>{getLeadName(asset.leadId)}</span>
                             <div className="flex items-center gap-2">
@@ -352,7 +370,12 @@ export function FilesPanel({ messages, leads, initialLeadId, isCompact = false, 
                           {getIcon(asset.canvasMode!)}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h4 className="text-xs font-medium text-zinc-200 truncate">{asset.text}</h4>
+                          <div className="flex items-center gap-1.5">
+                            <span className="font-mono text-[10px] font-semibold px-1.5 py-0.5 rounded bg-zinc-800 text-indigo-400 border border-zinc-700/60 shrink-0">
+                              #{index + 1}
+                            </span>
+                            <h4 className="text-xs font-medium text-zinc-200 truncate">{asset.title || asset.text}</h4>
+                          </div>
                           <p className="text-[10px] text-zinc-500">{new Date(parseInt(asset.id)).toLocaleDateString()}</p>
                         </div>
                         <div className="flex items-center gap-1">

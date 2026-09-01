@@ -344,11 +344,16 @@ export function LeadCRM({ leads, onGeneratePrototype, onNavigate, onUpdateLead, 
               <Zap className="w-4 h-4" /> Action Required: Due For Follow-Up
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {leads.filter(l => l.nextFollowUpDate && l.nextFollowUpDate <= now && l.status !== 'Closed').map(lead => (
+              {leads.filter(l => l.nextFollowUpDate && l.nextFollowUpDate <= now && l.status !== 'Closed').map((lead, idx) => (
                 <div key={lead.id} className="bg-zinc-900 border border-rose-500/20 rounded-xl p-4 flex flex-col">
                   <div className="flex justify-between items-start mb-2">
-                    <h4 className="font-medium text-zinc-100">{lead.name}</h4>
-                    <span className="text-[10px] font-medium text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded-full border border-rose-500/20">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span className="font-mono text-xs font-semibold px-1.5 py-0.5 rounded-md bg-zinc-800 text-indigo-400 border border-zinc-700/60 shrink-0">
+                        #{idx + 1}
+                      </span>
+                      <h4 className="font-medium text-zinc-100 truncate">{lead.name}</h4>
+                    </div>
+                    <span className="text-[10px] font-medium text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded-full border border-rose-500/20 shrink-0 ml-2">
                       Due
                     </span>
                   </div>
@@ -448,6 +453,9 @@ export function LeadCRM({ leads, onGeneratePrototype, onNavigate, onUpdateLead, 
                             )}
                             <div>
                               <div className="font-medium text-zinc-100 group-hover:text-indigo-300 transition-colors flex items-center gap-2">
+                                <span className="font-mono text-xs font-semibold px-2 py-0.5 rounded-md bg-zinc-800 text-indigo-400 border border-zinc-700/60 shrink-0">
+                                  #{i + 1}
+                                </span>
                                 <span>{lead.name}</span>
                                 <Eye className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 text-indigo-400 transition-opacity" />
                               </div>
@@ -641,7 +649,7 @@ export function LeadCRM({ leads, onGeneratePrototype, onNavigate, onUpdateLead, 
                 </div>
                 
                 <div className="flex-1 overflow-y-auto no-scrollbar space-y-3 pr-2">
-                  {filteredLeads.filter(l => l.status === status).map((lead) => {
+                  {filteredLeads.filter(l => l.status === status).map((lead, leadIdx) => {
                     const cleanPhone = formatWhatsAppPhone(lead.phone);
                     const personalizedPitch = getPersonalizedPitch(lead);
                     const prototypeLink = lead.previewUrl || (lead.prototypeId ? `https://mox.infni-t.online/preview/${lead.prototypeId}` : '');
@@ -668,6 +676,9 @@ export function LeadCRM({ leads, onGeneratePrototype, onNavigate, onUpdateLead, 
                               </div>
                             )}
                             <h4 className="font-medium text-zinc-100 group-hover:text-indigo-300 transition-colors flex items-center gap-1.5 truncate">
+                              <span className="font-mono text-[11px] font-semibold px-1.5 py-0.5 rounded bg-zinc-800 text-indigo-400 border border-zinc-700/60 shrink-0">
+                                #{leadIdx + 1}
+                              </span>
                               <span className="truncate">{lead.name}</span>
                               <Eye className="w-3 h-3 text-indigo-400 opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
                             </h4>
