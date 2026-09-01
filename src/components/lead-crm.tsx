@@ -353,7 +353,10 @@ export function LeadCRM({ leads, onGeneratePrototype, onNavigate, onUpdateLead, 
                       className="hover:bg-zinc-800/20 transition-colors group"
                     >
                       <td className="py-4 px-6">
-                        <div className="font-medium text-zinc-100">{lead.name}</div>
+                        <div className="font-medium text-zinc-100 flex items-center gap-2">
+                          <span className="text-xs font-mono font-bold px-1.5 py-0.5 rounded bg-zinc-800 text-indigo-400 border border-zinc-700/60">#{i + 1}</span>
+                          <span>{lead.name}</span>
+                        </div>
                         <div className="flex items-center gap-2 mt-2">
                           {lead.rating && (
                             <span className="flex items-center gap-1 text-xs text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">
@@ -483,14 +486,17 @@ export function LeadCRM({ leads, onGeneratePrototype, onNavigate, onUpdateLead, 
                 </div>
                 
                 <div className="flex-1 overflow-y-auto no-scrollbar space-y-3 pr-2">
-                  {filteredLeads.filter(l => l.status === status).map((lead) => (
+                  {filteredLeads.filter(l => l.status === status).map((lead, idx) => (
                     <motion.div 
                       layoutId={`card-${lead.id}`}
                       key={lead.id}
                       className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 hover:border-zinc-700 transition-colors group"
                     >
                       <div className="flex items-start justify-between mb-2">
-                        <h4 className="font-medium text-zinc-100">{lead.name}</h4>
+                        <h4 className="font-medium text-zinc-100 flex items-center gap-1.5 truncate">
+                          <span className="text-[10px] font-mono font-bold px-1 py-0.5 rounded bg-zinc-800 text-indigo-400 border border-zinc-700/60 shrink-0">#{idx + 1}</span>
+                          <span className="truncate">{lead.name}</span>
+                        </h4>
                         <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                           <button 
                             onClick={() => onSelectLead(lead.id)}

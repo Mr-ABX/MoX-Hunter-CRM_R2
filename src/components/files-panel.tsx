@@ -107,7 +107,7 @@ export function FilesPanel({ messages, leads, initialLeadId, isCompact = false, 
 
         {!selectedLeadId ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {leads.map((lead) => {
+            {leads.map((lead, index) => {
               const leadAssets = assets.filter(a => a.leadId === lead.id);
               return (
                 <motion.button
@@ -115,13 +115,16 @@ export function FilesPanel({ messages, leads, initialLeadId, isCompact = false, 
                   onClick={() => setSelectedLeadId(lead.id)}
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="flex flex-col items-start p-6 bg-zinc-900/50 border border-zinc-800/50 rounded-2xl hover:border-indigo-500/50 hover:bg-indigo-500/5 transition-all text-left group"
+                  className="flex flex-col items-start p-6 bg-zinc-900/50 border border-zinc-800/50 rounded-2xl hover:border-indigo-500/50 hover:bg-indigo-500/5 transition-all text-left group relative"
                 >
                   <div className="w-12 h-12 bg-zinc-950 border border-zinc-800 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                     <Folder className="w-6 h-6 text-indigo-400" />
                   </div>
-                  <h3 className="text-lg font-semibold text-zinc-100 mb-1 group-hover:text-indigo-400 transition-colors">{lead.name}</h3>
-                  <p className="text-sm text-zinc-500 mb-4">{lead.niche} • {lead.city}</p>
+                  <div className="flex items-center gap-2 mb-1 w-full">
+                    <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-zinc-800 text-indigo-400 border border-zinc-700/60">#{index + 1}</span>
+                    <h3 className="text-base font-semibold text-zinc-100 group-hover:text-indigo-400 transition-colors truncate flex-1">{lead.name}</h3>
+                  </div>
+                  <p className="text-xs text-zinc-500 mb-4">{lead.niche} • {lead.city}</p>
                   <div className="mt-auto flex items-center justify-between w-full">
                     <span className="text-xs font-medium px-2 py-1 bg-zinc-800 text-zinc-400 rounded-md">
                       {leadAssets.length} Assets
@@ -189,7 +192,7 @@ export function FilesPanel({ messages, leads, initialLeadId, isCompact = false, 
               </div>
             ) : (
               <div className={`grid grid-cols-1 ${isCompact ? 'gap-3' : 'md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'}`}>
-                {filteredAssets.map((asset) => (
+                {filteredAssets.map((asset, index) => (
                   <motion.div
                     key={asset.id}
                     initial={{ opacity: 0, y: 10 }}
@@ -220,6 +223,9 @@ export function FilesPanel({ messages, leads, initialLeadId, isCompact = false, 
                         <div className="p-4">
                           <div className="flex items-center gap-2 mb-2">
                             {getIcon(asset.canvasMode!)}
+                            <span className="text-xs font-mono font-bold px-2 py-0.5 bg-zinc-800 text-indigo-400 border border-zinc-700/60 rounded-md">
+                              #{index + 1}
+                            </span>
                             <span className="text-xs font-medium px-2 py-0.5 bg-zinc-800 text-zinc-300 rounded-md">
                               {asset.canvasMode}
                             </span>
@@ -253,7 +259,10 @@ export function FilesPanel({ messages, leads, initialLeadId, isCompact = false, 
                           {getIcon(asset.canvasMode!)}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h4 className="text-xs font-medium text-zinc-200 truncate">{asset.text}</h4>
+                          <h4 className="text-xs font-medium text-zinc-200 truncate flex items-center gap-1.5">
+                            <span className="text-[10px] font-mono font-bold text-indigo-400">#{index + 1}</span>
+                            <span>{asset.text}</span>
+                          </h4>
                           <p className="text-[10px] text-zinc-500">{new Date(parseInt(asset.id)).toLocaleDateString()}</p>
                         </div>
                         <div className="flex items-center gap-1">
