@@ -1,6 +1,6 @@
 {
-  "system_version": "3.2.0-strategic-audit-and-notes-injection",
-  "last_updated": "2026-09-01T21:30:00+05:00",
+  "system_version": "3.3.0-psychological-outreach-engine",
+  "last_updated": "2026-09-01T22:05:00+05:00",
   "git_repository_sync": {
     "remote_url": "https://github.com/Mr-ABX/MoX-Hunter-CRM_R2.git",
     "active_branch": "antigravity-agents-core",
@@ -10,6 +10,22 @@
       ".agents/memory/ (Persistent Learning Ledger & State Machine)",
       "~/.gemini/config/skills/mox-hunter/ (Global Mirror for Cross-Session Continuity)"
     ]
+  },
+  "psychological_outreach_engine": {
+    "enforcement_tool": "scripts/mox_psychological_copywriter.py",
+    "five_commandments": [
+      "1. NEVER BLAME OR JUDGE: Always externalize technical flaws as third-party theme/update glitches.",
+      "2. HIGH-STATUS VALIDATION FIRST: Praise verified reputation, legacy years, or 4.9★+ reviews before anything else.",
+      "3. 2026 MOBILE REALITY: Frame mobile optimization as essential to capture the 85%+ mobile patient searches.",
+      "4. ZERO-PRESSURE GIFT: Deliver the 10-section bespoke prototype or technical audit as a 100% free gift.",
+      "5. AIRY MOBILE SPACING: Strictly 1-to-2 sentence breathers with clean line breaks (under 65 words total)."
+    ],
+    "dynamic_triggers": {
+      "trigger_1_tech_glitch_externalization": "Praise reputation + frame bug as theme update shift + free prototype gift.",
+      "trigger_2_vip_prestige_exclusivity": "Validate high-ticket aesthetic status + alert on dead domain + dark luxury prototype.",
+      "trigger_3_harley_street_legacy": "Celebrate 10+ year British/GDC surgical heritage + 2026 royal editorial prototype.",
+      "trigger_4_technical_seo_advisory": "Acknowledge modern site + offer 3-point mobile speed/schema ranking leak report."
+    }
   },
   "website_triage_and_outreach_strategy_matrix": {
     "mandate": "Differentiate pitch strategy strictly by website condition and inject human Gate 1 review notes into every outreach.",
