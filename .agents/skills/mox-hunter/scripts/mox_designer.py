@@ -1,25 +1,28 @@
-#!/usr/bin/env python3
-"""
-mox_designer.py - Interactive Awwwards-Grade Prototype Engine for MoX Hunter
-Synthesizes unique, responsive single-file landing pages with Tailwind CSS, 2-column forms,
-and automatically publishes to the MCP endpoint.
-"""
-
-import sys
 import os
+import sys
 import json
 import urllib.request
 import ssl
+from image_linter import lint_html_images
 
-ssl_context = ssl._create_unverified_context()
 API_URL = "https://mo-x.vercel.app/api/mcp"
 API_KEY = "mox_zZdcZAAI2KXJzVOEorV3U2chSFTj2HWz"
 
-def publish_prototype(title: str, custom_slug: str, html_content: str, lead_id: str = ""):
-    """Publishes the HTML prototype to the MoX CDN endpoint."""
+def publish_prototype(title: str, slug: str, html_content: str, lead_id: str = ""):
+    """Validates HTML markup and image authenticity before publishing to production CDN."""
+    # 1. Image Authenticity & Blacklist Verification
+    is_image_valid, image_errors = lint_html_images(html_content)
+    if not is_image_valid:
+        print("\n❌ PROTOTYPE REJECTED BY IMAGE LINTER:")
+        for err in image_errors:
+            print(f"  - {err}")
+        print("Build halted to prevent non-clinical/bad imagery from publishing.")
+        return None
+
+    # 2. Publish to Production Endpoint
     payload = {
         "title": title,
-        "customSlug": custom_slug,
+        "customSlug": slug,
         "htmlContent": html_content,
         "leadId": lead_id
     }
@@ -29,6 +32,7 @@ def publish_prototype(title: str, custom_slug: str, html_content: str, lead_id: 
         "mo-x-api-key": API_KEY
     }
     
+    ssl_context = ssl._create_unverified_context()
     req = urllib.request.Request(
         f"{API_URL}/publish-prototype",
         data=json.dumps(payload).encode('utf-8'),
@@ -38,14 +42,16 @@ def publish_prototype(title: str, custom_slug: str, html_content: str, lead_id: 
     
     try:
         with urllib.request.urlopen(req, context=ssl_context) as response:
-            res_json = json.loads(response.read().decode('utf-8'))
-            return res_json
+            res_data = json.loads(response.read().decode('utf-8'))
+            print(f"✓ Prototype Published Successfully: {res_data.get('previewUrl')}")
+            return res_data
     except Exception as e:
-        return {"success": False, "error": str(e)}
+        print(f"❌ Error publishing prototype: {e}")
+        return None
 
 if __name__ == "__main__":
-    if len(sys.argv) < 3:
-        print("Usage: python3 mox_designer.py <title> <custom_slug> <html_file_path> [lead_id]")
+    if len(sys.argv) < 4:
+        print("Usage: python3 mox_designer.py <title> <customSlug> <html_file_path> [lead_id]")
         sys.exit(1)
         
     p_title = sys.argv[1]
@@ -53,8 +59,11 @@ if __name__ == "__main__":
     p_file = sys.argv[3]
     p_lead_id = sys.argv[4] if len(sys.argv) > 4 else ""
     
-    with open(p_file, 'r', encoding='utf-8') as f:
+    if not os.path.exists(p_file):
+        print(f"Error: File not found: {p_file}")
+        sys.exit(1)
+        
+    with open(p_file, "r", encoding="utf-8") as f:
         content = f.read()
         
-    res = publish_prototype(p_title, p_slug, content, p_lead_id)
-    print(json.dumps(res, indent=2))
+    publish_prototype(p_title, p_slug, content, p_lead_id)
