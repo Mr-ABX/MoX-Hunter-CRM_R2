@@ -1,6 +1,6 @@
 {
-  "system_version": "3.0.0-universal-archetypes-and-linter",
-  "last_updated": "2026-09-01T17:15:00+05:00",
+  "system_version": "3.1.0-decoupled-two-stage-ground-truth",
+  "last_updated": "2026-09-01T19:30:00+05:00",
   "git_repository_sync": {
     "remote_url": "https://github.com/Mr-ABX/MoX-Hunter-CRM_R2.git",
     "active_branch": "antigravity-agents-core",
@@ -10,6 +10,36 @@
       ".agents/memory/ (Persistent Learning Ledger & State Machine)",
       "~/.gemini/config/skills/mox-hunter/ (Global Mirror for Cross-Session Continuity)"
     ]
+  },
+  "two_stage_decoupled_hunting_architecture": {
+    "mandate": "MANDATORY DECOUPLING: Never combine identity discovery with asset synthesis in a single step.",
+    "stage_1_identity_and_contact_ground_truth": {
+      "focus": "Deterministic identity verification from live Google Places/Maps & active web pages only.",
+      "fields_collected": [
+        "Exact Business Name (from Google My Business)",
+        "Exact Physical Address / Floor / Building",
+        "Exact Verbatim Phone & Mobile Numbers (e.g. 051-8350000 / 0303-3337770)",
+        "Exact Website URL (or flagged as Dead/Offline/None)",
+        "Verified Social Profiles (Facebook, Instagram, LinkedIn)",
+        "Verified mailto: Email Address (if absent, strictly set to null/empty; NEVER guess/hallucinate)"
+      ],
+      "gate_1_review": "User inspects and verifies contact numbers and Google Maps links before Stage 2."
+    },
+    "stage_2_reputation_assets_and_prototype_synthesis": {
+      "focus": "Deep audit and custom asset generation on approved ground-truth leads only.",
+      "fields_collected": [
+        "Verified Star Rating & Exact Review Count",
+        "Original Brand Logo extraction & Color Palette derivation",
+        "Technical Website Audit / Mobile conversion blockers",
+        "10-Section Bespoke Prototype deployment with image linter guard",
+        "Tailored DIC Outreach Copy + 1-Click WhatsApp Direct link"
+      ],
+      "gate_2_review": "User inspects live bespoke prototypes and copy before safe drip sending."
+    }
+  },
+  "zero_hallucination_contact_guard": {
+    "enforcement_engine": "scripts/mox_contact_verifier.py",
+    "rule": "Every phone number, mobile number, and email must be verified against live Google Places / GMB or live web pages. Placeholders such as 'recipient@target.com' or guessed local area code numbers are strictly illegal. If no email exists, outreach defaults exclusively to verified WhatsApp/Phone."
   },
   "verified_credentials": {
     "sender_email": "abdulrahmant.official@gmail.com",

@@ -40,7 +40,12 @@ MoX Hunter is equipped with standalone, zero-dependency executable Python CLI to
 * **Capabilities**: Crafts ultra-short 3-sentence DIC (Disrupt, Intrigue, Click) emails and encodes pre-filled 1-Click WhatsApp direct links (`https://wa.me/{phone}?text={encoded}`).
 * **Usage**: `python3 scripts/mox_copywriter.py [lead_json_file]`
 
-### 6. `mox_flow.py` (Master Unified CLI Orchestrator)
+### 6. `mox_contact_verifier.py` (Deterministic Contact Verifier & Ground Truth Validator)
+* **Location**: `scripts/mox_contact_verifier.py`
+* **Capabilities**: Validates real phone numbers, sanitizes emails, and enforces a strict zero-hallucination policy. Guarantees that only verified Google Places/Maps contact data enters the CRM.
+* **Usage**: `python3 scripts/mox_contact_verifier.py [lead_json_file]`
+
+### 7. `mox_flow.py` (Master Unified CLI Orchestrator)
 * **Location**: `scripts/mox_flow.py`
 * **Capabilities**: Unified CLI connecting all sub-tools into an automated workflow.
 * **Usage**: `python3 scripts/mox_flow.py --action status|verify|scrape|copy`
