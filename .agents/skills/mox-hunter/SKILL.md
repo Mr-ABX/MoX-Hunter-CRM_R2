@@ -15,30 +15,52 @@ Connected Production Cloud Storage & CRM: `https://mox.infni-t.online`
 
 MoX Hunter is equipped with standalone, zero-dependency executable Python CLI tools that empower the squad to scrape, verify, design, and copywrite with real-world execution:
 
-### 1. `mox_scraper.py` (Live Business & Social Asset Scraper)
+### 1. `brand_color_extractor.py` (Smart Logo & Brand Palette Extractor)
+* **Location**: `scripts/brand_color_extractor.py`
+* **Capabilities**: Analyzes scraped logo URLs and brand assets to generate a cohesive design token palette (Primary, Secondary, Accent, Dark BG, Card Surface, Border).
+* **Usage**: `python3 scripts/brand_color_extractor.py <logo_url>`
+
+### 2. `mox_scraper.py` (Live Business & Social Asset Scraper)
 * **Location**: `scripts/mox_scraper.py`
 * **Capabilities**: Scrapes real logos, phone numbers, clean emails, social profile links (Facebook, Instagram, LinkedIn, WhatsApp), and meta tags from live business websites.
 * **Usage**: `python3 scripts/mox_scraper.py <url> [clinic_name]`
 
-### 2. `mox_verifier.py` (Lead & URL Health Diagnostic Engine)
+### 3. `mox_verifier.py` (Lead & URL Health Diagnostic Engine)
 * **Location**: `scripts/mox_verifier.py`
 * **Capabilities**: Deeply audits HTTP status codes (200, 403, 404, 500), SSL cert validity, DNS resolution, and mobile viewport tags. Classifies leads into diagnostic categories (`BROKEN_DNS_OR_DOMAIN_DEAD`, `HTTP_403_FORBIDDEN`, `DEFICIENT_UX`, `OUTDATED_REDESIGN`).
 * **Usage**: `python3 scripts/mox_verifier.py <url>`
 
-### 3. `mox_designer.py` (Interactive Prototype Synthesizer & Publisher)
+### 4. `mox_designer.py` (Interactive Prototype Synthesizer & Publisher)
 * **Location**: `scripts/mox_designer.py`
 * **Capabilities**: Ingests custom HTML, validates markup, and automatically publishes the prototype to `POST /api/mcp/publish-prototype`, returning live `https://mox.infni-t.online/preview/{slug}` URLs.
 * **Usage**: `python3 scripts/mox_designer.py <title> <slug> <html_file> [lead_id]`
 
-### 4. `mox_copywriter.py` (Dynamic DIC Outreach & 1-Click WhatsApp Generator)
+### 5. `mox_copywriter.py` (Dynamic DIC Outreach & 1-Click WhatsApp Generator)
 * **Location**: `scripts/mox_copywriter.py`
 * **Capabilities**: Crafts ultra-short 3-sentence DIC (Disrupt, Intrigue, Click) emails and encodes pre-filled 1-Click WhatsApp direct links (`https://wa.me/{phone}?text={encoded}`).
 * **Usage**: `python3 scripts/mox_copywriter.py [lead_json_file]`
 
-### 5. `mox_flow.py` (Master Unified CLI Orchestrator)
+### 6. `mox_flow.py` (Master Unified CLI Orchestrator)
 * **Location**: `scripts/mox_flow.py`
 * **Capabilities**: Unified CLI connecting all sub-tools into an automated workflow.
 * **Usage**: `python3 scripts/mox_flow.py --action status|verify|scrape|copy`
+
+---
+
+## 🏛️ Universal UI Architecture & 7-10 Section Mandate
+
+Every prototype synthesized by `mox-ui-designer` must strictly contain **at least 7 to 10 unique, fully designed sections**:
+
+1. **Section 01: [HEADER]** Floating Capsule, Dual-Tier Enterprise, Luxury Monogram, Alert Ribbon, or Ghost Minimal.
+2. **Section 02: [HERO]** Split-Screen Before/After, Full-Bleed Editorial, Asymmetric Bento, Instant Triage Calculator, or High-Urgency Hub.
+3. **Section 03: [TRUST BAR]** 4-Column Live Metric Counters / Badges (Years, Reviews, Accreditations).
+4. **Section 04: [CORE SERVICES]** Multi-Card Bento Grid with Verified Photography & Descriptions.
+5. **Section 05: [INTERACTIVE DEMO]** Draggable Before/After Comparison Slider, 3D Optical Scanner, or Urgency Checker.
+6. **Section 06: [PROCESS TIMELINE]** 3-Step Client/Patient Journey Stepper (01 Consultation ➔ 02 Plan ➔ 03 Delivery).
+7. **Section 07: [STANDARDS / TECH]** Sterilization, Warranty Seals, Equipment, or Methodology Breakdown.
+8. **Section 08: [TESTIMONIALS]** Verified Customer Review Masonry / Story Cards with Real Portrait Avatars.
+9. **Section 09: [MASTER FORM / CTA]** 2-Column High-Converting Booking Suite with Doctor/Founder Trust Sidecard & Direct WhatsApp.
+10. **Section 10: [FOOTER]** Rich 4-Column Mega-Footer with Google Maps Link, Operating Hours, Phone, and Legal Disclaimers.
 
 ---
 
@@ -107,7 +129,7 @@ MoX Hunter immediately initiates the **6-Stage Interactive Master Flow** with **
 ┌────────────────────────────────────────────────────────┐
 │ STAGE 3: Super-Grade Prototype & Pitch Synthesis       │
 │ • mox-design-researcher curates Awwwards design tokens │
-│ • mox-ui-designer builds bespoke HTML (8-12 sections)  │
+│ • mox-ui-designer builds bespoke HTML (7-10 sections)  │
 │   incorporating any custom notes provided by user      │
 │ • POST /api/mcp/publish-prototype deploys live preview │
 │ • mox-sales-closer & courtesy-advisor draft pitches    │
@@ -132,30 +154,6 @@ MoX Hunter immediately initiates the **6-Stage Interactive Master Flow** with **
 │ • Schedules Day 3, 6, 10 follow-up sequence            │
 └────────────────────────────────────────────────────────┘
 ```
-
----
-
-## 👥 Specialized Multi-Agent Squad Architecture
-
-1. **`mox-cma-agent`**: Market intelligence and targeted lead research across any niche, business size, or geographical perimeter.
-2. **`mox-verifier`**: Live HTTP reachability & domain health checker (flags dead DNS, timeouts, 404s) and validates that social profiles return active HTTP 200 responses with zero hallucination.
-3. **`mox-courtesy-advisor`**: Executes the non-salesy "Helpful Neighbor" broken-link alert strategy for offline domains, building authentic rapport.
-4. **`mox-site-auditor`**: Technical SEO and UX auditor. Conducts deep scans on mobile viewport responsiveness, Core Web Vitals, metadata hygiene, and outdated copyright years.
-5. **`mox-design-researcher`**: Design benchmark curator. Synthesizes conversion layouts inspired by **One Page Love**, **Awwwards**, **Siteinspire**, and **Framer** tokens mapped to the **20-Industry Design Library**.
-6. **`mox-ui-designer`**: Master UI/UX developer. Builds single-file, production-grade HTML prototypes with real Unsplash/Pexels photography, dynamic bento grids, scroll entrance animations, and custom section depths.
-7. **`mox-sales-closer`**: High-ticket sales strategist. Formats short, non-salesy DIC (Disrupt, Intrigue, Click) emails & 1-click WhatsApp pitches embedding verified pain points, live preview URLs, and **Calendly strategy call links** signed by `AbdulRahman-T`.
-8. **`mox-followup-closer`**: Conversational follow-up specialist. Executes the 3-step zero-guilt follow-up ladder for leads that haven't responded yet.
-
----
-
-## 🏆 Super-Grade Awwwards & One Page Love Architecture
-
-Every bespoke prototype built by `mox-ui-designer` must reflect world-class web design excellence:
-1. **Smart Dynamic Narrative & Variable Depth (8 to 12+ Sections)**.
-2. **5 Distinct Structural Archetypes** (Split-Screen Slider, British Royal Editorial, Luxury Diplomatic Lounge, Specialist Bento Matrix, 24/7 Rapid Emergency Triage).
-3. **High-Converting 2-Column Booking Forms** with Doctor portraits and verified trust badges.
-4. **Editorial Typography & Color Matching** (`Italiana`, `Cormorant Garamond`, `Space Grotesk`, `Plus Jakarta Sans`).
-5. **Rich Context-Matched Photography** (100% photo-backed cards, real customer portrait avatars).
 
 ---
 
