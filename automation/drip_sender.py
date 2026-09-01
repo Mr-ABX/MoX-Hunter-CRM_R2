@@ -115,11 +115,11 @@ def drip_dispatch_queue(leads_to_contact: list, min_delay_sec: int = 180, max_de
 
 if __name__ == "__main__":
     test_queue = [{
-        "id": "FmIYSd7nyr50Hug1JH4K",
-        "name": "Prestige Car Detailing",
-        "email": "sirajiaengineering@gmail.com",
-        "previewUrl": "https://mox.infni-t.online/preview/prestige-car-detailing-01",
-        "outreachSubject": "Quick live prototype for Prestige Car Detailing (DHA Phase 5)"
+        "id": "demo-01",
+        "name": "Care N Cure Dental Clinic",
+        "email": "inquiry@cncclinic.pk",
+        "previewUrl": "https://mox.infni-t.online/preview/care-n-cure-dental-f7-05",
+        "outreachSubject": "Quick live prototype for Care N Cure Dental"
     }]
     # Run test without sleep for local verification
     drip_dispatch_queue(test_queue, min_delay_sec=1, max_delay_sec=2, live_send=False)
