@@ -73,11 +73,15 @@
     "enforcement_engine": "scripts/mox_contact_verifier.py",
     "rule": "Every phone number, mobile number, and email must be verified against live Google Places / GMB or live web pages. Placeholders such as 'recipient@target.com' or guessed local area code numbers are strictly illegal. If no email exists, outreach defaults exclusively to verified WhatsApp/Phone."
   },
+  "domain_routing_mandate": {
+    "official_live_url": "https://mox.infni-t.online",
+    "rule": "ALWAYS use the user's live custom subdomain https://mox.infni-t.online for the dashboard, live website, and prototype previews. NEVER reference or display mo-x.vercel.app."
+  },
   "verified_credentials": {
     "sender_email": "abdulrahmant.official@gmail.com",
     "composio_connection": "gmail_prod-nide",
     "calendly_meeting_url": "https://calendly.com/digital-b3asts",
-    "crm_api_base": "https://mo-x.vercel.app/api/mcp",
+    "crm_api_base": "https://mox.infni-t.online/api/mcp",
     "live_preview_host": "https://mox.infni-t.online",
     "api_key": "mox_zZdcZAAI2KXJzVOEorV3U2chSFTj2HWz"
   },
